@@ -1,0 +1,688 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Quest 11: The Spellbound Citadel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one-screen arcade column — HUD strip, battle scene, spell card with big answer buttons. Single dark "night citadel" world by design. */
+:root{
+  color-scheme:dark;
+  --night:#17133a; --night2:#231c55; --panel:#2b2465; --panel2:#372f7c; --line:#4d43a6;
+  --ink:#f6f2ff; --muted:#bdb4ea; --lilac:#c8b5ff; --gold:#ffd66e; --mint:#8ff0c8;
+  --sky:#8fd3ff; --rose:#ff97ba; --peach:#ffc4a3; --good:#7ef0b0; --bad:#ff8f8f;
+  --display:'Lilita One','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --rc:var(--gold);
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--night);background-image:radial-gradient(900px 520px at 50% -8%,var(--night2),var(--night));background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+#app{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:12px 40px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,label:focus-within{outline:3px solid var(--sky);outline-offset:2px}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--muted)}
+
+/* Buttons */
+.btn{border:0;border-radius:16px;padding:14px 22px;font-family:var(--display);font-size:1.15rem;letter-spacing:.02em;background:var(--gold);color:var(--night);box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s;min-height:52px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.btn.alt{background:var(--mint)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none;font-family:var(--body);font-weight:800;font-size:1rem}
+.btn.small{padding:8px 14px;min-height:40px;font-size:.95rem}
+
+/* HUD */
+.hud{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.hud .who{display:flex;flex-direction:column;margin-right:auto;min-width:0}
+.hud .who b{font-family:var(--display);font-weight:400;font-size:1.25rem;line-height:1.1;overflow-wrap:anywhere}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill small{font-size:.7rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.pill.bpp b{color:var(--gold)}
+.heart{color:var(--rose);font-size:1.2rem;line-height:1;transition:transform .3s}
+.heart.lost{color:var(--line);transform:scale(.8)}
+.iconbtn{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:800;min-height:40px}
+
+/* Title */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin:18px 0 20px}
+.logo h1{font-size:clamp(2.6rem,9vw,4.4rem);line-height:.95;color:var(--gold);text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 28px rgba(255,214,110,.35)}
+.logo h1 span{color:var(--lilac)}
+.logo p{margin:.4rem 0 0;font-family:var(--display);font-size:clamp(1.15rem,3.6vw,1.6rem);color:var(--sky)}
+.owl{width:clamp(84px,20vw,130px);height:auto;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-2deg)}}
+.setup{background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:20px;display:grid;gap:20px}
+.field{display:grid;gap:8px}
+.field > span{font-weight:800}
+input[type=text]{width:100%;font:inherit;font-size:1.2rem;font-weight:800;padding:12px 16px;border-radius:14px;border:2px solid var(--line);background:var(--night);color:var(--ink)}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tile{position:relative;display:grid;gap:2px;padding:14px 16px;border-radius:16px;background:var(--night);border:2px solid var(--line);cursor:pointer;transition:border-color .15s,transform .15s}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.tile b{font-family:var(--display);font-weight:400;font-size:1.2rem}
+.tile small{color:var(--muted);font-weight:700}
+.tile.on{border-color:var(--rc);box-shadow:0 0 0 3px var(--rc) inset,0 0 22px -6px var(--rc)}
+.tile .gem{width:14px;height:14px;border-radius:4px;transform:rotate(45deg);background:var(--rc);position:absolute;right:16px;top:18px;box-shadow:0 0 12px var(--rc)}
+.realms{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.go{display:flex;justify-content:flex-end}
+
+/* Map */
+.maphead{margin:10px 0 16px}
+.maphead h2{font-size:clamp(1.8rem,6vw,2.6rem);color:var(--gold)}
+.maphead p{margin:.3rem 0 0;color:var(--muted);font-weight:700}
+.towers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.tower{text-align:left;border:2px solid var(--line);border-radius:22px;background:var(--panel);padding:18px;display:grid;gap:10px;align-content:start;transition:transform .15s,border-color .15s}
+.tower:hover{transform:translateY(-3px);border-color:var(--rc)}
+.tower .top{display:flex;align-items:center;gap:12px}
+.medal{width:52px;height:52px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:1.4rem;color:var(--night);background:var(--rc);box-shadow:0 0 0 4px var(--night),0 0 0 6px var(--rc)}
+.medal.locked{background:var(--night);color:var(--muted);box-shadow:0 0 0 2px var(--line) inset}
+.tower h3{font-size:1.3rem}
+.tower p{margin:0;color:var(--muted);font-weight:700;font-size:.95rem}
+.tower .state{font-weight:800;color:var(--rc)}
+
+/* Play */
+.realmbar{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.realmbar h2{font-size:clamp(1.5rem,5vw,2.1rem);color:var(--rc)}
+.qcount{font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.progress{height:10px;border-radius:99px;background:var(--panel);margin:10px 0 12px;overflow:hidden;border:1px solid var(--line)}
+.progress i{display:block;height:100%;width:0;background:var(--rc);border-radius:99px;transition:width .5s}
+#scene{display:block;width:100%;height:170px;border-radius:20px;border:2px solid var(--line)}
+.card{margin-top:14px;background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:18px;display:grid;gap:14px}
+.qmeta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:8px;background:var(--rc);color:var(--night)}
+.chip.ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+.boost{font-family:var(--display);padding:4px 12px;border-radius:8px;background:var(--rose);color:var(--night);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 18px var(--rose)}}
+.qtext{margin:0;font-size:clamp(1.15rem,3.4vw,1.4rem);font-weight:800;line-height:1.4;max-width:62ch}
+.strip{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.strip canvas{background:var(--night);border-radius:14px;border:2px solid var(--line)}
+.strip .qbox{width:92px;height:92px;border-radius:14px;border:3px dashed var(--rc);display:grid;place-items:center;font-family:var(--display);font-size:2.4rem;color:var(--rc)}
+.strip .lbl{font-family:var(--display);font-size:1.2rem;color:var(--rc)}
+.energy{position:relative;height:18px;border-radius:99px;background:var(--night);border:2px solid var(--line);overflow:hidden}
+.energy i{position:absolute;inset:0;width:100%;background:linear-gradient(90deg,var(--rc),var(--lilac));box-shadow:0 0 16px var(--rc);border-radius:99px;transition:width .1s linear}
+.energy.low i{background:linear-gradient(90deg,var(--bad),var(--rose))}
+.energy span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.72rem;font-weight:800;color:var(--night);font-variant-numeric:tabular-nums;mix-blend-mode:normal}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;min-height:64px;padding:12px 14px;border-radius:16px;background:var(--panel2);border:2px solid var(--line);font-weight:800;font-size:1.08rem;box-shadow:0 4px 0 rgba(0,0,0,.3);transition:transform .08s,background .2s,border-color .2s;min-width:0}
+.opt span:last-child{min-width:0;overflow-wrap:anywhere}
+.opt:hover:not(:disabled){border-color:var(--rc)}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.opt .k{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--night);color:var(--rc);font-family:var(--display);font-size:1.1rem}
+.opt.correct{background:var(--good);border-color:var(--good);color:var(--night)}
+.opt.correct .k{color:var(--good)}
+.opt.wrong{border-color:var(--bad);opacity:.45;animation:shake .4s}
+.opt:disabled{cursor:default}
+.opts.img .opt{justify-content:center;flex-direction:column;gap:6px;padding:10px}
+.opts.img canvas{max-width:100%}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.cardfoot small{color:var(--muted);font-weight:700}
+@media (max-width:560px){.opts:not(.img){grid-template-columns:1fr}.hero{grid-template-columns:1fr;justify-items:start}#scene{height:150px}}
+
+/* Modals */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(10,7,32,.72);display:flex;align-items:center;justify-content:center;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{width:100%;max-width:560px;max-height:100%;overflow:auto;background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:22px;display:grid;gap:14px;animation:pop .28s cubic-bezier(.2,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.mascot{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.mascot .owl{width:86px}
+.bubble{background:var(--night);border:2px solid var(--line);border-radius:18px;padding:14px 16px;position:relative}
+.bubble h3{font-size:1.3rem;color:var(--gold);margin-bottom:4px}
+.bubble p{margin:0;font-weight:700;line-height:1.55}
+.bubble .reveal{margin-top:10px;padding-top:10px;border-top:2px dashed var(--line)}
+.bubble .reveal b{color:var(--good)}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.badgebig{display:grid;justify-items:center;gap:10px;text-align:center}
+.badgebig .medal{width:96px;height:96px;font-size:2.6rem;animation:spin 1.2s cubic-bezier(.2,1.3,.5,1)}
+@keyframes spin{from{transform:rotate(-200deg) scale(.3)}}
+.badgebig h2{font-size:2rem;color:var(--gold)}
+.badgebig p{margin:0;font-weight:700;color:var(--muted)}
+
+/* Report */
+.rep h2{font-size:1.7rem;color:var(--gold)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.kpi{background:var(--night);border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
+.kpi b{display:block;font-family:var(--display);font-weight:400;font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi small{color:var(--muted);font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(0,9rem) 1fr 3.2rem;gap:10px;align-items:center;font-weight:700;font-size:.95rem}
+.bar .t{height:12px;border-radius:99px;background:var(--night);overflow:hidden;border:1px solid var(--line)}
+.bar .t i{display:block;height:100%;background:var(--rc);border-radius:99px}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.rep h3{font-size:1.15rem;margin-top:4px}
+.rep ul{margin:0;padding-left:1.1rem;display:grid;gap:6px}
+.rep li{font-weight:700}
+.rep li small{display:block;color:var(--muted);font-weight:600}
+.rep .note{margin:0;color:var(--muted);font-weight:700}
+.badgeline{display:flex;gap:8px;flex-wrap:wrap}
+.badgeline .medal{width:40px;height:40px;font-size:1rem;box-shadow:0 0 0 2px var(--night),0 0 0 4px var(--rc)}
+
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:31;font-family:var(--display);font-size:1.3rem;padding:8px 18px;border-radius:14px;background:var(--rose);color:var(--night);box-shadow:0 6px 0 rgba(0,0,0,.3);pointer-events:none;transition:opacity .3s,transform .3s;opacity:0}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(4px)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<!--BODY-->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="owlArt">
+      <polygon points="18,20 26,4 32,20" fill="#b98cff"/>
+      <polygon points="62,20 54,4 48,20" fill="#b98cff"/>
+      <ellipse cx="40" cy="46" rx="29" ry="31" fill="#b98cff"/>
+      <ellipse cx="40" cy="56" rx="17" ry="18" fill="#ffe3cf"/>
+      <path d="M46 50 q4 3 0 6 M36 55 q4 3 0 6 M44 62 q4 3 0 6" stroke="#d7a98d" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="29" cy="33" r="12" fill="#fff"/><circle cx="51" cy="33" r="12" fill="#fff"/>
+      <circle cx="31" cy="34" r="6" fill="#17133a"/><circle cx="49" cy="34" r="6" fill="#17133a"/>
+      <circle cx="33" cy="32" r="2" fill="#fff"/><circle cx="51" cy="32" r="2" fill="#fff"/>
+      <polygon points="36,42 44,42 40,49" fill="#ffd66e"/>
+      <path d="M12 44 q-6 16 6 26 M68 44 q6 16 -6 26" stroke="#9a6ef0" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <polygon points="16,18 40,-2 64,18" fill="#8fd3ff"/>
+      <circle cx="40" cy="8" r="3" fill="#ffd66e"/>
+    </g>
+  </defs>
+</svg>
+
+<div id="app">
+  <header class="hud" id="hud" hidden>
+    <div class="who"><span class="eyebrow" id="hMode">GL style</span><b id="hName">Hero</b></div>
+    <span class="pill bpp"><small>BPP</small><b id="hBpp">0</b></span>
+    <span class="pill" id="hHearts" aria-label="Hearts"></span>
+    <span class="pill"><small>Streak</small><b id="hStreak">0</b></span>
+    <button class="iconbtn" id="reportBtn" type="button">Parent report</button>
+    <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+  </header>
+
+  <main>
+    <!-- TITLE -->
+    <section id="scr-title">
+      <div class="hero">
+        <svg class="owl" viewBox="-2 -4 84 86" aria-hidden="true"><use href="#owlArt"/></svg>
+        <div class="logo">
+          <h1>Quest <span>11</span></h1>
+          <p>The Spellbound Citadel</p>
+        </div>
+      </div>
+      <form class="setup" id="setupForm" autocomplete="off">
+        <label class="field">
+          <span>Your hero's name</span>
+          <input type="text" id="heroName" maxlength="16" placeholder="e.g. Amara the Brave" value="">
+        </label>
+        <div class="field">
+          <span>Exam style</span>
+          <div class="seg" id="modeSeg">
+            <label class="tile on" style="--rc:var(--sky)"><input type="radio" name="mode" id="modeGL" value="GL" checked><b>GL style</b><small>45 s per question · grammar, rules and classic patterns</small></label>
+            <label class="tile" style="--rc:var(--rose)"><input type="radio" name="mode" id="modeCEM" value="CEM"><b>CEM style</b><small>30 s per question · vocabulary in context and speed</small></label>
+          </div>
+        </div>
+        <div class="field">
+          <span>Starting tower</span>
+          <div class="realms" id="realmSeg"></div>
+        </div>
+        <div class="go"><button class="btn" type="submit" id="beginBtn">Begin the quest</button></div>
+      </form>
+    </section>
+
+    <!-- MAP -->
+    <section id="scr-map" hidden>
+      <div class="maphead">
+        <span class="eyebrow">The Citadel map</span>
+        <h2 id="mapTitle">Choose your next tower</h2>
+        <p id="mapSub">Defeat each tower's guardian to earn its badge.</p>
+      </div>
+      <div class="towers" id="towers"></div>
+    </section>
+
+    <!-- PLAY -->
+    <section id="scr-play" hidden>
+      <div class="realmbar">
+        <div><span class="eyebrow" id="pSub">Maths</span><h2 id="pName">Tower of Numbers</h2></div>
+        <div class="qcount" id="pCount">Question 1 of 8</div>
+      </div>
+      <div class="progress"><i id="pProg"></i></div>
+      <canvas id="scene" aria-label="Battle scene"></canvas>
+      <div class="card">
+        <div class="qmeta"><span class="chip" id="qTopic">Topic</span><span class="chip ghost" id="qMode">GL</span><span class="boost" id="boostPill" hidden>Spell Boost ×2</span></div>
+        <p class="qtext" id="qText"></p>
+        <div class="strip" id="qStrip"></div>
+        <div class="energy" id="energy"><i id="tFill"></i><span id="tNum"></span></div>
+        <div class="opts" id="qOpts"></div>
+        <div class="cardfoot">
+          <small>Answer fast for bonus points. Tip: keys A–D work too.</small>
+          <button class="btn ghost small" id="askBtn" type="button">Ask Ollie for a clue</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="mModal" hidden><div class="sheet" id="mSheet"></div></div>
+<canvas id="fx"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const root=document.documentElement;
+const css=n=>getComputedStyle(root).getPropertyValue('--'+n).trim();
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const QPR=8;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const REALMS={
+  maths:{name:'Tower of Numbers',sub:'Maths',col:'gold',badge:'Math Wizard',mark:'M',monster:'Sum Goblin'},
+  english:{name:'Tower of Words',sub:'English',col:'mint',badge:'Vocabulary Master',mark:'E',monster:'Grammar Gremlin'},
+  vr:{name:'Tower of Riddles',sub:'Verbal Reasoning',col:'sky',badge:'Logic Legend',mark:'V',monster:'Riddle Wraith'},
+  nvr:{name:'Tower of Shapes',sub:'Non-Verbal Reasoning',col:'rose',badge:'Shape Shifter',mark:'N',monster:'Prism Beast'}
+};
+const ORDER=['maths','english','vr','nvr'];
+
+/* ---------------- Question bank (first option is always correct; shuffled on screen) ---------------- */
+const BANK={
+maths:[
+{t:'BIDMAS',q:'Work out: 3 + 4 × 5 − 6 ÷ 2',o:['20','32','17.5','22'],h:'BIDMAS: do × and ÷ before + and −. Work out 4 × 5 and 6 ÷ 2 first.',x:'4 × 5 = 20 and 6 ÷ 2 = 3, so 3 + 20 − 3 = 20.'},
+{t:'Percentages',q:'What is 35% of 240?',o:['84','72','96','68'],h:'Find 10% first, then build 35% from 10% + 10% + 10% + 5%.',x:'10% = 24, so 30% = 72 and 5% = 12. 72 + 12 = 84.'},
+{t:'Speed, distance & time',q:'A train travels 180 km in 2 hours 15 minutes. What is its average speed?',o:['80 km/h','90 km/h','72 km/h','85 km/h'],h:'Speed = distance ÷ time. 15 minutes is a quarter of an hour, so write the time as a decimal.',x:'2 h 15 min = 2.25 h. 180 ÷ 2.25 = 80 km/h.'},
+{t:'Area & perimeter',q:'A rectangle has a perimeter of 36 cm and a length of 11 cm. What is its area?',o:['77 cm²','99 cm²','63 cm²','70 cm²'],h:'Two lengths + two widths = 36. Take away the two lengths to find the two widths.',x:'36 − 22 = 14, so the width is 7 cm. Area = 11 × 7 = 77 cm².'},
+{t:'Number sequences',q:'What comes next? 2, 5, 11, 23, 47, …',o:['95','94','71','96'],h:'Compare each number with the one before it. Try doubling.',x:'Each term is double the last, plus 1. 47 × 2 + 1 = 95.'},
+{t:'Fractions',q:'What is ¾ of ⅔ of 48?',o:['24','32','36','18'],h:'Work from the inside out: find ⅔ of 48 first.',x:'⅔ of 48 = 32. ¾ of 32 = 24.'},
+{t:'Ratio',q:'Mia and Sam share £56 in the ratio 3 : 5. How much does Sam get?',o:['£35','£21','£40','£28'],h:'Add the ratio parts to find how many equal shares there are.',x:'3 + 5 = 8 parts. £56 ÷ 8 = £7 per part. Sam gets 5 × £7 = £35.'},
+{t:'Algebra',q:'If 4n − 7 = 29, what is n?',o:['9','8','5.5','10'],h:'Undo the steps in reverse. First add 7 to both sides.',x:'4n = 36, so n = 36 ÷ 4 = 9.'},
+{t:'Averages',q:'The mean of 6, 9, 12, 15 and x is 11. What is x?',o:['13','11','14','10'],h:'Mean × how many numbers = the total of all the numbers.',x:'11 × 5 = 55. 6 + 9 + 12 + 15 = 42. 55 − 42 = 13.'},
+{t:'Probability',q:'A bag holds 3 red, 5 blue and 4 green counters. What is the probability of picking one that is NOT blue?',o:['7/12','5/12','1/3','3/4'],h:'Count all the counters, then count only the ones that are not blue.',x:'There are 12 counters and 7 are not blue, so the probability is 7/12.'},
+{t:'Decimals & fractions',q:'Work out 0.45 + 3/8',o:['0.825','0.485','0.8','0.785'],h:'Turn 3/8 into a decimal. 1/8 = 0.125.',x:'3/8 = 0.375. 0.45 + 0.375 = 0.825.'},
+{t:'Time',q:'A bus leaves at 13:47 and the journey takes 1 hour 38 minutes. When does it arrive?',o:['15:25','15:15','15:35','14:25'],h:'Add the hour first, then the minutes. 60 minutes make an hour.',x:'13:47 + 1 h = 14:47. Add 13 min to reach 15:00, then the last 25 min: 15:25.'},
+{t:'Angles',q:'Two angles in a triangle are 47° and 68°. What is the third angle?',o:['65°','75°','55°','85°'],h:'The angles in a triangle always add up to 180°.',x:'47 + 68 = 115. 180 − 115 = 65°.'},
+{t:'Percentages',q:'A £60 coat goes up in price by 15%, then the new price is cut by 10%. What does it cost now?',o:['£62.10','£63.00','£61.20','£65.10'],h:'Do it in two steps. The 10% is taken from the new price, not the original.',x:'15% of £60 = £9, so £69. 10% of £69 = £6.90. £69 − £6.90 = £62.10.',m:'CEM'},
+{t:'Money problems',q:'Pencils cost 35p each or £3 for a pack of 10. What is the cheapest way to buy exactly 23 pencils?',o:['£7.05','£8.05','£7.40','£6.95'],h:'Use as many packs as you can, then buy the rest singly. Check whether a third pack would be cheaper.',x:'2 packs = £6, plus 3 singles = £1.05. Total £7.05. Three packs would cost £9.',m:'CEM'},
+{t:'Place value',q:'What is 4.7 × 1000 ÷ 100?',o:['47','470','0.47','4700'],h:'× 1000 moves digits three places left; ÷ 100 moves them two places back.',x:'4.7 × 1000 = 4700. 4700 ÷ 100 = 47.',m:'GL'}
+],
+english:[
+{t:'Synonyms',q:'Which word is closest in meaning to BENEVOLENT?',o:['kind','wealthy','cunning','weary'],h:'"Bene" comes from Latin for "well" or "good", as in "benefit".',x:'Benevolent means well-meaning and kind.'},
+{t:'Antonyms',q:'Which word is most opposite in meaning to SCARCE?',o:['plentiful','rare','fragile','hidden'],h:'Scarce means there is not much of something. Look for a word meaning the reverse.',x:'Scarce means in short supply, so the opposite is plentiful. "Rare" is a synonym, a common trap.',m:'CEM'},
+{t:'Spelling',q:'Which spelling is correct?',o:['necessary','neccessary','necesary','neccesary'],h:'Memory trick: a shirt has one Collar and two Sleeves. One c, double s.',x:'Necessary has one c and a double s.'},
+{t:'Apostrophes',q:'Which sentence is punctuated correctly?',o:["The children's coats hung by the door.","The childrens' coats hung by the door.","The childrens coats hung by the door.","The children's' coats hung by the door."],h:'"Children" is already plural. For plurals that do not end in s, add \'s.',x:"Children is a plural without an s, so the possessive is children's.",m:'GL'},
+{t:'Cloze',q:'Choose the best word: "The detective\'s ______ eye noticed the tiny scratch on the lock."',o:['astute','obtuse','clumsy','vacant'],h:'The detective spotted something tiny. Which word means sharp and clever at noticing?',x:'Astute means sharp and perceptive. Obtuse means slow to understand.',m:'CEM'},
+{t:'Word classes',q:'In "She sang beautifully at the concert", what type of word is "beautifully"?',o:['adverb','adjective','verb','noun'],h:'Ask what the word describes: a thing, or how an action was done?',x:'Beautifully tells us how she sang, so it is an adverb.',m:'GL'},
+{t:'Homophones',q:'Choose the correct word: "The ______ of the fable is that honesty pays."',o:['moral','morale','mortal','mural'],h:'One of these means the lesson a story teaches. Another means team spirit.',x:'Moral is the lesson of a story. Morale is confidence or spirit.'},
+{t:'Vocabulary',q:'What does RELUCTANT mean?',o:['unwilling','excited','forgetful','furious'],h:'Imagine being reluctant to tidy your room. How do you feel about doing it?',x:'Reluctant means unwilling or hesitant.'},
+{t:'Semicolons',q:'Which sentence uses a semicolon correctly?',o:['It was raining heavily; the match was cancelled.','It was raining; heavily the match was cancelled.','It was; raining heavily the match was cancelled.','It was raining heavily the; match was cancelled.'],h:'A semicolon joins two complete sentences that are closely linked. Each side must make sense on its own.',x:'"It was raining heavily" and "the match was cancelled" are both complete, so a semicolon can join them.',m:'GL'},
+{t:'Antonyms',q:'Which word is most opposite in meaning to TRANSPARENT?',o:['opaque','clear','glossy','delicate'],h:'Transparent means you can see through it, like glass.',x:'Opaque means light cannot pass through: the opposite of transparent.',m:'CEM'},
+{t:'Cloze',q:'Choose the best word: "Despite the storm, the sailors remained ______ and steered the ship calmly."',o:['composed','frantic','reckless','bewildered'],h:'The clue is the word "calmly". Pick the word that matches it.',x:'Composed means calm and in control, which fits "steered calmly".',m:'CEM'},
+{t:'Spelling',q:'Which word is spelt correctly?',o:['separate','seperate','separete','sepparate'],h:'Trick: there is "a rat" in sep-A-RAT-e.',x:'Separate is spelt sep-a-rate.'},
+{t:'Synonyms',q:'Which word is closest in meaning to METICULOUS?',o:['thorough','hasty','generous','noisy'],h:'A meticulous person checks every tiny detail.',x:'Meticulous means very careful and precise, so thorough is closest.',m:'CEM'},
+{t:'Direct speech',q:'Which sentence is punctuated correctly?',o:['"Where are you going?" asked Tom.','"Where are you going" asked Tom?','"Where are you going?" Asked Tom.','"Where are you going," asked Tom?'],h:'The question mark belongs inside the speech marks, and the sentence carries on in lower case.',x:'The question mark sits inside the speech marks and "asked" stays lower case.',m:'GL'}
+],
+vr:[
+{t:'Anagrams',q:'Rearrange the letters of SILENT to make a word meaning "to pay attention to a sound".',o:['LISTEN','TINSEL','ENLIST','INLETS'],h:'All four options use the same six letters. Which one is about hearing?',x:'SILENT and LISTEN use exactly the same letters.'},
+{t:'Letter codes',q:'If CAT is written as DBU, how is DOG written?',o:['EPH','CNF','EPG','DPH'],h:'Compare each letter of CAT with DBU. How far along the alphabet does each one move?',x:'Each letter moves on by one: D→E, O→P, G→H, giving EPH.',m:'GL'},
+{t:'Letter values',q:'If A = 1, B = 2, C = 3 and so on, what is the total value of BAD?',o:['7','6','8','9'],h:'Write the value under each letter, then add them.',x:'B = 2, A = 1, D = 4. 2 + 1 + 4 = 7.'},
+{t:'Odd one out',q:'Which is the odd one out? ROBIN, SPARROW, BAT, EAGLE',o:['BAT','ROBIN','SPARROW','EAGLE'],h:'They can all fly, so look for a different way of grouping them.',x:'A bat is a mammal; the others are birds.'},
+{t:'Hidden words',q:'An animal is hidden across two neighbouring words: "We came late to the party." Which animal?',o:['CAMEL','EMU','ANT','RAT'],h:'Read the letters without the spaces: wecamelatetotheparty.',x:'"came late" hides CAME + L = CAMEL.',m:'GL'},
+{t:'Compound words',q:'Which word completes both: FOOT ____ and ____ ROOM?',o:['BALL','STEP','NOTE','PATH'],h:'Try each option in both gaps. It must make a real word both times.',x:'FOOTBALL and BALLROOM.'},
+{t:'Letter series',q:'What comes next? B, E, H, K, …',o:['N','M','O','L'],h:'Count how many places along the alphabet you move each time.',x:'Each step moves on 3 letters: K + 3 = N.'},
+{t:'Letter pairs',q:'What comes next? AZ, BY, CX, …',o:['DW','DV','EW','DX'],h:'Look at the first letters and the second letters separately.',x:'First letters go forwards A, B, C, D. Second letters go backwards Z, Y, X, W.'},
+{t:'Move a letter',q:'Move one letter from BLAND to ROD to make two new words. Which letter moves?',o:['L','B','A','D'],h:'Take each letter out of BLAND in turn. Does what is left still make a word?',x:'BLAND − L = BAND. ROD + L = LORD.',m:'GL'},
+{t:'Logic',q:'Amy is taller than Ben. Ben is taller than Cal. Dee is taller than Amy. Who is the shortest?',o:['Cal','Ben','Amy','Dee'],h:'Draw a quick line from tallest to shortest and place each person on it.',x:'Dee > Amy > Ben > Cal, so Cal is the shortest.'},
+{t:'Number codes',q:'The code for TEAM is 5 7 3 2. What is the code for TAME?',o:['5 3 2 7','5 3 7 2','3 5 2 7','7 2 3 5'],h:'Match each letter to its number first: T = 5, E = 7…',x:'T = 5, A = 3, M = 2, E = 7, so TAME = 5 3 2 7.'},
+{t:'Analogies',q:'HOT is to COLD as TALL is to …',o:['SHORT','HIGH','WIDE','LONG'],h:'Hot and cold are opposites. Find the opposite of tall.',x:'The pair are opposites, and the opposite of tall is short.'},
+{t:'Synonym pairs',q:'Pick one word from each group that are closest in meaning: (glad, angry, calm) (furious, sad, tired)',o:['angry & furious','glad & sad','calm & tired','glad & furious'],h:'Try each word in the first group against each word in the second.',x:'Angry and furious both mean very cross.',m:'CEM'},
+{t:'Missing letters',q:'Which letter ends the first word and starts the second?  LAM ( ? ) OAT',o:['B','P','E','G'],h:'Try each letter: does it make a real word on the end of LAM and at the start of _OAT?',x:'B makes LAMB and BOAT.',m:'GL'}
+]};
+
+/* ---------------- Non-verbal reasoning (generated fresh every time) ---------------- */
+const PN={3:'triangle',4:'square',5:'pentagon',6:'hexagon',7:'heptagon',8:'octagon'};
+const NVR_GEN=[
+function seqSides(){const n=3+rnd(2);const f=shuffle(['solid','empty','stripe']).slice(0,2);
+  const fr=[0,1,2].map(i=>({k:'poly',n:n+i,fill:f[i%2]}));
+  return {t:'Sequences',q:'Which shape comes next in the sequence?',strip:[...fr,null],
+    o:[{k:'poly',n:n+3,fill:f[1]},{k:'poly',n:n+3,fill:f[0]},{k:'poly',n:n+2,fill:f[1]},{k:'poly',n:n+4,fill:f[1]}],
+    h:'Two things change here. Count the sides each time, then look at the shading.',
+    x:`Each shape gains one side and the shading takes turns, so next is a ${PN[n+3]} with the second shading.`};},
+function seqRot(){const r=rnd(8)*45;const fr=[0,1,2].map(i=>({k:'arrow',rot:r+45*i,dots:i+1}));
+  return {t:'Sequences',q:'Which figure comes next in the sequence?',strip:[...fr,null],
+    o:[{k:'arrow',rot:r+135,dots:4},{k:'arrow',rot:r+135,dots:3},{k:'arrow',rot:r+180,dots:4},{k:'arrow',rot:r+90,dots:4}],
+    h:'Watch two things: which way the arrow turns each step, and how many dots there are.',
+    x:'The arrow turns 45° clockwise each step and gains one dot, so next it turns once more and has 4 dots.'};},
+function rotation(){const r=rnd(4)*90,fl=Math.random()<.5,d=fl?-90:90;
+  return {t:'Rotation',q:'Which option shows this shape turned 90° clockwise?',strip:[{k:'flag',rot:r,flip:fl}],lbl:'↻ 90° clockwise',
+    o:[{k:'flag',rot:r+d,flip:fl},{k:'flag',rot:r-d,flip:fl},{k:'flag',rot:r+180,flip:fl},{k:'flag',rot:r+d,flip:!fl}],
+    h:'Follow one feature, like the flag. On a clock face, 90° clockwise takes you from 12 to 3.',
+    x:'Every part makes a quarter-turn to the right. One option is a mirror image, which a rotation can never make.'};},
+function reflection(){const r=rnd(4)*90,fl=Math.random()<.5;
+  return {t:'Reflection',q:'Which option is the reflection of this shape in the dashed mirror line?',strip:[{k:'flag',rot:r,flip:fl}],mirror:true,
+    o:[{k:'flag',rot:r,flip:!fl},{k:'flag',rot:r,flip:fl},{k:'flag',rot:r+180,flip:fl},{k:'flag',rot:r+180,flip:!fl}],
+    h:'In a side mirror, things stay at the same height but left and right swap over.',
+    x:'In the reflection the flag still points up or down the same way, but it now faces the other side.'};},
+function oddMirror(){const fl=Math.random()<.5,rs=shuffle([0,90,180,270]);
+  return {t:'Odd one out',q:'Three of these are the same shape turned around. Which one is the odd one out?',strip:null,
+    o:[{k:'flag',rot:rs[0],flip:!fl},{k:'flag',rot:rs[1],flip:fl},{k:'flag',rot:rs[2],flip:fl},{k:'flag',rot:rs[3],flip:fl}],
+    h:'Turning a shape can never turn it into its mirror image. Look for the one that has been flipped over.',
+    x:'The odd one out is a reflection. The other three are rotations of the same shape.'};},
+function oddDots(){const ns=shuffle([3,4,5,6]),odd=ns[0];
+  return {t:'Odd one out',q:'Which shape is the odd one out?',strip:null,
+    o:[{k:'poly',n:odd,fill:'empty',dots:odd+(Math.random()<.5?1:-1)},...ns.slice(1).map(n=>({k:'poly',n,fill:'empty',dots:n}))],
+    h:'Count the sides of each shape, then count the dots inside it.',
+    x:'In three shapes the number of dots matches the number of sides. In the odd one out it does not.'};}
+];
+
+/* ---------------- Drawing shapes ---------------- */
+function mkCanvas(w,h){const c=document.createElement('canvas');const d=Math.min(2,window.devicePixelRatio||1);c.width=w*d;c.height=h*d;c.style.width=w+'px';c.style.height=h+'px';const x=c.getContext('2d');x.scale(d,d);return [c,x];}
+function drawGlyph(c,g,cx,cy,s){
+  const ink=css('ink'),bg=css('night');
+  c.save();c.translate(cx,cy);
+  c.lineWidth=Math.max(2.5,s*.08);c.strokeStyle=ink;c.fillStyle=ink;c.lineJoin='round';c.lineCap='round';
+  if(g.k==='poly'){
+    const n=g.n,a0=-Math.PI/2+(n%2===0?Math.PI/n:0);
+    c.beginPath();for(let i=0;i<n;i++){const a=a0+i*2*Math.PI/n;c[i?'lineTo':'moveTo'](Math.cos(a)*s,Math.sin(a)*s);}c.closePath();
+    if(g.fill==='solid')c.fill();
+    else if(g.fill==='stripe'){c.save();c.clip();c.lineWidth=Math.max(1.5,s*.06);for(let i=-2*s;i<2*s;i+=s*.24){c.beginPath();c.moveTo(i,-s*1.2);c.lineTo(i+s*1.6,s*1.2);c.stroke();}c.restore();c.lineWidth=Math.max(2.5,s*.08);}
+    c.stroke();
+    if(g.dots){const m=g.dots;c.fillStyle=g.fill==='solid'?bg:ink;const rr=m===1?0:s*.3;
+      for(let i=0;i<m;i++){const a=-Math.PI/2+i*2*Math.PI/m;c.beginPath();c.arc(Math.cos(a)*rr,Math.sin(a)*rr+(n===3?s*.1:0),s*.085,0,7);c.fill();}}
+  } else if(g.k==='flag'){
+    if(g.flip)c.scale(-1,1);c.rotate((g.rot||0)*Math.PI/180);
+    c.beginPath();c.moveTo(-.2*s,.75*s);c.lineTo(-.2*s,-.75*s);c.stroke();
+    c.beginPath();c.moveTo(-.2*s,-.75*s);c.lineTo(.6*s,-.45*s);c.lineTo(-.2*s,-.15*s);c.closePath();c.fill();
+    c.beginPath();c.moveTo(-.2*s,.75*s);c.lineTo(-.65*s,.75*s);c.stroke();
+    c.beginPath();c.arc(.35*s,.35*s,.13*s,0,7);c.fill();
+  } else if(g.k==='arrow'){
+    c.save();c.rotate((g.rot||0)*Math.PI/180);const a=s*.78;
+    c.beginPath();c.moveTo(0,.85*a);c.lineTo(0,-.4*a);c.stroke();
+    c.beginPath();c.moveTo(-.4*a,-.3*a);c.lineTo(.4*a,-.3*a);c.lineTo(0,-.95*a);c.closePath();c.fill();
+    c.beginPath();c.moveTo(-.25*a,.85*a);c.lineTo(.25*a,.85*a);c.stroke();
+    c.restore();
+    const m=g.dots||0,gap=s*.26;for(let i=0;i<m;i++){c.beginPath();c.arc((i-(m-1)/2)*gap,s*1.02,s*.08,0,7);c.fill();}
+  }
+  c.restore();
+}
+function glyphCanvas(g,size,mirror){
+  const w=mirror?size+38:size;const [cv,c]=mkCanvas(w,size);
+  const s=g.k==='arrow'?size*.34:size*.36;
+  drawGlyph(c,g,size/2,g.k==='arrow'?size*.45:size/2,s);
+  if(mirror){c.save();c.strokeStyle=css('sky');c.lineWidth=3;c.setLineDash([7,6]);c.beginPath();c.moveTo(size+18,8);c.lineTo(size+18,size-8);c.stroke();c.restore();}
+  return cv;
+}
+
+/* ---------------- Sound (Web Audio, all generated) ---------------- */
+let AC=null,muted=false;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,d,o){o=o||{};const a=ac();if(!a||muted)return;const t=a.currentTime+(o.at||0);const osc=a.createOscillator(),g=a.createGain();
+  osc.type=o.type||'sine';osc.frequency.setValueAtTime(f,t);if(o.to)osc.frequency.exponentialRampToValueAtTime(o.to,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(o.vol||.15,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  osc.connect(g);g.connect(a.destination);osc.start(t);osc.stop(t+d+.05);}
+const SFX={
+  chime(){[1047,1319,1568,2093].forEach((f,i)=>tone(f,.4,{at:i*.07,vol:.12}));},
+  whop(){tone(330,.3,{type:'triangle',to:110,vol:.22});},
+  fanfare(){[[523,0,.16],[659,.15,.16],[784,.3,.16],[1047,.45,.3],[784,.78,.14],[1047,.92,.7]].forEach(([f,at,d])=>{tone(f,d,{type:'triangle',at,vol:.16});tone(f/2,d,{type:'sine',at,vol:.08});});},
+  zap(){tone(1200,.28,{type:'sawtooth',to:240,vol:.035});},
+  hit(){tone(160,.22,{to:60,vol:.25});},
+  boost(){[523,784,1047,1568].forEach((f,i)=>tone(f,.22,{type:'square',at:i*.06,vol:.05}));},
+  tick(){tone(880,.05,{type:'square',vol:.025});},
+  click(){tone(600,.05,{type:'triangle',vol:.06});}
+};
+
+/* ---------------- Game state ---------------- */
+const S={name:'Hero',mode:'GL',hearts:3,bpp:0,streak:0,best:0,boost:false,badges:{},log:[],start:0,
+  realm:'maths',qs:[],qi:0,cur:null,opts:[],firstTry:true,hinted:false,tLeft:0,tMax:45,timer:null,locked:true,over:false,inPlay:false};
+
+function hud(){
+  $('#hName').textContent=S.name;$('#hMode').textContent=S.mode==='GL'?'GL style':'CEM style';
+  $('#hBpp').textContent=S.bpp;$('#hStreak').textContent=S.streak;
+  $('#hHearts').innerHTML=[0,1,2].map(i=>`<span class="heart${i<S.hearts?'':' lost'}" aria-hidden="true">♥</span>`).join('')+`<span style="position:absolute;left:-9999px">${S.hearts} hearts</span>`;
+  $('#boostPill').hidden=!S.boost;
+}
+function show(id){['scr-title','scr-map','scr-play'].forEach(s=>{$('#'+s).hidden=s!==id;});$('#hud').hidden=id==='scr-title';S.inPlay=id==='scr-play';if(S.inPlay)sizeScene();window.scrollTo(0,0);}
+let toastT=0;function toast(t,col){const el=$('#toast');el.textContent=t;el.style.background=`var(--${col||'rose'})`;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),1400);}
+
+/* ---------------- Title screen ---------------- */
+function buildRealmPicker(){
+  $('#realmSeg').innerHTML=ORDER.map((k,i)=>`<label class="tile${i===0?' on':''}" style="--rc:var(--${REALMS[k].col})"><input type="radio" name="realm" id="realm-${k}" value="${k}"${i===0?' checked':''}><span class="gem"></span><b>${REALMS[k].name}</b><small>${REALMS[k].sub}</small></label>`).join('');
+}
+function wireTiles(sel){document.querySelectorAll(sel+' input').forEach(inp=>inp.addEventListener('change',()=>{document.querySelectorAll(sel+' .tile').forEach(t=>t.classList.toggle('on',t.contains(inp)&&inp.checked));SFX.click();}));}
+
+/* ---------------- Map ---------------- */
+function renderMap(){
+  const n=Object.keys(S.badges).length;
+  $('#mapTitle').textContent=n===4?`${S.name}, the Citadel is free!`:`Where next, ${S.name}?`;
+  $('#mapSub').textContent=n===4?'You earned all four badges. Replay any tower or open the parent report.':`${n} of 4 badges earned. Clearing a tower also restores one heart.`;
+  $('#towers').innerHTML=ORDER.map(k=>{const R=REALMS[k],got=S.badges[k];
+    return `<button class="tower" type="button" data-realm="${k}" style="--rc:var(--${R.col})"><div class="top"><span class="medal${got?'':' locked'}">${R.mark}</span><div><h3>${R.name}</h3><p>${R.sub}</p></div></div><p>Guardian: ${R.monster}</p><span class="state">${got?'Badge earned: '+R.badge+' · play again':'Enter tower →'}</span></button>`;}).join('');
+  document.querySelectorAll('.tower').forEach(b=>b.addEventListener('click',()=>{SFX.click();startRealm(b.dataset.realm);}));
+}
+
+/* ---------------- Realm flow ---------------- */
+function buildQs(k){
+  if(k==='nvr'){const gens=shuffle([...NVR_GEN,...NVR_GEN]).slice(0,QPR);return gens.map(g=>Object.assign(g(),{nvr:true}));}
+  return BANK[k].map(q=>({q,s:(q.m===S.mode?0:q.m?1.4:.6)+Math.random()*1.3})).sort((a,b)=>a.s-b.s).slice(0,QPR).map(x=>Object.assign({},x.q));
+}
+function startRealm(k){
+  S.realm=k;S.qs=buildQs(k);S.qi=0;S.over=false;
+  const R=REALMS[k];$('#scr-play').style.setProperty('--rc',`var(--${R.col})`);
+  $('#pSub').textContent=R.sub;$('#pName').textContent=R.name;
+  scene.reset(R);show('scr-play');hud();showQ();
+}
+function showQ(){
+  const q=S.cur=S.qs[S.qi];S.firstTry=true;S.hinted=false;S.locked=false;
+  $('#pCount').textContent=`Question ${S.qi+1} of ${S.qs.length}`;
+  $('#pProg').style.width=(S.qi/S.qs.length*100)+'%';
+  $('#qTopic').textContent=q.t;$('#qMode').textContent=S.mode==='GL'?'GL style':'CEM style';
+  $('#qText').textContent=q.q;
+  const strip=$('#qStrip');strip.innerHTML='';
+  if(q.strip){q.strip.forEach(g=>{if(g){strip.appendChild(glyphCanvas(g,92,q.mirror));}else{const b=document.createElement('div');b.className='qbox';b.textContent='?';strip.appendChild(b);}});
+    if(q.lbl){const l=document.createElement('span');l.className='lbl';l.textContent=q.lbl;strip.appendChild(l);}}
+  strip.hidden=!q.strip;
+  S.opts=shuffle(q.o.map((o,i)=>({o,ok:i===0})));
+  const box=$('#qOpts');box.innerHTML='';box.classList.toggle('img',!!q.nvr);
+  S.opts.forEach((op,i)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.dataset.i=i;
+    const k=document.createElement('span');k.className='k';k.textContent='ABCD'[i];b.appendChild(k);
+    if(q.nvr){b.appendChild(glyphCanvas(op.o,88,false));b.setAttribute('aria-label','Option '+'ABCD'[i]);}
+    else{const t=document.createElement('span');t.textContent=op.o;b.appendChild(t);}
+    b.addEventListener('click',()=>answer(b,op));box.appendChild(b);});
+  S.tMax=S.mode==='CEM'?30:45;S.tLeft=S.tMax;startTimer();hud();
+}
+function startTimer(){stopTimer();drawTimer();S.timer=setInterval(()=>{S.tLeft=Math.max(0,S.tLeft-.1);drawTimer();
+  if(S.tLeft<=5&&Math.abs(S.tLeft-Math.round(S.tLeft))<.05&&S.tLeft>0)SFX.tick();
+  if(S.tLeft<=0){stopTimer();timeUp();}},100);}
+function stopTimer(){if(S.timer){clearInterval(S.timer);S.timer=null;}}
+function drawTimer(){$('#tFill').style.width=(S.tLeft/S.tMax*100)+'%';$('#tNum').textContent=Math.ceil(S.tLeft)+'s';$('#energy').classList.toggle('low',S.tLeft<=S.tMax*.25);}
+
+function logFirst(ok){if(!S.firstTry)return;S.log.push({realm:S.realm,topic:S.cur.t,ok,secs:Math.round(S.tMax-S.tLeft),hint:S.cur.h});S.firstTry=false;}
+function answer(btn,op){
+  if(S.locked||btn.disabled)return;
+  if(op.ok){
+    S.locked=true;stopTimer();
+    const speed=Math.round(10*S.tLeft/S.tMax);
+    let pts=(10+speed)*(S.boost?2:1);if(S.hinted)pts=Math.ceil(pts/2);if(!S.firstTry)pts=Math.ceil(pts/2);
+    const clean=S.firstTry;logFirst(true);
+    S.bpp+=pts;S.streak++;S.best=Math.max(S.best,S.streak);
+    btn.classList.add('correct');document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    SFX.chime();const r=btn.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,RM?12:40);
+    if(S.streak>=3&&!S.boost&&clean){S.boost=true;setTimeout(()=>{SFX.boost();toast('Spell Boost! Double points','rose');},350);}
+    else toast(`+${pts} BPP${S.boost?' · ×2':''}`,'gold');
+    hud();scene.cast(true);setTimeout(advance,1350);
+  } else {
+    btn.classList.add('wrong');btn.disabled=true;SFX.whop();
+    const firstWrong=S.firstTry;logFirst(false);
+    S.streak=0;S.boost=false;if(firstWrong){S.hearts=Math.max(0,S.hearts-1);scene.hurt();}
+    stopTimer();hud();openMascot(S.hearts===0?'out':'wrong');
+  }
+}
+function timeUp(){if(S.locked)return;logFirst(false);S.streak=0;S.boost=false;hud();SFX.whop();openMascot('time');}
+function revealAndNext(){
+  S.locked=true;document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(S.opts[i].ok)b.classList.add('correct');});
+  closeModal();scene.cast(false);setTimeout(advance,1500);
+}
+function advance(){
+  S.qi++;
+  if(S.hearts<=0){endRun();return;}
+  if(S.qi>=S.qs.length){$('#pProg').style.width='100%';realmDone();return;}
+  showQ();
+}
+
+/* ---------------- Mascot (Ollie) ---------------- */
+const OWL='<svg class="owl" viewBox="-2 -4 84 86" aria-hidden="true"><use href="#owlArt"/></svg>';
+function openModal(html){$('#mSheet').innerHTML=html;$('#mModal').hidden=false;const f=$('#mSheet button');if(f)f.focus({preventScroll:true});}
+function closeModal(){$('#mModal').hidden=true;}
+function openMascot(kind){
+  const q=S.cur;const correct=S.opts.find(o=>o.ok).o;
+  const ans=q.nvr?'Look at the highlighted option.':esc(correct);
+  let title,body,btns;
+  if(kind==='ask'){title='Here is a clue';body=esc(q.h);btns=`<button class="btn" type="button" data-a="resume">Back to the question</button>`;}
+  else if(kind==='time'){title="Time's up! No heart lost.";body=esc(q.h);btns=`<button class="btn ghost" type="button" data-a="show">Show me the answer</button><button class="btn" type="button" data-a="retry">Try again</button>`;}
+  else if(kind==='out'){title="Out of hearts, but great effort!";body=`${esc(q.h)}<div class="reveal"><b>Answer: ${ans}</b><br>${esc(q.x)}</div>`;btns=`<button class="btn" type="button" data-a="end">See my report</button>`;}
+  else {title='Not quite. Let me help!';body=esc(q.h);btns=`<button class="btn ghost" type="button" data-a="show">Show me and move on</button><button class="btn" type="button" data-a="again">Try again</button>`;}
+  openModal(`<div class="mascot">${OWL}<div class="bubble"><h3>Ollie says…</h3><p><b>${title}</b><br>${body}</p>${kind==='ask'?'<p style="margin-top:8px;color:var(--muted);font-size:.9rem">Using a clue halves the points for this question.</p>':''}</div></div><div class="row">${btns}</div>`);
+  $('#mSheet').querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.a;SFX.click();
+    if(a==='resume'||a==='again'){closeModal();if(a==='again'&&S.tLeft<10)S.tLeft=Math.min(S.tMax,10);startTimer();}
+    else if(a==='retry'){closeModal();S.tLeft=S.tMax;startTimer();}
+    else if(a==='show'){showAnswer();}
+    else if(a==='end'){closeModal();document.querySelectorAll('.opt').forEach((x,i)=>{x.disabled=true;if(S.opts[i].ok)x.classList.add('correct');});setTimeout(endRun,700);}
+  }));
+}
+function showAnswer(){
+  const q=S.cur,c=S.opts.find(o=>o.ok).o;
+  openModal(`<div class="mascot">${OWL}<div class="bubble"><h3>Here's how it works</h3><p>${esc(q.x)}</p><div class="reveal"><b>Answer: ${q.nvr?'the highlighted option':esc(c)}</b></div></div></div><div class="row"><button class="btn" type="button" id="nextBtn">Next question</button></div>`);
+  $('#nextBtn').addEventListener('click',()=>{SFX.click();revealAndNext();});
+}
+$('#askBtn').addEventListener('click',()=>{if(S.locked)return;SFX.whop();stopTimer();S.hinted=true;openMascot('ask');});
+
+/* ---------------- Realm complete / run end ---------------- */
+function realmDone(){
+  const R=REALMS[S.realm];const first=S.badges[S.realm];S.badges[S.realm]=true;S.hearts=Math.min(3,S.hearts+1);hud();
+  const mine=S.log.filter(e=>e.realm===S.realm).slice(-S.qs.length);const ok=mine.filter(e=>e.ok).length;
+  scene.defeat();SFX.fanfare();burst(innerWidth/2,innerHeight/3,RM?30:160);
+  const all=Object.keys(S.badges).length===4;
+  openModal(`<div class="badgebig" style="--rc:var(--${R.col})"><span class="eyebrow">${R.monster} defeated</span><span class="medal">${R.mark}</span><h2>${first?'Tower cleared again!':R.badge+' badge!'}</h2><p>${ok} of ${mine.length} right first time · ${S.bpp} BPP total${S.hearts<3?'':' · hearts full'}</p></div><div class="row">${all?'<button class="btn ghost" type="button" id="finalRep">Final report</button>':''}<button class="btn" type="button" id="toMap">Back to the Citadel</button></div>`);
+  $('#toMap').addEventListener('click',()=>{SFX.click();closeModal();renderMap();show('scr-map');});
+  if(all)$('#finalRep').addEventListener('click',()=>{SFX.click();openReport(true);});
+}
+function endRun(){S.over=true;stopTimer();openReport(true);}
+
+/* ---------------- Parent / teacher report ---------------- */
+function fmtTime(ms){const s=Math.round(ms/1000),m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`;}
+function openReport(final){
+  const wasTiming=!!S.timer;stopTimer();
+  const L=S.log,n=L.length,ok=L.filter(e=>e.ok).length,acc=n?Math.round(ok/n*100):0;
+  const avg=n?Math.round(L.reduce((a,e)=>a+e.secs,0)/n):0;
+  const bars=ORDER.map(k=>{const r=L.filter(e=>e.realm===k);if(!r.length)return '';const p=Math.round(r.filter(e=>e.ok).length/r.length*100);
+    return `<div class="bar" style="--rc:var(--${REALMS[k].col})"><span>${REALMS[k].sub}</span><span class="t"><i style="width:${p}%"></i></span><span class="v">${p}%</span></div>`;}).join('');
+  const T={};L.forEach(e=>{const key=e.realm+'|'+e.topic;T[key]=T[key]||{realm:e.realm,topic:e.topic,n:0,ok:0,hint:''};T[key].n++;if(e.ok)T[key].ok++;else T[key].hint=e.hint;});
+  const tl=Object.values(T);
+  let strong=tl.filter(t=>t.n>=2&&t.ok/t.n>=.75);if(!strong.length)strong=tl.filter(t=>t.ok===t.n);strong=strong.sort((a,b)=>b.ok-a.ok).slice(0,5);
+  const weak=tl.filter(t=>t.ok/t.n<.6).sort((a,b)=>a.ok/a.n-b.ok/b.n).slice(0,5);
+  const byRealm=ORDER.map(k=>{const r=L.filter(e=>e.realm===k);return r.length?{k,p:r.filter(e=>e.ok).length/r.length}:null;}).filter(Boolean).sort((a,b)=>a.p-b.p);
+  let rec='Play a few questions and this report will suggest what to practise next.';
+  if(byRealm.length){const w=byRealm[0];rec=w.p>=.85?`Excellent work across the board. Try switching to ${S.mode==='GL'?'CEM':'GL'} style for a fresh challenge with a different timer.`:`Spend the next session in the ${REALMS[w.k].name} (${REALMS[w.k].sub}).${weak.length?` Start with ${weak[0].topic.toLowerCase()}.`:''} Short daily sessions of 10–15 minutes work better than one long one.`;}
+  const badges=ORDER.filter(k=>S.badges[k]).map(k=>`<span class="medal" style="--rc:var(--${REALMS[k].col})" title="${REALMS[k].badge}">${REALMS[k].mark}</span>`).join('')||'<span class="note">No badges yet.</span>';
+  openModal(`<div class="rep" style="display:grid;gap:14px">
+    <div><span class="eyebrow">Parent &amp; teacher summary · ${S.mode} style</span><h2>${S.over?'Run complete':'Progress so far'}: ${esc(S.name)}</h2></div>
+    <div class="kpis"><div class="kpi"><b>${acc}%</b><small>Accuracy</small></div><div class="kpi"><b>${n}</b><small>Questions</small></div><div class="kpi"><b>${fmtTime(S.start?Date.now()-S.start:0)}</b><small>Time spent</small></div><div class="kpi"><b>${avg}s</b><small>Avg per question</small></div><div class="kpi"><b>${S.bpp}</b><small>BPP</small></div><div class="kpi"><b>${S.best}</b><small>Best streak</small></div></div>
+    ${bars?`<div><h3>By subject (right first time)</h3><div class="bars" style="margin-top:8px">${bars}</div></div>`:''}
+    <div><h3>Strengths</h3>${strong.length?`<ul>${strong.map(t=>`<li>${esc(t.topic)} <small>${REALMS[t.realm].sub} · ${t.ok}/${t.n} correct</small></li>`).join('')}</ul>`:'<p class="note">Not enough answers yet to spot strengths.</p>'}</div>
+    <div><h3>Topics to review</h3>${weak.length?`<ul>${weak.map(t=>`<li>${esc(t.topic)} <small>${REALMS[t.realm].sub} · ${t.ok}/${t.n} correct · Tip: ${esc(t.hint)}</small></li>`).join('')}</ul>`:'<p class="note">Nothing flagged so far.</p>'}</div>
+    <div><h3>Next step</h3><p class="note">${rec}</p></div>
+    <div><h3>Badges</h3><div class="badgeline">${badges}</div></div>
+    <div class="row">${S.over?'<button class="btn" type="button" id="newRun">Start a new run</button>':'<button class="btn" type="button" id="closeRep">Close report</button>'}</div></div>`);
+  if(S.over)$('#newRun').addEventListener('click',()=>{SFX.click();closeModal();resetRun();});
+  else $('#closeRep').addEventListener('click',()=>{SFX.click();closeModal();if(S.inPlay&&!S.locked&&(wasTiming||final===false))startTimer();});
+}
+function resetRun(){Object.assign(S,{hearts:3,bpp:0,streak:0,best:0,boost:false,badges:{},log:[],over:false,locked:true});show('scr-title');}
+$('#reportBtn').addEventListener('click',()=>{SFX.click();openReport(false);});
+$('#soundBtn').addEventListener('click',()=>{muted=!muted;$('#soundBtn').textContent=muted?'Sound off':'Sound on';$('#soundBtn').setAttribute('aria-pressed',String(!muted));if(!muted)SFX.click();});
+
+/* ---------------- Battle scene ---------------- */
+const cv=$('#scene'),cx=cv.getContext('2d');let W=600,H=170;
+const stars=Array.from({length:40},()=>({x:Math.random(),y:Math.random()*.6,r:Math.random()*1.5+.4,p:Math.random()*6}));
+function sizeScene(){const d=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth||600;H=cv.clientHeight||170;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);}
+const scene={R:REALMS.maths,hp:QPR,max:QPR,bolts:[],sparks:[],shake:0,flash:0,hurtT:0,dead:0,
+  reset(R){this.R=R;this.max=QPR;this.hp=QPR;this.bolts=[];this.sparks=[];this.dead=0;this.flash=0;},
+  cast(big){SFX.zap();this.bolts.push({p:0,big});},
+  hurt(){this.hurtT=1;this.shake=10;SFX.hit();},
+  defeat(){this.dead=.001;}
+};
+function drawHero(x,y,s,t){
+  const bob=RM?0:Math.sin(t*2.2)*3;y+=bob;const c=cx;
+  c.save();if(scene.hurtT>0){c.globalAlpha=.5+.5*Math.abs(Math.sin(t*30));}
+  c.strokeStyle=css('peach');c.lineWidth=4;c.lineCap='round';c.beginPath();c.moveTo(x+.42*s,y-.35*s);c.lineTo(x+.52*s,y+.9*s);c.stroke();
+  c.shadowColor=css('gold');c.shadowBlur=18;c.fillStyle=css('gold');c.beginPath();c.arc(x+.42*s,y-.42*s,.13*s,0,7);c.fill();c.shadowBlur=0;
+  c.fillStyle=css('lilac');c.beginPath();c.moveTo(x-.48*s,y+.92*s);c.lineTo(x+.45*s,y+.92*s);c.lineTo(x,y-.2*s);c.closePath();c.fill();
+  c.fillStyle=css('peach');c.beginPath();c.arc(x,y-.32*s,.24*s,0,7);c.fill();
+  c.fillStyle=css('night');c.beginPath();c.arc(x+.08*s,y-.34*s,.035*s,0,7);c.arc(x-.06*s,y-.34*s,.035*s,0,7);c.fill();
+  c.fillStyle=css('sky');c.beginPath();c.moveTo(x-.4*s,y-.42*s);c.lineTo(x+.38*s,y-.42*s);c.lineTo(x+.12*s,y-1.25*s);c.closePath();c.fill();
+  c.fillStyle=css('gold');c.beginPath();c.arc(x+.02*s,y-.72*s,.06*s,0,7);c.fill();
+  c.restore();
+}
+function drawMonster(x,y,s,t){
+  const c=cx,col=css(scene.R.col);const wob=RM?0:Math.sin(t*3)*.04;
+  c.save();let a=1;if(scene.dead){a=Math.max(0,1-scene.dead);y+=scene.dead*40;}
+  c.globalAlpha=a;if(scene.flash>0){c.shadowColor='#fff';c.shadowBlur=30*scene.flash;}
+  c.fillStyle=col;
+  c.beginPath();c.moveTo(x-.45*s,y-.55*s);c.lineTo(x-.3*s,y-.95*s);c.lineTo(x-.15*s,y-.6*s);c.fill();
+  c.beginPath();c.moveTo(x+.45*s,y-.55*s);c.lineTo(x+.3*s,y-.95*s);c.lineTo(x+.15*s,y-.6*s);c.fill();
+  c.beginPath();c.ellipse(x,y,s*(.62+wob),s*(.62-wob),0,0,7);c.fill();c.shadowBlur=0;
+  c.fillStyle='#fff';c.beginPath();c.arc(x-.2*s,y-.15*s,.14*s,0,7);c.arc(x+.12*s,y-.15*s,.14*s,0,7);c.fill();
+  c.fillStyle=css('night');c.beginPath();c.arc(x-.25*s,y-.13*s,.07*s,0,7);c.arc(x+.07*s,y-.13*s,.07*s,0,7);c.fill();
+  c.fillStyle=css('night');c.beginPath();c.ellipse(x-.05*s,y+.22*s,.28*s,.12*s,0,0,Math.PI);c.fill();
+  c.fillStyle='#fff';for(let i=0;i<3;i++){c.beginPath();c.moveTo(x-.25*s+i*.15*s,y+.22*s);c.lineTo(x-.18*s+i*.15*s,y+.3*s);c.lineTo(x-.11*s+i*.15*s,y+.22*s);c.fill();}
+  c.restore();
+}
+let last=0;
+function frame(ts){
+  const t=ts/1000,dt=Math.min(.05,(ts-last)/1000||0);last=ts;
+  if(S.inPlay){
+    const c=cx;c.save();
+    if(scene.shake>0){c.translate((Math.random()-.5)*scene.shake,(Math.random()-.5)*scene.shake);scene.shake=Math.max(0,scene.shake-dt*40);}
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,css('night2'));g.addColorStop(1,css('night'));c.fillStyle=g;c.fillRect(-20,-20,W+40,H+40);
+    c.fillStyle=css('ink');stars.forEach(s=>{c.globalAlpha=.35+.35*Math.sin(t*1.5+s.p);c.beginPath();c.arc(s.x*W,s.y*H,s.r,0,7);c.fill();});c.globalAlpha=1;
+    const col=css(scene.R.col);c.globalAlpha=.16;c.fillStyle=col;
+    [[.33,.5,.07],[.45,.35,.05],[.58,.45,.06],[.68,.3,.045]].forEach(([tx,ty,tw])=>{c.fillRect(tx*W-tw*W/2,ty*H,tw*W,H);c.beginPath();c.moveTo(tx*W-tw*W*.7,ty*H);c.lineTo(tx*W+tw*W*.7,ty*H);c.lineTo(tx*W,ty*H-tw*W*1.3);c.fill();});
+    c.globalAlpha=1;c.fillStyle=css('panel');c.beginPath();c.ellipse(W/2,H+10,W*.7,H*.28,0,0,7);c.fill();
+    const s=Math.min(H*.42,W*.12);const hx=Math.max(50,W*.17),mx=Math.min(W-60,W*.8),gy=H*.66;
+    drawHero(hx,gy,s,t);
+    if(scene.dead<1)drawMonster(mx,gy,s*1.05,t);
+    if(scene.dead){scene.dead=Math.min(1,scene.dead+dt*1.2);}
+    // HP bar
+    const bw=Math.min(140,W*.3),bx=mx-bw/2,by=14;
+    c.fillStyle=css('ink');c.font=`800 12px ${getComputedStyle(document.body).fontFamily}`;c.textAlign='center';c.fillText(scene.R.monster.toUpperCase(),mx,by-2+10);
+    c.fillStyle=css('night');c.fillRect(bx,by+16,bw,9);c.fillStyle=col;c.fillRect(bx,by+16,bw*scene.hp/scene.max,9);
+    c.strokeStyle=css('line');c.lineWidth=1.5;c.strokeRect(bx,by+16,bw,9);
+    // bolts
+    scene.bolts=scene.bolts.filter(b=>{b.p+=dt/(RM?.2:.45);const sx=hx+.42*s,sy=gy-.42*s,ex=mx,ey=gy-.05*s;
+      const p=Math.min(1,b.p),x=sx+(ex-sx)*p,y=sy+(ey-sy)*p-Math.sin(p*Math.PI)*H*.25;
+      c.save();c.shadowColor=b.big?css('gold'):css('lilac');c.shadowBlur=20;c.fillStyle=b.big?css('gold'):css('lilac');
+      c.beginPath();c.arc(x,y,b.big?9:5,0,7);c.fill();c.restore();
+      if(!RM)scene.sparks.push({x,y,vx:(Math.random()-.5)*40,vy:(Math.random()-.5)*40,l:.4,c:b.big?css('gold'):css('lilac')});
+      if(b.p>=1){scene.hp=Math.max(0,scene.hp-1);scene.flash=1;SFX.hit();for(let i=0;i<(b.big?26:10);i++){const a=Math.random()*7,v=60+Math.random()*140;scene.sparks.push({x:ex,y:ey,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:.7,c:[css('gold'),col,css('ink')][i%3]});}return false;}
+      return true;});
+    scene.flash=Math.max(0,scene.flash-dt*3);scene.hurtT=Math.max(0,scene.hurtT-dt*1.5);
+    scene.sparks=scene.sparks.filter(p=>{p.l-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=120*dt;c.globalAlpha=Math.max(0,p.l*1.4);c.fillStyle=p.c;c.fillRect(p.x-2,p.y-2,4,4);return p.l>0;});
+    c.globalAlpha=1;c.restore();
+  }
+  fxFrame(dt);
+  requestAnimationFrame(frame);
+}
+
+/* ---------------- Confetti ---------------- */
+const fx=$('#fx'),fc=fx.getContext('2d');let parts=[];
+function sizeFx(){const d=Math.min(2,window.devicePixelRatio||1);fx.width=innerWidth*d;fx.height=innerHeight*d;fc.setTransform(d,0,0,d,0,0);}
+function burst(x,y,n){const cols=['gold','mint','sky','rose','lilac','peach'].map(css);for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=150+Math.random()*350;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-220,r:Math.random()*6,vr:(Math.random()-.5)*12,w:5+Math.random()*6,h:3+Math.random()*4,c:cols[i%cols.length],l:1.6+Math.random()*.8});}}
+function fxFrame(dt){fc.clearRect(0,0,innerWidth,innerHeight);if(!parts.length)return;
+  parts=parts.filter(p=>{p.l-=dt;p.vy+=600*dt;p.vx*=.99;p.x+=p.vx*dt;p.y+=p.vy*dt;p.r+=p.vr*dt;fc.save();fc.globalAlpha=Math.min(1,p.l);fc.translate(p.x,p.y);fc.rotate(p.r);fc.fillStyle=p.c;fc.fillRect(-p.w/2,-p.h/2,p.w,p.h);fc.restore();return p.l>0&&p.y<innerHeight+40;});}
+
+/* ---------------- Boot ---------------- */
+buildRealmPicker();wireTiles('#modeSeg');wireTiles('#realmSeg');
+$('#setupForm').addEventListener('submit',e=>{e.preventDefault();ac();
+  S.name=($('#heroName').value.trim()||'Hero').slice(0,16);
+  S.mode=document.querySelector('input[name=mode]:checked').value;
+  const realm=document.querySelector('input[name=realm]:checked').value;
+  S.start=Date.now();SFX.fanfare();startRealm(realm);});
+document.addEventListener('keydown',e=>{
+  if(!$('#mModal').hidden){if(e.key==='Escape'){const r=$('#mSheet [data-a="resume"],#closeRep');if(r)r.click();}return;}
+  if(!S.inPlay||S.locked)return;const i='abcd'.indexOf(e.key.toLowerCase());if(i<0)return;const b=document.querySelectorAll('.opt')[i];if(b)b.click();});
+addEventListener('resize',()=>{sizeFx();if(S.inPlay)sizeScene();});
+sizeFx();hud();requestAnimationFrame(frame);
+})();
+</script>
+
+<p id="arcade-back" style="margin:0;padding:18px 16px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;font:600 15px/1.4 system-ui,-apple-system,sans-serif"><a href="../" style="color:inherit;opacity:.8;text-decoration:underline;text-underline-offset:3px">Back to the Games Arcade</a></p>
+</body></html>

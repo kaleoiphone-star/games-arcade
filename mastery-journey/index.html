@@ -1,0 +1,1159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>11+ Mastery Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one climbing column. Summit HUD on top, a mountain-shaped trail of 20 steps, then one challenge card at a time.
+   Deliberately single-theme: a bright glacier-and-marigold alpine look that reads the same on any host background. */
+:root{
+  color-scheme: light;
+  --snow:#eaf2f6;
+  --card:#ffffff;
+  --ink:#1b2a41;
+  --ink-2:#2a3d5c;
+  --ink-soft:#52627a;
+  --mist:#cddbe5;
+  --marigold:#f2a93b;
+  --marigold-lt:#ffe1a8;
+  --pine:#2d7a58;
+  --pine-lt:#e2f3ea;
+  --coral:#cf5a43;
+  --coral-lt:#fbe8e3;
+  --sand:#fff6e3;
+  --maths:#2d6cb0; --english:#b0406f; --verbal:#6b4fc0; --nvr:#23795a;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+  --r:16px;
+}
+html,body{background:var(--snow);color:var(--ink)}
+body{font-family:var(--body);font-size:16px;line-height:1.5}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
+h1,h2,h3{margin:0;font-family:var(--display);line-height:1.1;text-wrap:balance}
+
+/* ---------- HUD ---------- */
+.hud{background:var(--ink);color:#fff;padding:12px 16px 14px}
+.hud-in{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--ink-2);display:grid;place-items:center;font-size:24px;flex:none;border:2px solid var(--marigold);padding:0}
+.who{min-width:0;flex:1 1 120px}
+.who .nm{font-family:var(--display);font-weight:800;font-size:20px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .tt{font-size:12px;color:#f7d49a;letter-spacing:.04em}
+.lvlchip{font-family:var(--display);font-weight:800;background:var(--marigold);color:var(--ink);border-radius:999px;padding:3px 14px;font-size:17px;white-space:nowrap}
+.stars{display:flex;align-items:center;gap:5px;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.stars svg{width:22px;height:22px}
+.hbtns{display:flex;gap:6px;flex-wrap:wrap}
+.hbtn{background:var(--ink-2);border:1px solid #3e5679;border-radius:10px;padding:6px 11px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#fff;min-height:38px}
+.hbtn:hover{background:#34496b}
+.hbtn.parent{background:#fff;color:var(--ink);border-color:#fff}
+.meters{flex:1 1 260px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mlbl{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#c7d4e4;font-variant-numeric:tabular-nums}
+.mlbl b{color:#fff}
+.bar{height:12px;background:var(--ink-2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--marigold),#ffd684);border-radius:99px;transition:width .7s cubic-bezier(.3,1.4,.5,1)}
+.bar.thin{height:6px}
+.bar.thin>i{background:#8fd3b0}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.bdg{font-size:11px;font-weight:700;background:var(--ink-2);border:1px solid #3e5679;border-radius:99px;padding:2px 9px;color:#f7d49a;letter-spacing:.02em}
+.bdg.none{color:#9fb0c6;font-weight:400}
+
+/* ---------- page ---------- */
+.wrap{max-width:840px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:flex;flex-direction:column;gap:14px}
+
+/* mountain trail */
+.trailbox{background:var(--card);border:1px solid var(--mist);border-radius:var(--r);padding:12px 14px 10px;display:flex;flex-direction:column;gap:6px}
+.trail{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;align-items:end;height:66px}
+.node{border-radius:5px 5px 2px 2px;background:var(--mist);position:relative;display:flex;justify-content:center;align-items:flex-start}
+.node span{font-size:9px;font-weight:700;color:var(--ink-soft);padding-top:2px;font-variant-numeric:tabular-nums}
+.node.done{background:var(--pine)}
+.node.done span{color:#fff}
+.node.cur{background:var(--marigold)}
+.node.cur span{color:var(--ink)}
+.node.cur::after{content:"";position:absolute;top:-12px;left:50%;width:10px;height:10px;margin-left:-5px;background:var(--ink);border-radius:50% 50% 50% 0;transform:rotate(-45deg);animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{50%{top:-16px}}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+.tiers span{border-top:3px solid var(--mist);padding-top:3px}
+.tiers span.on{border-color:var(--marigold);color:var(--ink);font-weight:700}
+
+/* challenge card */
+.card{background:var(--card);border:1px solid var(--mist);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 3px 0 var(--mist)}
+.lhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700}
+.ltitle{font-size:28px;font-weight:800}
+.ltitle em{font-style:normal;color:var(--marigold);-webkit-text-stroke:0}
+.subj{display:inline-flex;align-items:center;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#fff;border-radius:99px;padding:4px 12px;white-space:nowrap}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink-soft)}
+.pip{width:12px;height:12px;border-radius:50%;background:var(--mist)}
+.pip.on{background:var(--pine)}
+.ptag{align-self:flex-start;background:var(--sand);border:2px dashed var(--marigold);color:var(--ink);font-weight:700;border-radius:10px;padding:4px 12px;font-size:14px}
+.qtext{font-size:21px;line-height:1.45;max-width:65ch}
+.qtext b{background:linear-gradient(transparent 60%,var(--marigold-lt) 60%);padding:0 1px}
+.quote{display:block;margin-top:10px;font-size:20px;font-style:italic;background:var(--snow);border-radius:10px;padding:10px 14px}
+.triple{display:block;margin-top:10px;font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.03em}
+.visual{display:flex;justify-content:center;overflow-x:auto}
+.visual svg{max-width:100%;height:auto}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choice{display:flex;align-items:center;gap:12px;text-align:left;background:var(--card);border:2px solid var(--mist);border-radius:14px;padding:12px 14px;min-height:64px;font-size:19px;transition:transform .12s,border-color .12s,background .12s;min-width:0}
+.choice:hover:not(:disabled){border-color:var(--ink);transform:translateY(-2px)}
+.choice .k{flex:none;width:32px;height:32px;border-radius:9px;background:var(--snow);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:17px}
+.choice .v{min-width:0;flex:1;overflow-wrap:anywhere}
+.choice.svgc{flex-direction:column;align-items:stretch;padding:10px}
+.choice.svgc .v{display:flex;justify-content:center}
+.choice.svgc svg{width:100%;max-width:120px;height:auto}
+.choice.ok{border-color:var(--pine);background:var(--pine-lt)}
+.choice.ok .k{background:var(--pine);color:#fff}
+.choice.no{border-color:var(--coral);background:var(--coral-lt);opacity:.65;animation:shake .35s}
+.choice:disabled{cursor:default}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (max-width:480px){.choices.text{grid-template-columns:1fr}.ltitle{font-size:24px}.qtext{font-size:19px}}
+
+.fb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:14px;padding:12px 14px}
+.fb.ok{background:var(--pine-lt);border:2px solid var(--pine)}
+.fb .msg{flex:1 1 200px;font-weight:700;font-size:17px}
+.fb .msg small{display:block;font-weight:400;color:var(--ink-soft);font-size:14px}
+
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;font-size:16px;min-height:48px;background:var(--ink);color:#fff}
+.btn:hover{background:var(--ink-2)}
+.btn.gold{background:var(--marigold);color:var(--ink)}
+.btn.gold:hover{background:#f6b95a}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{background:var(--snow)}
+.btn.small{min-height:38px;padding:6px 12px;font-size:14px}
+
+.tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.streak{display:inline-flex;align-items:center;gap:6px;font-weight:700;background:var(--sand);border-radius:99px;padding:6px 12px;font-variant-numeric:tabular-nums}
+.streak .fl{display:inline-block;width:12px;height:16px;background:var(--marigold);border-radius:50% 50% 50% 50%/60% 60% 40% 40%}
+.speed{flex:1 1 220px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.speed .sl{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.speed .sb{height:10px;border-radius:99px;background:var(--snow);overflow:hidden;border:1px solid var(--mist)}
+.speed .sb i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8fd3b0,var(--pine));border-radius:99px}
+.linkbtn{background:none;border:0;padding:0;font-size:13px;color:var(--ink);text-decoration:underline;min-height:0}
+
+/* Professor Paws */
+.paws{display:flex;gap:14px;align-items:flex-start;background:var(--sand);border:2px solid #f0d49c;border-radius:var(--r);padding:14px}
+.mascot{width:72px;height:72px;flex:none}
+.bubble{min-width:0;flex:1;display:flex;flex-direction:column;gap:10px}
+.bubble h3{font-size:19px}
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.steps li{display:flex;gap:10px;align-items:flex-start;animation:pop .3s ease-out}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--marigold);color:var(--ink);font-weight:700;display:grid;place-items:center;font-size:14px}
+.steps li span{min-width:0;overflow-wrap:anywhere}
+.pacts{display:flex;gap:8px;flex-wrap:wrap}
+.abc{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.06em;color:var(--ink-soft);margin-top:4px;overflow-wrap:anywhere}
+@keyframes pop{from{opacity:.2;transform:translateY(4px)}}
+
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.82em;line-height:1.1;margin:0 2px}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 3px}
+
+/* svg shapes */
+.tile-bg{fill:#fff;stroke:#9fb3c6;stroke-width:2}
+.tile-q{fill:var(--snow);stroke:#9fb3c6;stroke-width:2;stroke-dasharray:6 5}
+.qmark{font-family:var(--display);font-weight:800;font-size:44px;fill:var(--ink-soft)}
+.f-solid{fill:var(--ink);stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.f-hollow{fill:#fff;stroke:var(--ink);stroke-width:3.5;stroke-linejoin:round}
+.f-grey{fill:#9db2c7;stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.dot{fill:var(--coral)}
+.mirror{stroke:var(--coral);stroke-width:3;stroke-dasharray:8 6}
+.dim{font-family:var(--body);font-size:13px;font-weight:700;fill:var(--ink)}
+.netc{fill:#dcebf4;stroke:var(--ink);stroke-width:2}
+.netl{font-family:var(--display);font-weight:800;font-size:13px;fill:var(--ink)}
+.lshape{fill:#dcebf4;stroke:var(--ink);stroke-width:2.5}
+
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(17,27,43,.6);display:grid;place-items:center;padding:16px;z-index:50}
+.sheet{background:var(--card);border-radius:20px;max-width:600px;width:100%;max-height:calc(100% - 24px);overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.sheet h2{font-size:30px;font-weight:800}
+.sheet h3{font-size:18px}
+.sheet p{margin:0}
+.sub{color:var(--ink-soft)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;font-weight:700;background:var(--snow);border:1px solid var(--mist);border-radius:99px;padding:4px 10px}
+.chip.gold{background:var(--marigold-lt);border-color:var(--marigold)}
+.hero-lvl{font-family:var(--display);font-weight:800;font-size:64px;line-height:.9;color:var(--marigold);-webkit-text-stroke:2px var(--ink)}
+.newtier{background:var(--pine-lt);border:2px solid var(--pine);border-radius:12px;padding:12px 14px}
+.sheet .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.inp{font:inherit;font-size:20px;padding:12px 14px;border-radius:12px;border:2px solid var(--mist);width:100%;background:#fff;color:var(--ink)}
+.title-big{font-size:40px;font-weight:800;line-height:1}
+.title-big span{color:var(--marigold);-webkit-text-stroke:1.5px var(--ink)}
+.startart{display:flex;justify-content:center}
+.startart svg{width:100%;max-width:380px;height:auto}
+
+.grid-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.gear{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid var(--mist);border-radius:12px;padding:10px 6px;background:#fff;font-size:13px;text-align:center;min-height:96px}
+.gear .gi{font-size:30px;line-height:1}
+.gear.lock{opacity:.45;cursor:default}
+.gear.eq{border-color:var(--marigold);background:var(--marigold-lt)}
+.tlist{display:flex;flex-direction:column;gap:6px}
+.trow{display:flex;justify-content:space-between;align-items:center;gap:10px;border:2px solid var(--mist);border-radius:12px;padding:8px 12px;background:#fff;text-align:left}
+.trow.eq{border-color:var(--marigold);background:var(--marigold-lt)}
+.trow.lock{opacity:.5;cursor:default}
+.trow small{color:var(--ink-soft);display:block;font-size:12px}
+
+/* parent dashboard */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kpi{background:var(--snow);border-radius:12px;padding:10px 12px}
+.kpi .n{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+.srow{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:14px}
+.srow .tb{height:12px;background:var(--snow);border-radius:99px;overflow:hidden;border:1px solid var(--mist)}
+.srow .tb i{display:block;height:100%}
+.srow .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+.list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.list li small{display:block;color:var(--ink-soft)}
+.danger{background:var(--coral-lt);color:var(--coral);border:2px solid var(--coral)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:14px;padding:10px 16px;font-weight:700;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100% - 32px);text-align:center;animation:pop .3s}
+.toast b{color:var(--marigold)}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="hud">
+  <div class="hud-in">
+    <div class="row">
+      <button class="avatar" id="avatarBtn" aria-label="Open the Reward Treasury"><span id="gearIcon">🗺️</span></button>
+      <div class="who"><div class="nm" id="pName">Climber</div><div class="tt" id="pTitle">Trainee Climber</div></div>
+      <div class="lvlchip" id="lvlChip">Level 1</div>
+      <div class="stars" title="Gold stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,1.5 15,8.6 22.7,9.2 16.8,14.2 18.6,21.8 12,17.7 5.4,21.8 7.2,14.2 1.3,9.2 9,8.6" fill="#f2a93b" stroke="#fff3d6" stroke-width="1.2"/></svg><span id="starCount">0</span></div>
+    </div>
+    <div class="row">
+      <div class="meters">
+        <div class="mlbl"><span>Level progress <b id="lvlProgTxt">0 / 5</b></span><span>XP <b id="xpTxt">0</b></span></div>
+        <div class="bar"><i id="lvlBar"></i></div>
+        <div class="mlbl"><span>Journey to Level 20</span><b id="journeyTxt">0%</b></div>
+        <div class="bar thin"><i id="journeyBar"></i></div>
+      </div>
+      <div class="hbtns">
+        <button class="hbtn" id="treasBtn">TREASURY</button>
+        <button class="hbtn" id="soundBtn" aria-pressed="true">SOUND ON</button>
+        <button class="hbtn parent" id="parentBtn">PARENT</button>
+      </div>
+    </div>
+    <div class="badges" id="badgeRow"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="trailbox" aria-label="Your climb from Level 1 to Level 20">
+    <div class="trail" id="trail"></div>
+    <div class="tiers" id="tiers"><span>1–5 Gentle</span><span>6–10 Momentum</span><span>11–15 Exam</span><span>16–20 Mastery</span></div>
+  </div>
+
+  <section class="card" id="card">
+    <div class="lhead">
+      <div>
+        <div class="eyebrow" id="tierName">Gentle Foundations</div>
+        <h1 class="ltitle" id="lvlTitle">Level 1: First Footsteps</h1>
+      </div>
+      <span class="subj" id="subj">Maths</span>
+    </div>
+    <div class="qmeta" id="qmeta"></div>
+    <div class="ptag" id="ptag" hidden>Practice Step with Professor Paws</div>
+    <div class="qtext" id="qtext"></div>
+    <div class="visual" id="visual" hidden></div>
+    <div class="choices" id="choices"></div>
+    <div class="fb" id="fb" hidden></div>
+    <div class="paws" id="paws" hidden>
+      <svg class="mascot" viewBox="0 0 80 80" aria-hidden="true">
+        <polygon points="13,34 17,9 34,22" fill="#e8964a" stroke="#1b2a41" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="67,34 63,9 46,22" fill="#e8964a" stroke="#1b2a41" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="40" cy="46" r="27" fill="#f2b06a" stroke="#1b2a41" stroke-width="2.5"/>
+        <ellipse cx="40" cy="57" rx="14" ry="10" fill="#fff4e3"/>
+        <circle cx="29" cy="44" r="7.5" fill="#fff" stroke="#1b2a41" stroke-width="2.2"/>
+        <circle cx="51" cy="44" r="7.5" fill="#fff" stroke="#1b2a41" stroke-width="2.2"/>
+        <line x1="36.5" y1="44" x2="43.5" y2="44" stroke="#1b2a41" stroke-width="2.2"/>
+        <circle cx="30" cy="45" r="3" fill="#1b2a41"/><circle cx="52" cy="45" r="3" fill="#1b2a41"/>
+        <polygon points="37,53 43,53 40,57" fill="#cf5a43"/>
+        <path d="M34,60 Q40,65 46,60" fill="none" stroke="#1b2a41" stroke-width="2" stroke-linecap="round"/>
+        <path d="M14,54 L28,56 M14,60 L28,59 M66,54 L52,56 M66,60 L52,59" stroke="#1b2a41" stroke-width="1.4" stroke-linecap="round"/>
+        <polygon points="16,21 40,11 64,21 40,31" fill="#1b2a41"/>
+        <rect x="31" y="23" width="18" height="7" fill="#1b2a41"/>
+        <path d="M40,21 L60,24 L60,33" fill="none" stroke="#f2a93b" stroke-width="2"/>
+        <circle cx="60" cy="34" r="2.5" fill="#f2a93b"/>
+      </svg>
+      <div class="bubble" id="bubble"></div>
+    </div>
+    <div class="tools">
+      <button class="btn ghost" id="hintBtn">Break It Down</button>
+      <div class="streak" id="streak" hidden><span class="fl"></span><span id="streakTxt">Streak 0</span></div>
+      <div class="speed" id="speed" hidden>
+        <div class="sl"><span id="speedLbl">Speed bonus</span><button class="linkbtn" id="speedToggle">Hide speed meter</button></div>
+        <div class="sb"><i id="speedFill"></i></div>
+      </div>
+      <button class="btn small ghost" id="speedOnBtn" hidden>Show speed meter</button>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+/*GEN-START*/
+// ================= utilities =================
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const L=n=>String.fromCharCode(65+((n%26)+26)%26);
+const ix=c=>c.charCodeAt(0)-65;
+const fmt=n=>typeof n==='number'?n.toLocaleString('en-GB'):n;
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const fr=(a,b)=>`<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const ABC='<span class="abc">A1 B2 C3 D4 E5 F6 G7 H8 I9 J10 K11 L12 M13 N14 O15 P16 Q17 R18 S19 T20 U21 V22 W23 X24 Y25 Z26</span>';
+const tierFor=d=>d<=5?1:d<=10?2:d<=15?3:4;
+const NAMES=['Aisha','Ben','Chloe','Dev','Ella','Finn','Grace','Harry','Isla','Jay','Kofi','Lily','Maya','Noah','Priya','Sam','Zara','Oscar','Ruby','Theo'];
+
+// Build four options: the correct value plus three distinct distractors.
+function opts(correct,pool,show=fmt){
+  const key=v=>String(v);
+  const seen=new Set([key(correct)]),ds=[];
+  for(const d of pool){
+    if(d===undefined||d===null)continue;
+    if(typeof d==='number'&&(!isFinite(d)||d<0||(Number.isInteger(correct)&&!Number.isInteger(d))))continue;
+    const k=key(d); if(!seen.has(k)){seen.add(k);ds.push(d)}
+    if(ds.length===3)break;
+  }
+  let k=1;
+  while(ds.length<3&&typeof correct==='number'&&k<60){
+    const c=correct+(k%2?Math.ceil(k/2):-Math.ceil(k/2)); k++;
+    if(c>=0&&!seen.has(key(c))){seen.add(key(c));ds.push(c)}
+  }
+  const all=shuffle([correct,...ds]);
+  return {choices:all.map(show),answer:all.indexOf(correct)};
+}
+const fromBank=(ans,wrongs)=>opts(ans,shuffle(wrongs),x=>x);
+
+// ================= SVG helpers (Non-Verbal) =================
+const SH={
+  arrow:'<polygon points="-26,-7 6,-7 6,-18 27,0 6,18 6,7 -26,7"/>',
+  flag:'<rect x="-20" y="-26" width="6" height="52"/><polygon points="-14,-26 22,-14 -14,-2"/>',
+  ell:'<polygon points="-20,-26 -6,-26 -6,12 22,12 22,26 -20,26"/><circle cx="12" cy="-10" r="6"/>',
+  circle:'<circle r="20"/>',
+  square:'<rect x="-18" y="-18" width="36" height="36"/>',
+  triangle:'<polygon points="0,-22 21,17 -21,17"/>',
+  star:'<polygon points="0,-23 6,-8 22,-7 10,3 14,19 0,10 -14,19 -10,3 -22,-7 -6,-8"/>',
+  diamond:'<polygon points="0,-23 17,0 0,23 -17,0"/>',
+  hexagon:'<polygon points="-21,0 -10.5,-18 10.5,-18 21,0 10.5,18 -10.5,18"/>'
+};
+const FEATURE={ell:'dot',flag:'flag',arrow:'arrow tip'};
+function shapeG(type,o={}){
+  const {x=50,y=50,s=1,rot=0,mir=false,fill='solid'}=o;
+  const cls=fill==='solid'?'f-solid':fill==='grey'?'f-grey':'f-hollow';
+  return `<g class="${cls}" transform="translate(${x} ${y}) rotate(${rot}) scale(${mir?-s:s} ${s})">${SH[type]}</g>`;
+}
+const tileBg=(x=0,y=0)=>`<rect class="tile-bg" x="${x+2}" y="${y+2}" width="96" height="96" rx="10"/>`;
+const tileQ=(x=0,y=0)=>`<rect class="tile-q" x="${x+2}" y="${y+2}" width="96" height="96" rx="10"/><text class="qmark" x="${x+50}" y="${y+66}" text-anchor="middle">?</text>`;
+const svgWrap=(w,h,inner,maxw)=>`<svg viewBox="0 0 ${w} ${h}" style="width:${maxw||w}px" role="img" aria-label="diagram">${inner}</svg>`;
+function frameG(f,x=0,y=0){
+  let g=tileBg(x,y);
+  const dots=f.dots||0;
+  g+=shapeG(f.shape,{x:x+50,y:y+(dots?42:50),s:dots?.78:1,rot:f.rot||0,mir:!!f.mir,fill:f.fill||'solid'});
+  for(let i=0;i<dots;i++){const cx=x+50-(dots-1)*6.5+i*13;g+=`<circle class="dot" cx="${cx}" cy="${y+84}" r="4.6"/>`}
+  return g;
+}
+const tileSVG=f=>`<svg viewBox="0 0 100 100" role="img" aria-label="shape option">${frameG(f)}</svg>`;
+function cellG(c,x,y){
+  let g=tileBg(x,y);
+  const pos={1:[[50,50]],2:[[30,50],[70,50]],3:[[30,34],[70,34],[50,70]]}[c.n];
+  pos.forEach(([px,py])=>g+=shapeG(c.shape,{x:x+px,y:y+py,s:.58,fill:c.fill}));
+  return g;
+}
+const cellSVG=c=>`<svg viewBox="0 0 100 100" role="img" aria-label="matrix option">${cellG(c,0,0)}</svg>`;
+function netSVG(cells,letters){
+  const s=17,xs=cells.map(c=>c[0]),ys=cells.map(c=>c[1]);
+  const minx=Math.min(...xs),miny=Math.min(...ys),w=(Math.max(...xs)-minx+1)*s,h=(Math.max(...ys)-miny+1)*s;
+  const ox=(110-w)/2,oy=(110-h)/2;
+  let g='';
+  cells.forEach((c,i)=>{const x=ox+(c[0]-minx)*s,y=oy+(c[1]-miny)*s;g+=`<rect class="netc" x="${x}" y="${y}" width="${s}" height="${s}"/>`;if(letters)g+=`<text class="netl" x="${x+s/2}" y="${y+s/2+4.5}" text-anchor="middle">${letters[i]}</text>`});
+  return `<svg viewBox="0 0 110 110" role="img" aria-label="cube net">${g}</svg>`;
+}
+function tnet(cells){ // random rotation / reflection of a net
+  let c=cells.map(p=>p.slice());
+  const r=R(0,3); for(let k=0;k<r;k++)c=c.map(([x,y])=>[-y,x]);
+  if(Math.random()<.5)c=c.map(([x,y])=>[-x,y]);
+  return c;
+}
+
+// ================= word banks =================
+const VOCAB={
+1:[['big','large','small','of great size'],['happy','glad','sad','feeling pleased'],['fast','quick','slow','moving at speed'],['begin','start','finish','to set off doing something'],['shut','close','open','to stop something being open'],['angry','cross','calm','feeling mad about something'],['tiny','little','huge','very small'],['rich','wealthy','poor','having lots of money'],['loud','noisy','quiet','making a lot of sound'],['easy','simple','hard','not difficult'],['brave','bold','scared','ready to face danger'],['wet','damp','dry','covered in water']],
+2:[['ancient','old','modern','from a very long time ago'],['timid','shy','confident','easily frightened; not bold'],['generous','giving','mean','happy to give or share'],['gather','collect','scatter','to bring together into one place'],['famous','renowned','unknown','known by lots of people'],['arrive','reach','depart','to get to a place'],['fragile','delicate','sturdy','easily broken'],['vacant','empty','occupied','with nobody or nothing in it'],['peculiar','strange','ordinary','odd or unusual'],['enormous','vast','minute','extremely big'],['cautious','careful','reckless','taking care to avoid danger'],['conceal','hide','reveal','to keep something out of sight']],
+3:[['abundant','plentiful','scarce','existing in large amounts'],['candid','frank','secretive','honest and direct'],['reluctant','unwilling','eager','not wanting to do something'],['frugal','thrifty','extravagant','careful not to waste money'],['hostile','unfriendly','amiable','showing dislike or aggression'],['diligent','industrious','lazy','hard-working and careful'],['obscure','unclear','obvious','hard to see or understand'],['tranquil','peaceful','turbulent','calm and still'],['feeble','weak','robust','lacking strength'],['prosper','thrive','decline','to do very well'],['vivid','bright','dull','strong and clear, full of colour'],['commence','begin','conclude','to start (a formal word)']],
+4:[['benevolent','kind','malevolent','well-meaning and caring'],['ephemeral','fleeting','permanent','lasting a very short time'],['ubiquitous','omnipresent','rare','found everywhere'],['obstinate','stubborn','compliant','refusing to change your mind'],['meticulous','thorough','careless','paying great attention to detail'],['loquacious','talkative','taciturn','fond of talking a lot'],['audacious','daring','timid','willing to take bold risks'],['lethargic','sluggish','energetic','lacking energy'],['magnanimous','forgiving','petty','generous and forgiving, especially to a rival'],['ambiguous','unclear','explicit','having more than one possible meaning'],['gregarious','sociable','reclusive','enjoying the company of others'],['verbose','wordy','concise','using more words than needed']]
+};
+const SPELL={
+1:[['friend','freind','frend','friand','Remember: a fr<b>i</b>e<b>nd</b> is there to the <b>end</b> — f-r-i-e-n-d.'],['because','becuase','becos','beacuse','Say it slowly: be-<b>cau</b>-se.'],['said','sed','siad','sayd','"said" is a tricky word to learn by sight: s-a-i-d.'],['people','peeple','poeple','peopel','There is a silent <b>o</b>: p-e-<b>o</b>-p-l-e.'],['would','wuold','wuld','woud','would, could and should all end in <b>-ould</b>.'],['beautiful','beutiful','beautifull','butiful','b-<b>eau</b>-ti-ful, and the ending <b>-ful</b> has only one l.']],
+2:[['necessary','neccessary','necesary','neccesary','One <b>c</b>ollar and two <b>s</b>leeves: ne-<b>c</b>e-<b>ss</b>ary.'],['separate','seperate','seprate','separete','There is <b>a rat</b> in sep-<b>a-rat</b>-e.'],['definitely','definately','definitly','defenitely','It hides the word <b>finite</b>: de-<b>finite</b>-ly.'],['believe','beleive','belive','beleave','Never be<b>lie</b>ve a <b>lie</b>.'],['receive','recieve','receeve','resieve','<b>i</b> before <b>e</b> except after <b>c</b>: re-<b>cei</b>-ve.'],['February','Febuary','Feburary','Februery','Say every letter: Feb-<b>ru</b>-ary.']],
+3:[['accommodate','accomodate','acommodate','accommadate','It is big enough for <b>two c</b>s and <b>two m</b>s: a-<b>cc</b>o-<b>mm</b>odate.'],['embarrass','embarass','embarras','embaress','<b>Two r</b>s and <b>two s</b>s: you go <b>r</b>eally <b>r</b>ed and <b>s</b>mile <b>s</b>hyly.'],['conscience','concience','consience','conscence','It is <b>con</b> + <b>science</b>.'],['rhythm','rythm','rhythem','rhytm','<b>R</b>hythm <b>H</b>elps <b>Y</b>our <b>T</b>wo <b>H</b>ips <b>M</b>ove.'],['occasion','occassion','ocasion','ocassion','<b>Two c</b>s and <b>one s</b>: o-<b>cc</b>a-<b>s</b>ion.'],['mischievous','mischievious','mischevous','mischivous','Only three syllables: mis-<b>chie</b>-vous, with no extra i before -ous.']],
+4:[['conscientious','consciencious','conscientous','consientious','Think <b>science</b>, then <b>-tious</b>: con-<b>sci</b>-en-<b>tious</b>.'],['bureaucracy','beaurocracy','bureaucrasy','bureacracy','It starts like <b>bureau</b> (a desk): bur-<b>eau</b>-cracy.'],['miniature','miniture','minature','minniature','There is an <b>a</b> after mini: mini-<b>a</b>-ture.'],['onomatopoeia','onomatopeia','onomatopoiea','onamatopoeia','It ends in <b>-poeia</b>: o-no-ma-to-<b>poe</b>-ia.'],['questionnaire','questionaire','questionnare','questionnair','<b>Double n</b>, and it ends in <b>-aire</b>.'],['silhouette','silhouete','silouette','silhuette','A silent <b>h</b>, and a French ending <b>-ette</b>.'],['liaison','liason','liasion','laison','Two <b>i</b>s: l-<b>i</b>-a-<b>i</b>-son.']]
+};
+const SPAG=[
+{t:1,q:'Which word in this sentence needs a <b>capital letter</b>?<span class="quote">The dog ran to the park with sam.</span>',c:['sam','dog','ran','park'],s:['Names of people always start with a capital letter.','<b>Sam</b> is a name, so it needs a capital S.']},
+{t:1,q:'Which punctuation mark goes at the end of a <b>question</b>?',c:['?','!','.',','],s:['A question asks something and needs an answer.','Questions end with a <b>question mark ?</b>']},
+{t:1,q:'Choose the correct word:<span class="quote">I have ___ apples in my bag.</span>',c:['two','too','to','tow'],s:['<b>two</b> is the number 2; <b>too</b> means also or very; <b>to</b> shows direction.','We need the number, so it is <b>two</b>.']},
+{t:1,q:'Which word is a <b>noun</b> (a naming word)?',c:['table','run','happy','quickly'],s:['A noun names a person, place or thing.','You can put "the" in front of it: the <b>table</b>.']},
+{t:1,q:'Which word is a <b>verb</b> (a doing word)?',c:['jump','blue','chair','soft'],s:['A verb is an action you can do.','You can <b>jump</b>, so jump is the verb.']},
+{t:1,q:'Choose the correct word:<span class="quote">The children put on ___ coats.</span>',c:['their','there','they\'re','thier'],s:['<b>their</b> means belonging to them. <b>there</b> is a place. <b>they\'re</b> means they are.','The coats belong to the children, so it is <b>their</b>.']},
+{t:2,q:'Which word is an <b>adverb</b>?',c:['quietly','quiet','quietness','quieter'],s:['An adverb tells you <b>how</b> something is done.','Many adverbs end in <b>-ly</b>: she spoke <b>quietly</b>.']},
+{t:2,q:'Which sentence uses the <b>apostrophe</b> correctly?',c:['It\'s raining today.','Its raining today.','Its\' raining today.','It\'s\' raining today.'],s:['<b>It\'s</b> is short for "it is". The apostrophe shows the missing letter i.','Test it: "It is raining today" makes sense, so we need <b>It\'s</b>.']},
+{t:2,q:'Choose the correct word:<span class="quote">She ___ the race yesterday.</span>',c:['ran','run','runned','running'],s:['<b>Yesterday</b> tells us it is in the past.','The past tense of run is irregular: <b>ran</b>.']},
+{t:2,q:'What is the <b>plural</b> of <b>knife</b>?',c:['knives','knifes','knifs','knive'],s:['Many words ending in <b>-fe</b> or <b>-f</b> change to <b>-ves</b>.','Like wife → wives, knife → <b>knives</b>.']},
+{t:2,q:'Which word is an <b>adjective</b> (a describing word)?',c:['gentle','gently','gentleness','gentled'],s:['An adjective describes a noun.','A <b>gentle</b> giant: gentle describes the giant.']},
+{t:2,q:'What is the correct <b>past tense</b> of <b>catch</b>?',c:['caught','catched','cought','catches'],s:['Catch is an irregular verb, so it does not take -ed.','Today I catch; yesterday I <b>caught</b> (it rhymes with taught).']},
+{t:3,q:'Which sentence uses a <b>comma</b> correctly?',c:['After lunch, we played football.','After, lunch we played football.','After lunch we, played football.','After lunch we played, football.'],s:['A <b>fronted adverbial</b> is a phrase at the start saying when, where or how.','Put a comma straight after it: <b>After lunch,</b> we played football.']},
+{t:3,q:'Which word is the <b>conjunction</b>?<span class="quote">I was tired, although I had slept well.</span>',c:['although','tired','slept','well'],s:['A conjunction joins two clauses together.','<b>although</b> joins "I was tired" and "I had slept well".']},
+{t:3,q:'What is the <b>plural</b> of <b>criterion</b>?',c:['criteria','criterions','criterias','criterion'],s:['Some words from Greek have special plurals.','Like phenomenon → phenomena, criterion → <b>criteria</b>.']},
+{t:3,q:'Choose the correct word:<span class="quote">The rain will ___ our picnic plans.</span>',c:['affect','effect','afect','effekt'],s:['<b>Affect</b> is usually the verb (the doing word); <b>effect</b> is usually the noun (the result).','Here we need a verb, so <b>affect</b>. Tip: <b>A</b>ffect = <b>A</b>ction.']},
+{t:3,q:'Which sentence is written in the <b>passive voice</b>?',c:['The window was broken by the ball.','The ball broke the window.','Sam kicked the ball hard.','The ball flew over the wall.'],s:['In the passive voice, the thing the action happens to comes first.','Look for <b>was ... by</b>: The window <b>was broken by</b> the ball.']},
+{t:3,q:'Which word is the <b>preposition</b>?<span class="quote">The cat hid beneath the old sofa.</span>',c:['beneath','hid','old','sofa'],s:['A preposition shows where something is in relation to something else.','Where did the cat hide? <b>beneath</b> the sofa.']},
+{t:4,q:'Which sentence uses the <b>subjunctive</b> correctly?',c:['If I were you, I would apologise.','If I was you, I would apologise.','If I be you, I would apologise.','If I am you, I would apologise.'],s:['The subjunctive is used for wishes and imagined situations.','In formal English we say <b>If I were</b>, even with I.']},
+{t:4,q:'Which sentence uses a <b>semicolon</b> correctly?',c:['It was late; we hurried home.','It was; late we hurried home.','It was late we; hurried home.','It; was late we hurried home.'],s:['A semicolon joins two complete sentences that are closely linked.','"It was late" and "we hurried home" both make sense alone, so the semicolon goes <b>between them</b>.']},
+{t:4,q:'Which word is the main <b>verb</b>?<span class="quote">The ancient, crumbling castle loomed over the village.</span>',c:['loomed','crumbling','ancient','village'],s:['<b>crumbling</b> ends in -ing but here it describes the castle, so it acts as an adjective.','What did the castle do? It <b>loomed</b>.']},
+{t:4,q:'Which word is the <b>relative pronoun</b>?<span class="quote">The girl who won the prize smiled.</span>',c:['who','girl','won','prize'],s:['A relative pronoun starts a clause that gives more information about a noun.','<b>who</b> won the prize tells us more about the girl.']},
+{t:4,q:'Choose the correct word:<span class="quote">Neither the teacher nor the pupils ___ ready.</span>',c:['were','was','is','be'],s:['With <b>neither ... nor</b>, the verb agrees with the noun closest to it.','The closest noun is <b>pupils</b> (plural), so we need <b>were</b>.']},
+{t:4,q:'Which is correctly punctuated <b>direct speech</b>?',c:['"Stop!" shouted the guard.','"Stop! shouted the guard."','"Stop" shouted! the guard.','Stop! "shouted the guard."'],s:['Only the spoken words go inside the speech marks.','The ! belongs to the spoken word, so it goes inside: <b>"Stop!"</b> shouted the guard.']}
+];
+const CLOZE=[
+{t:1,q:'The sun was very ___, so we wore our hats.',c:['hot','cold','wet','dark'],s:['We wear hats to protect us from strong sunshine.','So the sun was <b>hot</b>.']},
+{t:1,q:'I brush my ___ every morning and night.',c:['teeth','shoes','books','chairs'],s:['Think about what you brush twice a day.','We brush our <b>teeth</b>.']},
+{t:1,q:'The bird built a ___ in the tall tree.',c:['nest','cave','hole','burrow'],s:['Birds make homes out of twigs in trees.','That home is a <b>nest</b>.']},
+{t:1,q:'She was ___ because she won the prize.',c:['happy','sad','bored','sleepy'],s:['How do you feel when you win something?','Winning makes you <b>happy</b>.']},
+{t:2,q:'The explorer was ___ to find the hidden cave at last.',c:['delighted','furious','bored','ashamed'],s:['<b>at last</b> tells us the explorer had been hoping to find it.','Finding what you hoped for makes you <b>delighted</b>.']},
+{t:2,q:'The glass vase is very ___, so handle it with care.',c:['fragile','sturdy','heavy','cheap'],s:['<b>handle it with care</b> is the clue.','Something that breaks easily is <b>fragile</b>.']},
+{t:2,q:'The ___ crowd cheered loudly as the team scored.',c:['enthusiastic','silent','empty','reluctant'],s:['The crowd <b>cheered loudly</b>.','A crowd full of excitement is <b>enthusiastic</b>.']},
+{t:2,q:'After the long hike up the hill, we were utterly ___.',c:['exhausted','energetic','refreshed','alert'],s:['A long hike uses up a lot of energy.','So we would be <b>exhausted</b>.']},
+{t:3,q:'The detective found a vital ___ hidden under the rug.',c:['clue','cure','claw','cue'],s:['Detectives search for evidence to solve a case.','A piece of evidence is a <b>clue</b>.']},
+{t:3,q:'Despite the storm, the sailors remained ___ and calm.',c:['composed','frantic','reckless','hostile'],s:['<b>and calm</b> tells us the missing word means something similar.','<b>composed</b> means calm and in control.']},
+{t:3,q:'The ___ of the volcano forced the villagers to flee.',c:['eruption','election','emotion','equation'],s:['What does a volcano do that makes people run away?','It erupts: the noun is <b>eruption</b>.']},
+{t:3,q:'Her ___ handwriting made the letter impossible to read.',c:['illegible','legible','eligible','elegant'],s:['<b>impossible to read</b> is the clue.','<b>il</b>- means not, so <b>illegible</b> means not readable.']},
+{t:4,q:'The scientist\'s ___ research took over a decade to complete.',c:['meticulous','cursory','negligent','hasty'],s:['Research that takes <b>over a decade</b> must be very careful and detailed.','<b>meticulous</b> means paying close attention to every detail.']},
+{t:4,q:'His ___ remarks offended everyone at the dinner.',c:['tactless','diplomatic','tactful','courteous'],s:['The remarks <b>offended</b> people, so they were not polite.','<b>tactless</b> means saying things without care for others\' feelings.']},
+{t:4,q:'The ___ lecture sent half the audience to sleep.',c:['tedious','riveting','brief','animated'],s:['Sending people to sleep means it was boring.','<b>tedious</b> means long, slow and dull.']},
+{t:4,q:'Faced with overwhelming evidence, the suspect finally ___ his guilt.',c:['conceded','concealed','denied','disguised'],s:['<b>overwhelming evidence</b> and <b>finally</b> suggest he gave in.','<b>conceded</b> means admitted that something is true.']},
+{t:4,q:'The festival is a(n) ___ event, lasting just a single evening.',c:['ephemeral','perpetual','eternal','enduring'],s:['<b>just a single evening</b> tells us it is very short.','<b>ephemeral</b> means lasting a very short time.']}
+];
+const ANALOGY=[
+[1,'hot','cold','up','down',['top','high','over'],'hot is the opposite of cold'],
+[1,'cat','kitten','dog','puppy',['calf','bone','bark'],'a kitten is a baby cat'],
+[1,'bird','fly','fish','swim',['water','fin','gill'],'a bird moves by flying'],
+[1,'day','night','black','white',['dark','grey','colour'],'day is the opposite of night'],
+[1,'foot','sock','hand','glove',['ring','finger','arm'],'a sock is worn on the foot'],
+[2,'pen','write','knife','cut',['fork','sharp','spoon'],'you use a pen to write'],
+[2,'bee','hive','bird','nest',['tree','feather','sky'],'a bee lives in a hive'],
+[2,'page','book','petal','flower',['stem','garden','seed'],'a page is part of a book'],
+[2,'author','book','artist','painting',['brush','gallery','colour'],'an author creates a book'],
+[2,'glove','hand','hat','head',['coat','hair','scarf'],'a glove is worn on the hand'],
+[3,'composer','symphony','architect','building',['bricks','plan','city'],'a composer creates a symphony'],
+[3,'cow','herd','wolf','pack',['den','cub','howl'],'a group of cows is a herd'],
+[3,'thermometer','temperature','barometer','pressure',['weather','rain','height'],'a thermometer measures temperature'],
+[3,'carpenter','wood','mason','stone',['house','tool','wall'],'a carpenter works with wood'],
+[3,'chapter','novel','scene','play',['actor','stage','curtain'],'a chapter is one part of a novel'],
+[4,'ornithologist','birds','entomologist','insects',['plants','fossils','stars'],'an ornithologist studies birds'],
+[4,'drought','water','famine','food',['hunger','rain','crops'],'a drought is a severe lack of water'],
+[4,'sculptor','chisel','painter','brush',['portrait','gallery','colour'],'a sculptor\'s tool is a chisel'],
+[4,'prologue','novel','overture','opera',['finale','orchestra','audience'],'a prologue opens a novel'],
+[4,'candid','deceitful','generous','miserly',['wealthy','kind','charitable'],'candid is the opposite of deceitful']
+];
+const ODD=[
+[1,['apple','banana','grape','carrot'],'carrot','the others are fruits'],
+[1,['red','blue','green','chair'],'chair','the others are colours'],
+[1,['dog','cat','cow','table'],'table','the others are animals'],
+[1,['run','jump','hop','book'],'book','the others are actions (verbs)'],
+[2,['violin','cello','harp','trumpet'],'trumpet','the others have strings'],
+[2,['Mercury','Mars','Venus','Moon'],'Moon','the others are planets'],
+[2,['square','triangle','circle','cube'],'cube','the others are flat 2D shapes'],
+[2,['London','Paris','Rome','Spain'],'Spain','the others are cities, and Spain is a country'],
+[3,['sprint','dash','race','stroll'],'stroll','the others mean moving fast'],
+[3,['oak','ash','elm','rose'],'rose','the others are trees'],
+[3,['sonnet','haiku','limerick','novel'],'novel','the others are types of poem'],
+[3,['whisper','murmur','mutter','bellow'],'bellow','the others are quiet ways of speaking'],
+[4,['timid','meek','shy','bold'],'bold','the others mean lacking confidence'],
+[4,['reluctant','hesitant','unwilling','eager'],'eager','the others mean not wanting to do something'],
+[4,['frugal','thrifty','economical','lavish'],'lavish','the others mean careful with money'],
+[4,['lethargic','sluggish','listless','vigorous'],'vigorous','the others mean lacking energy'],
+[4,['ambiguous','vague','unclear','explicit'],'explicit','the others mean not clear']
+];
+const COMPOUND=[['rain','bow',['shop','cup','pen']],['sun','flower',['table','cup','wall']],['foot','ball',['cake','hat','pen']],['tooth','brush',['cup','book','star']],['butter','fly',['sun','dog','bag']],['star','fish',['hat','pen','cup']],['snow','man',['cup','pen','box']],['cup','board',['ball','tree','dog']],['pan','cake',['hat','door','pen']],['book','case',['ball','tree','sun']],['bed','room',['cup','sun','pen']],['earth','quake',['cup','pen','dog']]];
+const PREFIX=[['foot',['ball','print','step'],['hand','sun','head']],['sun',['flower','glasses','burn'],['rain','star','day']],['book',['shelf','mark','worm'],['pen','page','note']],['water',['fall','melon','proof'],['rain','fire','sea']],['fire',['work','place','man'],['home','sea','foot']],['head',['line','ache','band'],['tooth','sun','back']],['under',['ground','stand','line'],['play','back','over']],['day',['dream','break','light'],['night','sun','moon']],['hand',['bag','shake','writing'],['back','hat','sand']],['sea',['shell','weed','side'],['egg','fire','road']]];
+const ANAGRAM={
+1:[['ACT','CAT'],['ARC','CAR'],['TEA','EAT'],['NOW','OWN'],['STOP','POTS'],['EVIL','LIVE'],['DEAR','READ'],['MEAT','TEAM'],['LOOP','POOL'],['TIME','EMIT']],
+2:[['HEART','EARTH'],['NIGHT','THING'],['LEMON','MELON'],['BELOW','ELBOW'],['STATE','TASTE'],['DUSTY','STUDY'],['PEACH','CHEAP'],['NOTES','STONE'],['SHORE','HORSE']],
+3:[['LISTEN','SILENT'],['SECURE','RESCUE'],['MASTER','STREAM'],['DANGER','GARDEN'],['ALERTS','ALTERS'],['CINEMA','ICEMAN'],['REMOTE','METEOR'],['PASTEL','PLATES']],
+4:[['LEADING','DEALING'],['TEACHER','CHEATER'],['ANGERED','ENRAGED'],['RESTFUL','FLUSTER'],['PAINTER','REPAINT'],['DECIMAL','CLAIMED'],['SHORTEN','HORNETS'],['SERVANT','TAVERNS']]
+};
+const HIDDEN=[['The shop enjoyed good trade.','OPEN','shop enjoyed'],['One arrow flew past the tree.','NEAR','One arrow'],['Sarah and Tom baked bread.','HAND','Sarah and'],['The magic artist bowed.','CART','magic artist'],['The owl over the barn hooted.','LOVE','owl over'],['Our estate is very big.','REST','Our estate'],['Tom thought hard about it.','MOTH','Tom thought'],['The horse ate hay.','SEAT','horse ate'],['A camel ambled past.','LAMB','camel ambled'],['The ship interested us.','PINT','ship interested'],['The cat rapped on the door.','TRAP','cat rapped'],['The army marched on.','HEAR','The army'],['Most agree with Sam.','STAG','Most agree'],['Clive stayed at home.','VEST','Clive stayed'],['The robot entered the room.','TENT','robot entered'],['Stop landing there.','PLAN','Stop landing']];
+const W3=['CAT','DOG','SUN','HAT','BOX','PEN','MAP','FOX','JAM','CUP','BUS','LEG','BED','PIG'];
+const W4=['BIRD','FISH','LAMP','DESK','SHIP','COAT','MILK','ROPE','FROG','GOLD'];
+const W5=['TRAIN','PLANT','CLOUD','BREAD','STONE','HORSE','LIGHT','MOUSE','GRAPE','SHELF'];
+
+const NET_VALID=[()=>[[0,1],[1,1],[2,1],[3,1],[R(0,3),0],[R(0,3),2]],()=>[[0,0],[1,0],[1,1],[2,1],[2,2],[3,2]],()=>[[0,0],[1,0],[2,0],[2,1],[3,1],[4,1]]];
+const NET_BAD=[[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]],[[0,0],[1,0],[2,0],[3,0],[4,0],[5,0]],[[0,1],[1,1],[2,1],[3,1],[4,1],[2,0]],[[0,0],[1,0],[2,0],[1,1],[2,1],[3,1]],[[0,1],[1,1],[2,1],[3,1],[0,0],[3,0]],[[0,1],[1,1],[2,1],[3,1],[1,0],[2,0]]];
+
+// ================= topics =================
+const T=[];
+const topic=(key,subject,name,min,max,gen)=>T.push({key,subject,name,min,max,gen});
+
+// ---------- MATHS ----------
+topic('m_add','Maths','Addition & subtraction',1,8,d=>{
+  let a,b; if(d<=2){a=R(5,15);b=R(2,9)}else if(d<=5){a=R(24,89);b=R(12,59)}else{a=R(125,789);b=R(46,389)}
+  while(b>=10&&b%10===0)b++;
+  let plus=Math.random()<.55; if(!plus&&a<b)[a,b]=[b,a];
+  const ans=plus?a+b:a-b, big=b-b%10, one=b%10, op=plus?'+':'−';
+  const steps=b<10?[`Hold <b>${a}</b> in your head and count ${plus?'on':'back'} ${b}.`,`${a} ${op} ${b} = <b>${ans}</b>.`]
+    :[`Split <b>${b}</b> into <b>${big}</b> and <b>${one}</b>.`,`${a} ${op} ${big} = ${plus?a+big:a-big}.`,`${plus?a+big:a-big} ${op} ${one} = <b>${ans}</b>.`];
+  return {q:`What is <b>${a} ${op} ${b}</b>?`,...opts(ans,shuffle([ans+10,ans-10,ans+1,ans-1,plus?a-b:a+b])),steps};
+});
+topic('m_times','Maths','Times tables',1,12,d=>{
+  const a=pick(d<=2?[2,5,10]:d<=5?[2,3,4,5,6,8,10]:[6,7,8,9,11,12]), b=R(2,d<=5?10:12), ans=a*b;
+  const q=d<=6?`What is <b>${a} × ${b}</b>?`:`A box holds <b>${a}</b> eggs. How many eggs are in <b>${b}</b> boxes?`;
+  return {q,...opts(ans,shuffle([a*(b+1),a*(b-1),ans+10,ans-2,a+b])),steps:[`This is <b>${b} groups of ${a}</b>.`,`Use a fact you know: ${a} × ${b-1} = ${a*(b-1)}.`,`Add one more ${a}: ${a*(b-1)} + ${a} = <b>${ans}</b>.`]};
+});
+topic('m_half','Maths','Halving & doubling',1,6,d=>{
+  const kind=d<=2?pick(['half','double']):pick(['half','double','quarter']);
+  let n,ans,steps,q;
+  if(kind==='half'){n=2*R(3,d<=2?15:60);ans=n/2;q=`What is <b>half</b> of <b>${n}</b>?`;steps=['Half means share into <b>2 equal parts</b>, which is the same as dividing by 2.',`${n} ÷ 2 = <b>${ans}</b>. Check: ${ans} + ${ans} = ${n}.`]}
+  else if(kind==='double'){n=R(6,d<=2?20:75);ans=2*n;q=`What is <b>double</b> ${n}?`;steps=['Double means add the number to itself.',`${n} + ${n} = <b>${ans}</b>.`]}
+  else{n=4*R(3,25);ans=n/4;q=`What is <b>a quarter</b> of <b>${n}</b>?`;steps=['A quarter is <b>half of a half</b>.',`Half of ${n} is ${n/2}.`,`Half of ${n/2} is <b>${ans}</b>.`]}
+  return {q,...opts(ans,shuffle([kind==='half'?n*2:n/2,ans+2,ans-2,ans+10,kind==='quarter'?n/2:ans+1])),steps};
+});
+topic('m_place','Maths','Place value',3,9,d=>{
+  const len=d<6?4:6, digs=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,len), num=+digs.join('');
+  const k=R(1,len-1), digit=digs[len-1-k], value=digit*10**k;
+  const cols=['ones','tens','hundreds','thousands','ten thousands','hundred thousands'];
+  const pool=[0,1,2,3,4,5].filter(j=>j<len&&j!==k).map(j=>digit*10**j);
+  return {q:`What is the value of the digit <b>${digit}</b> in <b>${fmt(num)}</b>?`,...opts(value,shuffle(pool)),steps:[`Name the columns from the right: ${cols.slice(0,len).join(', ')}.`,`The ${digit} sits in the <b>${cols[k]}</b> column.`,`So it is worth <b>${fmt(value)}</b>.`]};
+});
+topic('m_word2','Maths','Two-step word problems',5,20,d=>{
+  const n=pick(NAMES), f=[
+   ()=>{const p=R(3,d<10?6:12),k=R(4,d<10?9:15),g=R(2,p*k-5),ans=p*k-g;return {q:`${n} buys <b>${p}</b> packs of <b>${k}</b> stickers and gives away <b>${g}</b>. How many stickers are left?`,ans,pool:[p*k+g,p*k,p+k-g],steps:[`Step 1: find the total. ${p} × ${k} = ${p*k}.`,`Step 2: take away the ones given away. ${p*k} − ${g} = <b>${ans}</b>.`]}},
+   ()=>{const s=R(18,45),off=R(5,s-4),on=R(3,20),ans=s-off+on;return {q:`A bus has <b>${s}</b> passengers. At the stop, <b>${off}</b> get off and <b>${on}</b> get on. How many passengers are on the bus now?`,ans,pool:[s-off-on,s+off-on,s+off+on],steps:[`Step 1: people getting off means subtract. ${s} − ${off} = ${s-off}.`,`Step 2: people getting on means add. ${s-off} + ${on} = <b>${ans}</b>.`]}},
+   ()=>{const c=pick([15,20,25,35,45,55]),k=R(2,6),m=pick([5,10]),ans=m*100-c*k;return {q:`Pencils cost <b>${c}p</b> each. ${n} buys <b>${k}</b> pencils and pays with a <b>£${m}</b> note. How much change should ${n} get?`,ans,pool:[c*k,m*100-c,ans+100,ans-10],show:v=>'£'+(v/100).toFixed(2),steps:[`Step 1: cost of the pencils. ${k} × ${c}p = ${c*k}p = £${(c*k/100).toFixed(2)}.`,`Step 2: change = £${m}.00 − £${(c*k/100).toFixed(2)} = <b>£${(ans/100).toFixed(2)}</b>.`]}},
+   ()=>{const r=R(8,24),s=R(12,30),e=R(10,60),ans=r*s-e;return {q:`A cinema has <b>${r}</b> rows with <b>${s}</b> seats in each row. <b>${e}</b> seats are empty. How many people are watching the film?`,ans,pool:[r*s+e,r*s,r+s],steps:[`Step 1: total seats. ${r} × ${s} = ${r*s}.`,`Step 2: take away the empty seats. ${r*s} − ${e} = <b>${ans}</b>.`]}}
+  ];
+  const o=pick(f)(); return {q:o.q,...opts(o.ans,shuffle(o.pool),o.show||fmt),steps:o.steps};
+});
+topic('m_fracamt','Maths','Fractions of amounts',5,20,d=>{
+  if(d>=15&&Math.random()<.5){
+    const b=pick([3,4,5,6,8]),a=R(2,b-1),k=R(3,12),X=a*k,ans=b*k;
+    return {q:`${fr(a,b)} of a number is <b>${X}</b>. What is the number?`,...opts(ans,shuffle([X*a,X+k,a*b*k,ans+k])),steps:[`${fr(a,b)} means <b>${a}</b> equal parts out of <b>${b}</b>.`,`If ${a} parts = ${X}, then one part = ${X} ÷ ${a} = ${k}.`,`The whole number is ${b} parts: ${k} × ${b} = <b>${ans}</b>.`]};
+  }
+  let a,b,amt; if(d<8){b=pick([2,3,4,5,10]);a=1;amt=b*R(2,12)}else{b=pick([3,4,5,6,8]);a=R(2,b-1);amt=b*R(3,d<13?10:15)}
+  const one=amt/b, ans=one*a;
+  const steps=[`Find ${fr(1,b)} first: divide by the bottom number. ${amt} ÷ ${b} = ${one}.`, a>1?`Now multiply by the top number: ${one} × ${a} = <b>${ans}</b>.`:`So ${fr(1,b)} of ${amt} is <b>${ans}</b>.`];
+  return {q:`What is ${fr(a,b)} of <b>${amt}</b>?`,...opts(ans,shuffle([one,amt-ans,ans+one,amt/a,amt*a])),steps};
+});
+topic('m_round','Maths','Rounding',5,10,d=>{
+  const n=d<8?R(101,999):R(1001,9999), t=pick(d<8?[10,100]:[10,100,1000]), ans=Math.round(n/t)*t;
+  const name={10:'ten',100:'hundred',1000:'thousand'}[t], look=Math.floor(n/(t/10))%10;
+  const down=Math.floor(n/t)*t, up=down+t;
+  return {q:`Round <b>${fmt(n)}</b> to the nearest <b>${name}</b>.`,...opts(ans,shuffle([ans===up?down:up,Math.round(n/(t*10))*t*10,n-n%(t/10||1),ans+t])),steps:[`${fmt(n)} is between <b>${fmt(down)}</b> and <b>${fmt(up)}</b>.`,`Look at the digit just to the right of the ${name}s column: it is <b>${look}</b>.`,`${look>=5?'5 or more, so round <b>up</b>':'Less than 5, so round <b>down</b>'} to <b>${fmt(ans)}</b>.`]};
+});
+topic('m_percent','Maths','Percentages',7,20,d=>{
+  if(d<11){
+    const p=pick([10,50,25,20]),A=20*R(1,10),ans=A*p/100;
+    const st={10:[`10% means divide by 10.`,`${A} ÷ 10 = <b>${ans}</b>.`],50:[`50% is <b>half</b>.`,`Half of ${A} = <b>${ans}</b>.`],25:[`25% is <b>a quarter</b>: half, then half again.`,`${A} → ${A/2} → <b>${ans}</b>.`],20:[`Find 10% first: ${A} ÷ 10 = ${A/10}.`,`20% is double that: ${A/10} × 2 = <b>${ans}</b>.`]}[p];
+    return {q:`What is <b>${p}%</b> of <b>${A}</b>?`,...opts(ans,shuffle([A/10,A/2,A-ans,ans+10,A/p])),steps:st};
+  }
+  if(d<16){
+    const p=pick([15,35,45,5,75,30,65]),A=20*R(2,18),ans=A*p/100,tens=Math.floor(p/10);
+    return {q:`What is <b>${p}%</b> of <b>${A}</b>?`,...opts(ans,shuffle([A/10*tens,A-ans,ans+A/20,A/10+p,ans+A/10])),steps:[`Find <b>10%</b>: ${A} ÷ 10 = ${A/10}.`,`Find <b>5%</b>: half of 10% = ${A/20}.`,`${p}% = ${tens?`${tens} × 10%`:''}${tens&&p%10?' + ':''}${p%10?'5%':''} = ${tens?`${A/10*tens}`:''}${tens&&p%10?' + ':''}${p%10?A/20:''} = <b>${ans}</b>.`]};
+  }
+  const A=20*R(3,20),p=pick([15,25,35,40,45,20]),up=Math.random()<.35,ch=A*p/100,ans=up?A+ch:A-ch;
+  return {q:up?`A bike costs <b>£${A}</b>. Its price <b>rises by ${p}%</b>. What is the new price?`:`A coat costs <b>£${A}</b>. In a sale it is <b>reduced by ${p}%</b>. What is the sale price?`,
+    ...opts(ans,shuffle([ch,up?A-ch:A+ch,up?A+p:A-p,ans+A/10]),v=>'£'+fmt(v)),
+    steps:[`First find ${p}% of £${A}. 10% = £${A/10}, 5% = £${A/20}.`,`${p}% of £${A} = £${ch}.`,`${up?'Add':'Subtract'} it: £${A} ${up?'+':'−'} £${ch} = <b>£${ans}</b>.`]};
+});
+topic('m_seq','Maths','Number sequences',8,20,d=>{
+  let t,why;
+  if(d<12){const s=R(1,30),k=pick([2,3,4,5,6,7,9,11,-3,-4,-6]),st=k<0?s+60:s;t=[0,1,2,3,4].map(i=>st+i*k);why=[`Find the gap between each pair of numbers.`,`Each number ${k>0?'goes up':'goes down'} by <b>${Math.abs(k)}</b>.`]}
+  else if(d<16){const s=R(1,10),g=R(1,4),inc=pick([1,2]);t=[s];for(let i=1;i<5;i++)t.push(t[i-1]+g+(i-1)*inc);why=[`Write the gaps: ${t.slice(1,4).map((v,i)=>v-t[i]).join(', ')}.`,`The gaps themselves grow by <b>${inc}</b> each time, so the next gap is ${g+3*inc}.`]}
+  else{const k=pick(['sq','tri','dbl','fib']),o=R(1,4);
+    if(k==='sq'){t=[0,1,2,3,4].map(i=>(i+o)**2);why=[`These are <b>square numbers</b>: ${o}×${o}, ${o+1}×${o+1}, ${o+2}×${o+2} ...`,`The next is ${o+4} × ${o+4}.`]}
+    else if(k==='tri'){t=[0,1,2,3,4].map(i=>(i+o)*(i+o+1)/2);why=[`Gaps: ${t.slice(1,4).map((v,i)=>v-t[i]).join(', ')} go up by 1 each time.`,`These are <b>triangular numbers</b>; the next gap is ${o+4}.`]}
+    else if(k==='dbl'){const s=R(1,5);t=[s];for(let i=1;i<5;i++)t.push(t[i-1]*2+1);why=[`Each number is <b>double the one before, plus 1</b>.`,`Check: ${t[1]} × 2 + 1 = ${t[2]}.`]}
+    else{const a=R(1,4),b=R(2,6);t=[a,b];for(let i=2;i<5;i++)t.push(t[i-1]+t[i-2]);why=[`Each number is the <b>sum of the two before it</b>.`,`Check: ${t[1]} + ${t[2]} = ${t[3]}.`]}}
+  const show=t.slice(0,4),ans=t[4],last=show[3],gap=last-show[2];
+  const nx=d<12?ans:d<16?ans:ans;
+  return {q:`What is the next number in the sequence?<span class="triple">${show.join(',&nbsp; ')},&nbsp; ?</span>`,...opts(nx,shuffle([last+gap,ans+1,ans-1,ans+gap,ans*2-last])),steps:[...why,`So the next number is <b>${ans}</b>.`]};
+});
+topic('m_bidmas','Maths','Order of operations (BIDMAS)',8,20,d=>{
+  if(d<12){const a=R(2,20),b=R(2,9),c=R(2,9),ans=a+b*c;return {q:`Work out <b>${a} + ${b} × ${c}</b>`,...opts(ans,shuffle([(a+b)*c,a*b+c,ans+b])),steps:[`BIDMAS: <b>multiplication comes before addition</b>.`,`${b} × ${c} = ${b*c}.`,`${a} + ${b*c} = <b>${ans}</b>.`]}}
+  if(d<16){const a=R(2,9),b=R(2,9),c=R(3,8),e=R(2,15),ans=(a+b)*c-e;return {q:`Work out <b>(${a} + ${b}) × ${c} − ${e}</b>`,...opts(ans,shuffle([a+b*c-e,(a+b)*(c-e),(a+b)*c+e])),steps:[`<b>Brackets first</b>: ${a} + ${b} = ${a+b}.`,`Then multiply: ${a+b} × ${c} = ${(a+b)*c}.`,`Then subtract: ${(a+b)*c} − ${e} = <b>${ans}</b>.`]}}
+  const f=R(2,5),m=R(2,6),e=R(1,9),c=e+f*m,b=R(2,9),term=b*m,a=term+R(5,60),ans=a-term;
+  return {q:`Work out <b>${a} − ${b} × (${c} − ${e}) ÷ ${f}</b>`,...opts(ans,shuffle([(a-b)*m,a+term,a-b*f*m,ans+m])),steps:[`<b>Brackets</b>: ${c} − ${e} = ${f*m}.`,`<b>Multiply and divide</b> left to right: ${b} × ${f*m} = ${b*f*m}, then ÷ ${f} = ${term}.`,`<b>Subtract</b> last: ${a} − ${term} = <b>${ans}</b>.`]};
+});
+topic('m_ratio','Maths','Ratio',10,20,d=>{
+  if(d<14){const a=R(1,4),b=R(a+1,7),k=R(2,12),T=(a+b)*k,big=Math.random()<.5,ans=(big?b:a)*k,n1=pick(NAMES),n2=pick(NAMES.filter(x=>x!==n1));
+    return {q:`${n1} and ${n2} share <b>£${T}</b> in the ratio <b>${a} : ${b}</b>. How much does <b>${big?n2:n1}</b> get?`,...opts(ans,shuffle([(big?a:b)*k,T/2,k,ans+k]),v=>'£'+fmt(v)),steps:[`Add the parts: ${a} + ${b} = <b>${a+b} parts</b>.`,`One part = £${T} ÷ ${a+b} = £${k}.`,`${big?n2:n1} gets ${big?b:a} parts: ${big?b:a} × £${k} = <b>£${ans}</b>.`]}}
+  if(d<18){const a=R(2,5),b=R(2,7),k=R(3,9);if(a===b)return null;const red=a*k,ans=b*k;
+    return {q:`In a bag, the ratio of <b>red</b> to <b>blue</b> sweets is <b>${a} : ${b}</b>. There are <b>${red}</b> red sweets. How many <b>blue</b> sweets are there?`,...opts(ans,shuffle([red+b,red*b,red+ans,(a+b)*k])),steps:[`${a} parts are red, and ${a} parts = ${red}.`,`So one part = ${red} ÷ ${a} = ${k}.`,`Blue is ${b} parts: ${b} × ${k} = <b>${ans}</b>.`]}}
+  const a=R(2,5),b=R(a+1,a+4),k=R(2,8),D=(b-a)*k,ans=(a+b)*k;
+  return {q:`The ratio of boys to girls in a club is <b>${a} : ${b}</b>. There are <b>${D} more girls</b> than boys. How many children are in the club altogether?`,...opts(ans,shuffle([b*k,(a+b)*D,a*k+D,ans+D])),steps:[`The difference in parts is ${b} − ${a} = <b>${b-a} part${b-a>1?'s':''}</b>.`,`${b-a} part${b-a>1?'s':''} = ${D}, so one part = ${k}.`,`Total parts ${a} + ${b} = ${a+b}. ${a+b} × ${k} = <b>${ans}</b>.`]};
+});
+topic('m_area','Maths','Area & perimeter',10,20,d=>{
+  if(d<15){const w=R(3,12),h=R(2,9),area=Math.random()<.5,ans=area?w*h:2*(w+h),s=Math.min(200/w,120/h);
+    const W=w*s,H=h*s,vis=svgWrap(W+70,H+50,`<rect class="lshape" x="35" y="18" width="${W}" height="${H}"/><text class="dim" x="${35+W/2}" y="13" text-anchor="middle">${w} cm</text><text class="dim" x="${40+W}" y="${22+H/2}">${h} cm</text>`,Math.min(W+70,320));
+    return {q:`What is the <b>${area?'area':'perimeter'}</b> of this rectangle?`,visual:vis,...opts(ans,shuffle([area?2*(w+h):w*h,w+h,area?w*h+w:w+h+w]),v=>v+(area?' cm²':' cm')),steps:area?[`Area of a rectangle = <b>length × width</b>.`,`${w} × ${h} = <b>${ans} cm²</b>.`]:[`Perimeter is the distance <b>all the way round</b>.`,`${w} + ${h} + ${w} + ${h} = <b>${ans} cm</b>.`]};}
+  const W=R(8,14),H=R(6,12),cw=R(2,W-4),ch=R(2,H-4),area=W*H-cw*ch,per=2*(W+H),askP=d>=18&&Math.random()<.5,ans=askP?per:area;
+  const s=Math.min(230/W,150/H),x0=40,y0=24,X=v=>x0+v*s,Y=v=>y0+v*s;
+  const path=`M${X(0)},${Y(0)} H${X(W-cw)} V${Y(ch)} H${X(W)} V${Y(H)} H${X(0)} Z`;
+  const vis=svgWrap(W*s+100,H*s+60,`<path class="lshape" d="${path}"/>
+   <text class="dim" x="${X(W/2)}" y="${Y(H)+18}" text-anchor="middle">${W} cm</text>
+   <text class="dim" x="${X(0)-6}" y="${Y(H/2)}" text-anchor="end">${H} cm</text>
+   <text class="dim" x="${X((W-cw)/2)}" y="${Y(0)-7}" text-anchor="middle">${W-cw} cm</text>
+   <text class="dim" x="${X(W)+6}" y="${Y((ch+H)/2)}">${H-ch} cm</text>
+   <text class="dim" x="${X(W-cw/2)}" y="${Y(ch)-7}" text-anchor="middle">${cw} cm</text>
+   <text class="dim" x="${X(W-cw)+6}" y="${Y(ch/2)+4}">${ch} cm</text>`,Math.min(W*s+100,360));
+  return {q:`What is the <b>${askP?'perimeter':'area'}</b> of this shape?`,visual:vis,...opts(ans,shuffle(askP?[per-2*cw,W+H,area,per+2*ch]:[W*H,W*H+cw*ch,per,area+cw]),v=>v+(askP?' cm':' cm²')),
+   steps:askP?[`Perimeter is the distance <b>all the way round</b>.`,`The two small steps in the corner add up to the full width and full height, so it is the same as a <b>${W} × ${H}</b> rectangle.`,`2 × (${W} + ${H}) = <b>${per} cm</b>.`]
+   :[`Imagine the full rectangle, then take away the missing corner.`,`Full rectangle: ${W} × ${H} = ${W*H}. Missing corner: ${cw} × ${ch} = ${cw*ch}.`,`${W*H} − ${cw*ch} = <b>${area} cm²</b>.`]};
+});
+topic('m_algebra','Maths','Algebra',11,20,d=>{
+  if(d<14){const x=R(2,12),a=R(2,6),b=R(1,20),c=a*x+b;return {q:`Solve for <b>x</b>:<span class="triple">${a}x + ${b} = ${c}</span>`,...opts(x,shuffle([(c+b)/a,c-b,x+1,(c-b)/2])),steps:[`Undo the <b>+ ${b}</b>: subtract ${b} from both sides. ${a}x = ${c-b}.`,`Undo the <b>× ${a}</b>: divide both sides by ${a}. x = <b>${x}</b>.`,`Check: ${a} × ${x} + ${b} = ${c}. ✓`]}}
+  if(d<19){const x=R(2,9),a=R(4,8),c=R(1,a-2),b=R(1,(a-c)*x-1),e=(a-c)*x-b;return {q:`Solve for <b>x</b>:<span class="triple">${a}x − ${b} = ${c}x + ${e}</span>`,...opts(x,shuffle([x+1,(e+b)/(a+c),e+b,x-1])),steps:[`Get the x's on one side: subtract ${c}x from both sides. ${a-c}x − ${b} = ${e}.`,`Add ${b} to both sides: ${a-c}x = ${e+b}.`,`Divide by ${a-c}: x = <b>${x}</b>.`]}}
+  const a=R(2,6),b=R(2,9),p=R(2,4),q=R(2,5),ans=p*a*a-q*b;if(ans<0)return null;
+  return {q:`If <b>a = ${a}</b> and <b>b = ${b}</b>, what is <b>${p}a² − ${q}b</b>?`,...opts(ans,shuffle([(p*a)**2-q*b,p*a*2-q*b,p*a*a+q*b,ans+q])),steps:[`<b>a²</b> means a × a = ${a} × ${a} = ${a*a}. (Indices come before multiplying.)`,`${p}a² = ${p} × ${a*a} = ${p*a*a}, and ${q}b = ${q} × ${b} = ${q*b}.`,`${p*a*a} − ${q*b} = <b>${ans}</b>.`]};
+});
+topic('m_sdt','Maths','Speed, distance & time',11,20,d=>{
+  if(d<14){const s=pick([20,30,40,45,50,60,70]),t=R(2,5),ans=s*t;return {q:`A car travels at <b>${s} mph</b> for <b>${t} hours</b>. How far does it go?`,...opts(ans,shuffle([s+t,ans+s,ans-s,s*(t+1)+5]),v=>v+' miles'),steps:[`Distance = <b>speed × time</b>.`,`${s} × ${t} = <b>${ans} miles</b>.`]}}
+  if(d<17){const s=pick([12,15,16,18,20,24]),t=R(2,6),D=s*t;return {q:`A cyclist rides <b>${D} km</b> in <b>${t} hours</b>. What is her average speed?`,...opts(s,shuffle([D-t,s+t,D/2,s-2]),v=>v+' km/h'),steps:[`Speed = <b>distance ÷ time</b>.`,`${D} ÷ ${t} = <b>${s} km/h</b>.`]}}
+  const combos=[[60,15],[60,40],[48,45],[40,30],[90,20],[75,36],[80,45],[72,50],[36,40],[45,20]],[s,m]=pick(combos),D=s*m/60;
+  if(Math.random()<.5)return {q:`A train travels at <b>${s} km/h</b>. How far does it travel in <b>${m} minutes</b>?`,...opts(D,shuffle([s*m,s/m*10,D*2,s-m]),v=>fmt(v)+' km'),steps:[`Change minutes into hours: ${m} minutes = ${fr(m,60)} of an hour.`,`Distance = speed × time = ${s} × ${fr(m,60)}.`,`${s} ÷ 60 × ${m} = <b>${D} km</b>.`]};
+  return {q:`A train travels <b>${D} km</b> in <b>${m} minutes</b>. What is its average speed in <b>km/h</b>?`,...opts(s,shuffle([D*m,D+m,D*2,s+10]),v=>fmt(v)+' km/h'),steps:[`${m} minutes = ${fr(m,60)} of an hour.`,`Speed = distance ÷ time = ${D} ÷ ${fr(m,60)} = ${D} × ${fr(60,m)}.`,`${D} × 60 ÷ ${m} = <b>${s} km/h</b>.`]};
+});
+topic('m_fdp','Maths','Fractions, decimals & percentages',12,20,d=>{
+  const F=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,8],[3,8],[5,8],[7,8],[3,10],[7,10],[9,10],[1,3],[2,3]];
+  const items=[],ok=v=>items.every(it=>Math.abs(it.v-v)>=.03);
+  let g=0;
+  while(items.length<2&&g++<100){const [a,b]=pick(F),v=a/b;if(ok(v))items.push({v,h:fr(a,b),txt:`${a}/${b}`})}
+  while(items.length<3&&g++<200){const v=R(1,19)*.05;if(ok(v))items.push({v,h:String(+v.toFixed(2)),txt:String(+v.toFixed(2))})}
+  while(items.length<4&&g++<300){const p=R(1,19)*5;if(ok(p/100))items.push({v:p/100,h:p+'%',txt:p+'%'})}
+  if(items.length<4)return null;
+  const big=Math.random()<.5, tgt=items.reduce((m,it)=>big?(it.v>m.v?it:m):(it.v<m.v?it:m));
+  const dec=v=>Number.isInteger(Math.round(v*1e6)/1e6*1000)?String(+v.toFixed(3)):v.toFixed(3)+'…';
+  const order=shuffle(items),ans=order.indexOf(tgt);
+  return {q:`Which of these is the <b>${big?'largest':'smallest'}</b>?`,choices:order.map(it=>it.h),answer:ans,steps:[`Change everything into <b>decimals</b> so you can compare.`,order.map(it=>`${it.h} = ${dec(it.v)}`).join(' &nbsp;·&nbsp; '),`The ${big?'largest':'smallest'} is <b>${tgt.h}</b>.`]};
+});
+topic('m_angles','Maths','Angles',12,20,d=>{
+  const kind=d<15?pick(['line','tri']):pick(['tri','quad','iso']);
+  if(kind==='line'){const a=R(25,155),ans=180-a;return {q:`Two angles sit together on a <b>straight line</b>. One is <b>${a}°</b>. What is the other?`,...opts(ans,shuffle([360-a,90-a,ans+10,a]),v=>v+'°'),steps:[`Angles on a straight line add up to <b>180°</b>.`,`180 − ${a} = <b>${ans}°</b>.`]}}
+  if(kind==='tri'){const a=R(30,90),b=R(20,150-a),ans=180-a-b;return {q:`A triangle has angles of <b>${a}°</b> and <b>${b}°</b>. What is the third angle?`,...opts(ans,shuffle([360-a-b,a+b,ans+10,ans-10]),v=>v+'°'),steps:[`Angles in a triangle add up to <b>180°</b>.`,`${a} + ${b} = ${a+b}.`,`180 − ${a+b} = <b>${ans}°</b>.`]}}
+  if(kind==='quad'){let a,b,c,ans,g=0;do{a=R(60,120);b=R(60,120);c=R(60,120);ans=360-a-b-c}while((ans<30||ans>170)&&g++<50);return {q:`A quadrilateral has angles of <b>${a}°</b>, <b>${b}°</b> and <b>${c}°</b>. What is the fourth angle?`,...opts(ans,shuffle([180-(a+b+c-180),ans+10,ans-10,a]),v=>v+'°'),steps:[`Angles in a quadrilateral add up to <b>360°</b>.`,`${a} + ${b} + ${c} = ${a+b+c}.`,`360 − ${a+b+c} = <b>${ans}°</b>.`]}}
+  const apex=2*R(10,50),ans=(180-apex)/2;
+  return {q:`An <b>isosceles</b> triangle has a top angle of <b>${apex}°</b>. What size is <b>each</b> of the two equal angles?`,...opts(ans,shuffle([180-apex,apex,(360-apex)/2,ans+10]),v=>v+'°'),steps:[`An isosceles triangle has <b>two equal angles</b>, and all three add up to 180°.`,`180 − ${apex} = ${180-apex} is shared between the two equal angles.`,`${180-apex} ÷ 2 = <b>${ans}°</b>.`]};
+});
+topic('m_mean','Maths','Averages (mean)',13,20,d=>{
+  if(d<17){const n=[R(2,30),R(2,30),R(2,30),R(2,30),R(2,30)];const r=n.reduce((a,b)=>a+b)%5;n[4]+=5-r===5?0:5-r;const s=n.reduce((a,b)=>a+b),ans=s/5;
+    return {q:`What is the <b>mean</b> of these numbers?<span class="triple">${n.join(',&nbsp; ')}</span>`,...opts(ans,shuffle([s,[...n].sort((a,b)=>a-b)[2],ans+1,Math.round(s/4)])),steps:[`Mean = <b>total ÷ how many numbers</b>.`,`Total: ${n.join(' + ')} = ${s}.`,`${s} ÷ 5 = <b>${ans}</b>.`]}}
+  let M,four,fifth,g=0;do{M=R(8,20);four=[R(2,30),R(2,30),R(2,30),R(2,30)];fifth=5*M-four.reduce((a,b)=>a+b)}while((fifth<1||fifth>45)&&g++<80);if(fifth<1||fifth>45)return null;
+  return {q:`The <b>mean</b> of five numbers is <b>${M}</b>. Four of them are <b>${four.join(', ')}</b>. What is the fifth number?`,...opts(fifth,shuffle([M,4*M-four.reduce((a,b)=>a+b),fifth+5,5*M])),steps:[`If the mean of 5 numbers is ${M}, the <b>total</b> must be 5 × ${M} = ${5*M}.`,`The four numbers add to ${four.reduce((a,b)=>a+b)}.`,`${5*M} − ${four.reduce((a,b)=>a+b)} = <b>${fifth}</b>.`]};
+});
+topic('m_ages','Maths','Age problems',17,20,d=>{
+  const n=pick(NAMES);
+  if(Math.random()<.5){const a=R(2,8),b=R(2,6),x=a+2*b;return {q:`In <b>${a}</b> years' time, ${n} will be <b>twice</b> as old as ${n} was <b>${b}</b> years ago. How old is ${n} now?`,...opts(x,shuffle([a+b,2*a+b,x+b,x-a])),steps:[`Call ${n}'s age now <b>x</b>.`,`In ${a} years: x + ${a}. ${b} years ago: x − ${b}.`,`x + ${a} = 2(x − ${b}) → x + ${a} = 2x − ${2*b} → x = ${a} + ${2*b} = <b>${x}</b>.`]}}
+  const s=R(3,9),k=R(2,4),tot=s*(k+1),ans=k*s;
+  return {q:`${n} is <b>${k===2?'twice':k===3?'three times':'four times'}</b> as old as his sister. Together their ages add up to <b>${tot}</b>. How old is ${n}?`,...opts(ans,shuffle([s,tot/2,ans+s,tot-k])),steps:[`Think in parts: the sister is <b>1 part</b>, ${n} is <b>${k} parts</b>.`,`Together that is ${k+1} parts = ${tot}, so one part = ${s}.`,`${n} is ${k} × ${s} = <b>${ans}</b>.`]};
+});
+
+// ---------- ENGLISH ----------
+topic('e_syn','English','Synonyms',1,20,d=>{
+  const list=VOCAB[tierFor(d)],e=pick(list),others=shuffle(list.filter(x=>x!==e));
+  return {q:`Which word is <b>closest in meaning</b> to <b>${e[0]}</b>?`,...fromBank(e[1],[e[2],others[0][1],others[1][1]]),steps:[`<b>${cap(e[0])}</b> means ${e[3]}.`,`Watch out: <b>${e[2]}</b> means the opposite. That is a common trap.`,`The word with the same meaning is <b>${e[1]}</b>.`]};
+});
+topic('e_ant','English','Antonyms',2,20,d=>{
+  const list=VOCAB[tierFor(d)],e=pick(list),others=shuffle(list.filter(x=>x!==e));
+  return {q:`Which word is most <b>opposite</b> in meaning to <b>${e[0]}</b>?`,...fromBank(e[2],[e[1],others[0][0],others[1][2]]),steps:[`<b>${cap(e[0])}</b> means ${e[3]}.`,`<b>${e[1]}</b> means the same thing, so it is a trap.`,`The opposite is <b>${e[2]}</b>.`]};
+});
+topic('e_spell','English','Spelling',3,20,d=>{
+  const e=pick(SPELL[tierFor(d)]);
+  return {q:`Which word is <b>spelled correctly</b>?`,...fromBank(e[0],e.slice(1,4)),steps:[e[4],`The correct spelling is <b>${e[0]}</b>.`]};
+});
+topic('e_spag','English','Grammar & punctuation',1,20,d=>{
+  const tier=tierFor(d),e=pick(SPAG.filter(x=>x.t===tier));
+  return {q:e.q,...fromBank(e.c[0],e.c.slice(1)),steps:e.s};
+});
+topic('e_cloze','English','Cloze (missing words)',3,20,d=>{
+  const tier=tierFor(d),e=pick(CLOZE.filter(x=>x.t===tier));
+  return {q:`Which word best completes the sentence?<span class="quote">${e.q}</span>`,...fromBank(e.c[0],e.c.slice(1)),steps:[...e.s,'Read the sentence again with your word in the gap to check it makes sense.']};
+});
+
+// ---------- VERBAL REASONING ----------
+topic('v_analogy','Verbal','Word analogies',1,20,d=>{
+  const e=pick(ANALOGY.filter(x=>x[0]===tierFor(d)));
+  return {q:`<b>${cap(e[1])}</b> is to <b>${e[2]}</b> as <b>${e[3]}</b> is to ...?`,...fromBank(e[4],e[5]),steps:[`Find the link in the first pair: ${e[6]}.`,`Use the <b>same link</b> for ${e[3]}.`,`So the answer is <b>${e[4]}</b>.`]};
+});
+topic('v_code_alpha','Verbal','Letter–number codes',1,9,d=>{
+  const w=pick(W3),code=w.split('').map(c=>ix(c)+1);
+  if(d<=4){const others=shuffle(W3.filter(x=>x!==w));
+    return {q:`Using <b>A = 1, B = 2, C = 3</b> and so on, which word does <b>${code.join(' &nbsp;')}</b> spell?`,...fromBank(w,others.slice(0,3)),steps:[`Count through the alphabet: ${code.map(n=>`${n} = ${L(n-1)}`).join(', ')}.${ABC}`,`So the word is <b>${w}</b>.`]}}
+  const c=code.join(' '),rev=[...code].reverse().join(' '),off=code.map((n,i)=>i===1?n+1:n).join(' '),oth=pick(W3.filter(x=>x!==w)).split('').map(ch=>ix(ch)+1).join(' ');
+  return {q:`Using <b>A = 1, B = 2, C = 3</b> and so on, what is the code for <b>${w}</b>?`,...fromBank(c,[rev,off,oth]),steps:[`Find each letter's place in the alphabet.${ABC}`,`${w.split('').map((ch,i)=>`${ch} = ${code[i]}`).join(', ')}.`,`So the code is <b>${c}</b>.`]};
+});
+topic('v_compound','Verbal','Compound words',1,10,d=>{
+  const e=pick(COMPOUND);
+  return {q:`Which word joins onto the end of <b>${e[0]}</b> to make a new word?`,...fromBank(e[1],e[2]),steps:[`Say each option straight after <b>${e[0]}</b> and listen for a real word.`,`<b>${e[0]} + ${e[1]}</b> = ${e[0]}${e[1]}.`]};
+});
+topic('v_oddone','Verbal','Odd one out',3,20,d=>{
+  const e=pick(ODD.filter(x=>x[0]===tierFor(d)));
+  return {q:`Which word is the <b>odd one out</b>?`,...fromBank(e[2],e[1].filter(x=>x!==e[2])),steps:[`Look for what <b>most</b> of the words have in common.`,`Here, ${e[3]}.`,`So <b>${e[2]}</b> is the odd one out.`]};
+});
+topic('v_anagram','Verbal','Anagrams',2,20,d=>{
+  const tier=tierFor(d),list=ANAGRAM[tier],e=pick(list),[A,B]=Math.random()<.5?e:[e[1],e[0]];
+  const pool=shuffle(list.filter(x=>x!==e).map(x=>pick(x)).filter(w=>w.length===B.length));
+  const srt=w=>w.split('').sort().join('');
+  return {q:`Which word uses <b>exactly the same letters</b> as <b>${A}</b>?`,...fromBank(B,pool.filter(w=>srt(w)!==srt(A)).slice(0,3)),steps:[`Write the letters of ${A} in alphabetical order: <b>${srt(A).split('').join(' ')}</b>.`,`Do the same for each option and look for a match.`,`${B} → ${srt(B).split('').join(' ')}. It matches, so the answer is <b>${B}</b>.`]};
+});
+topic('v_letterseries','Verbal','Letter series',4,20,d=>{
+  if(d<8){const s=R(0,14),k=pick([1,2,3]),t=[0,1,2,3].map(i=>L(s+i*k)),ans=L(s+4*k);
+    return {q:`Which letter comes next?<span class="triple">${t.join(',&nbsp; ')},&nbsp; ?</span>`,...fromBank(ans,[L(s+3*k),L(s+4*k+1),L(s+5*k),L(s+4*k-1),L(s+4*k+2),L(s+4*k-2)].filter(x=>x!==ans)),steps:[`Find each letter's place in the alphabet.${ABC}`,`Each letter moves <b>${k}</b> place${k>1?'s':''} forward.`,`${t[3]} + ${k} = <b>${ans}</b>.`]}}
+  const s1=R(0,20),s2=R(0,25),k1=pick([1,2,3]),k2=d<12?k1:pick([-1,-2,2,3,-3]),grow=d>=16;
+  const a=i=>grow?s1+i*(i+1)/2:s1+i*k1, b=i=>s2+i*k2, term=i=>L(a(i))+L(b(i)),ans=term(4);
+  const pool=[L(a(4)+1)+L(b(4)),L(a(4))+L(b(4)+1),L(b(4))+L(a(4)),L(a(4)-1)+L(b(4)),term(3)];
+  const d1=grow?'the jump grows: +1, +2, +3, then <b>+4</b>':`each moves <b>${k1>0?'+':''}${k1}</b>`;
+  return {q:`Which pair of letters comes next?<span class="triple">${[0,1,2,3].map(term).join(',&nbsp; ')},&nbsp; ?</span>`,...fromBank(ans,pool.filter(x=>x!==ans)),steps:[`Look at the <b>first letters</b>: ${[0,1,2,3].map(i=>L(a(i))).join(', ')}. ${cap(d1.replace('each moves','Each one moves'))}.${ABC}`,`Now the <b>second letters</b>: ${[0,1,2,3].map(i=>L(b(i))).join(', ')}. Each one moves <b>${k2>0?'+':''}${k2}</b>.`,`So the next pair is <b>${ans}</b>. (After Z, go back round to A.)`]};
+});
+function encode(w,m){return w.split('').map((c,i)=>m.mirror?L(25-ix(c)):L(ix(c)+(m.pos?(i+1)*m.k:m.k))).join('')}
+topic('v_code_shift','Verbal','Letter codes',6,20,d=>{
+  const words=d<12?W3:d<16?W4:W5,ex=pick(words),tg=pick(words.filter(x=>x!==ex));
+  const m=d<10?{k:pick([1,-1])}:d<14?{k:pick([2,3,-2])}:d<18?{pos:true,k:pick([1,-1])}:{mirror:true};
+  const code=encode(ex,m),ans=encode(tg,m);
+  const alt=m.mirror?[encode(tg,{k:1}),encode(tg,{k:-1}),tg.split('').reverse().join('')]:[encode(tg,{...m,k:-m.k}),encode(tg,{...m,k:m.k+(m.k>0?1:-1)}),m.pos?encode(tg,{k:m.k}):encode(tg,{k:m.k*2})];
+  const oneOff=ans.slice(0,1)+L(ix(ans[1])+1)+ans.slice(2);
+  const map=tg.split('').map((c,i)=>`${c}→${ans[i]}`).join(', ');
+  const s1=m.mirror?`Compare: ${ex.split('').map((c,i)=>`${c}→${code[i]}`).join(', ')}. Each letter swaps with its <b>mirror</b> in the alphabet (A↔Z, B↔Y, C↔X ...). Their positions always add up to 27.`
+    :m.pos?`Compare: ${ex.split('').map((c,i)=>`${c}→${code[i]}`).join(', ')}. The 1st letter moves ${m.k>0?'+':''}${m.k}, the 2nd moves ${m.k>0?'+':''}${2*m.k}, the 3rd ${m.k>0?'+':''}${3*m.k}: the jump <b>grows</b>.`
+    :`Compare: ${ex.split('').map((c,i)=>`${c}→${code[i]}`).join(', ')}. Every letter moves <b>${Math.abs(m.k)} ${m.k>0?'forward':'back'}</b> in the alphabet.`;
+  return {q:`If <b>${ex}</b> is written in code as <b>${code}</b>, how would <b>${tg}</b> be written?`,...fromBank(ans,[...shuffle(alt),oneOff].filter(x=>x!==ans)),steps:[s1+ABC,`Use the same rule on ${tg}: ${map}.`,`So the answer is <b>${ans}</b>.`]};
+});
+topic('v_hidden','Verbal','Hidden words',7,20,d=>{
+  const e=pick(HIDDEN),flat=e[0].toUpperCase().replace(/[^A-Z]/g,'');
+  const pool=shuffle(HIDDEN.map(h=>h[1]).filter(w=>w!==e[1]&&!flat.includes(w)));
+  return {q:`A <b>four-letter word</b> is hidden across the end of one word and the start of the next. Which is it?<span class="quote">${e[0]}</span>`,...fromBank(e[1],pool.slice(0,3)),steps:[`Read the sentence with no spaces: <b>${flat.toLowerCase()}</b>.`,`Slide a four-letter window along, looking where one word ends and the next begins.`,`"${e[2]}" hides <b>${e[1].toLowerCase()}</b>.`]};
+});
+topic('v_logic','Verbal','Logic puzzles',9,20,d=>{
+  const n=d<17?4:5,p=shuffle(NAMES).slice(0,n),[more,less,most,least]=pick([['taller','shorter','tallest','shortest'],['older','younger','oldest','youngest'],['faster','slower','fastest','slowest']]);
+  const clues=shuffle(p.slice(0,-1).map((x,i)=>Math.random()<.5?`${x} is ${more} than ${p[i+1]}.`:`${p[i+1]} is ${less} than ${x}.`));
+  let ask,ans;
+  if(d<13){[ask,ans]=Math.random()<.5?[`Who is the <b>${most}</b>?`,p[0]]:[`Who is the <b>${least}</b>?`,p[n-1]]}
+  else if(d<17){[ask,ans]=pick([[`Who is the <b>${most}</b>?`,p[0]],[`Who is the <b>second ${most}</b>?`,p[1]],[`Who is the <b>second ${least}</b>?`,p[n-2]]])}
+  else{[ask,ans]=pick([[`Who is in the <b>middle</b>?`,p[2]],[`Who is the <b>second ${least}</b>?`,p[n-2]],[`Who is the <b>second ${most}</b>?`,p[1]]])}
+  return {q:`${clues.join(' ')}<br><br>${ask}`,...fromBank(ans,shuffle(p.filter(x=>x!==ans))),steps:[`Build a line from <b>${most}</b> to <b>${least}</b>, placing one clue at a time.`,`The order is: ${p.join(' → ')}.`,`So the answer is <b>${ans}</b>.`]};
+});
+topic('v_prefix','Verbal','Word connections',9,20,d=>{
+  const e=pick(PREFIX);
+  return {q:`Which word can go <b>in front of all three</b> to make three new words?<span class="triple">___${e[1][0]} &nbsp;·&nbsp; ___${e[1][1]} &nbsp;·&nbsp; ___${e[1][2]}</span>`,...fromBank(e[0],e[2]),steps:[`Test each option with <b>all three</b> endings, not just one.`,`${e[1].map(x=>e[0]+x).join(', ')}: all three are real words.`,`So the answer is <b>${e[0]}</b>.`]};
+});
+topic('v_letternum','Verbal','Letters for numbers',13,20,d=>{
+  const letters=['A','B','C','D','E'];
+  const forms=[[(x,y,z)=>x*y-z,(X,Y,Z)=>`${X} × ${Y} − ${Z}`],[(x,y,z)=>x+y-z,(X,Y,Z)=>`${X} + ${Y} − ${Z}`],[(x,y,z)=>(x+y)/z,(X,Y,Z)=>`(${X} + ${Y}) ÷ ${Z}`],[(x,y,z)=>x*y/z,(X,Y,Z)=>`${X} × ${Y} ÷ ${Z}`]];
+  for(let g=0;g<800;g++){
+    const vals=shuffle([...Array(24)].map((_,i)=>i+1)).slice(0,5).sort((a,b)=>a-b);
+    const [f,txt]=pick(d<16?forms.slice(0,2):forms),[X,Y,Z]=shuffle(letters).slice(0,3),v=l=>vals[letters.indexOf(l)];
+    const res=f(v(X),v(Y),v(Z)),k=vals.indexOf(res);
+    if(!Number.isInteger(res)||k<0||[X,Y,Z].includes(letters[k]))continue;
+    const ans=letters[k],rest=shuffle(letters.filter(x=>x!==ans)).slice(0,3);
+    return {q:`<b>${letters.map((l,i)=>`${l} = ${vals[i]}`).join(', &nbsp;')}</b><br>What is the answer to this sum, written as a letter?<span class="triple">${txt(X,Y,Z)} = ?</span>`,...fromBank(ans,rest),steps:[`Swap each letter for its number: ${txt(v(X),v(Y),v(Z))}.`,`Work it out (multiply and divide before adding and subtracting): = ${res}.`,`${res} is the value of <b>${ans}</b>.`]};
+  }
+  return null;
+});
+
+// ---------- NON-VERBAL REASONING ----------
+const fkey=f=>`${f.shape}|${((f.rot||0)%360+360)%360}|${!!f.mir}|${f.fill||'solid'}|${f.dots||0}`;
+function nvrOpts(correct,pool,render){
+  const seen=new Set([fkey(correct)]),ds=[];
+  for(const p of pool){const k=fkey(p);if(!seen.has(k)){seen.add(k);ds.push(p)}if(ds.length===3)break}
+  if(ds.length<3)return null;
+  const all=shuffle([correct,...ds]);
+  return {choices:all.map(render),answer:all.indexOf(correct),svg:true};
+}
+topic('n_series','NVR','Series completion',6,20,d=>{
+  const shape=pick(['arrow','flag','ell']),step=d<8?90:pick([45,90,135]),r0=pick([0,45,90,180,270]);
+  const useFill=d>=11,useDots=d>=15,f0=pick(['solid','hollow']),f1=f0==='solid'?'hollow':'solid',d0=R(1,2);
+  const fr_=i=>({shape,rot:(r0+i*step)%360,fill:useFill?(i%2?f1:f0):'solid',dots:useDots?d0+i:0});
+  const seq=[0,1,2,3].map(fr_),ans=fr_(4);
+  const pool=shuffle([{...ans,rot:ans.rot+step},{...ans,rot:ans.rot-step},{...ans,rot:ans.rot+180}]);
+  if(useFill)pool.unshift({...ans,fill:ans.fill==='solid'?'hollow':'solid'});
+  if(useDots)pool.unshift({...ans,dots:ans.dots+1});
+  const o=nvrOpts(ans,shuffle(pool.slice(0,4)).concat(pool),tileSVG);if(!o)return null;
+  const vis=svgWrap(540,100,seq.map((f,i)=>frameG(f,i*110)).join('')+tileQ(440),520);
+  const steps=[`Look at <b>one change at a time</b>.`,`Direction: the ${shape==='arrow'?'arrow':'shape'} turns <b>${step}° clockwise</b> from each box to the next.`];
+  if(useFill)steps.push(`Shading: it swaps between ${f0==='solid'?'black and white':'white and black'} every box, so next is <b>${ans.fill==='solid'?'black':'white'}</b>.`);
+  if(useDots)steps.push(`Dots: one more each time, so the next box has <b>${ans.dots}</b>.`);
+  steps.push('Find the option that matches every rule at once.');
+  return {q:`Which box comes <b>next</b> in the series?`,visual:vis,...o,steps};
+});
+topic('n_reflect','NVR','Reflections',7,20,d=>{
+  const shape=pick(['ell','flag']),base=d<14?pick([0,90,180,270]):pick([0,45,90,135,180,225,270,315]),vert=d<12||Math.random()<.5;
+  const orig={shape,rot:base},ans={shape,rot:vert?-base:180-base,mir:true};
+  const pool=[{shape,rot:base},{shape,rot:ans.rot+180,mir:true},{shape,rot:base+180},{shape,rot:base+90}];
+  const o=nvrOpts(ans,pool,tileSVG);if(!o)return null;
+  const vis=vert?svgWrap(220,100,frameG(orig)+`<line class="mirror" x1="110" y1="0" x2="110" y2="100"/>`+tileQ(120),240)
+                :svgWrap(100,220,frameG(orig)+`<line class="mirror" x1="0" y1="110" x2="100" y2="110"/>`+tileQ(0,120),110);
+  return {q:`Which option shows the shape <b>reflected</b> in the dashed mirror line?`,visual:vis,...o,steps:[`A mirror flips the shape <b>${vert?'left to right':'top to bottom'}</b>. It does not turn it.`,`Parts close to the mirror line stay close to it; parts far away stay far away.`,`Follow the <b>${FEATURE[shape]}</b>: it must land on the ${vert?'opposite side, at the same height':'opposite side, the same distance across'}.`]};
+});
+topic('n_rotate','NVR','Rotations',8,20,d=>{
+  const shape=pick(['ell','flag']),base=d<12?0:pick([0,90,180,270]),Rt=d<12?90:d<16?pick([90,180,270]):pick([45,135,90,270]);
+  const dir=Rt===270?'90° anticlockwise':Rt===180?'180° (a half turn)':`${Rt}° clockwise`;
+  const ans={shape,rot:base+Rt};
+  const pool=[{shape,rot:base+Rt,mir:true},{shape,rot:Rt===180?base+90:base-Rt},{shape,rot:base+Rt+90},{shape,rot:base+Rt+180},{shape,rot:base,mir:true}];
+  const o=nvrOpts(ans,pool.filter(p=>fkey(p)!==fkey({shape,rot:base})),tileSVG);if(!o)return null;
+  return {q:`Which option shows this shape <b>rotated ${dir}</b>?`,visual:svgWrap(100,100,frameG({shape,rot:base}),130),...o,steps:[`Pick one feature to track, such as the <b>${FEATURE[shape]}</b>.`,`Turn it in your head ${dir}.${Rt===90?' Whatever was at the top moves to the right-hand side.':Rt===270?' Whatever was at the top moves to the left-hand side.':Rt===180?' Top and bottom swap, and left and right swap.':''}`,`Watch out for the <b>mirror image</b>: it looks close, but it has been flipped, not turned.`]};
+});
+topic('n_oddone','NVR','Odd one out (shapes)',9,20,d=>{
+  const shape=pick(['ell','flag']),rots=shuffle(d>=15?[0,45,90,135,180,225,270,315]:[0,90,180,270]).slice(0,4),odd=R(0,3);
+  const tiles=rots.map((r,i)=>({shape,rot:r,mir:i===odd}));
+  return {q:`Which shape is the <b>odd one out</b>?`,choices:tiles.map(tileSVG),answer:odd,svg:true,steps:[`Three are the <b>same shape turned</b> to different angles. One has been <b>flipped</b> (a mirror image).`,`Track the <b>${FEATURE[shape]}</b>: turn each shape in your head until they all point the same way.`,`Option <b>${'ABCD'[odd]}</b> can never be turned to match the others, so it is the odd one out.`]};
+});
+topic('n_matrix','NVR','Matrices',10,20,d=>{
+  const shapes=shuffle(['circle','square','triangle','star','diamond','hexagon']).slice(0,3),withFill=d>=14,fills=shuffle(['solid','hollow','grey']),counts=d>=17?shuffle([1,2,3]):[1,2,3];
+  const cell=(r,c)=>({shape:shapes[r],n:counts[c],fill:withFill?fills[(r+c)%3]:'hollow'}),ans=cell(2,2);
+  const ck=c=>`${c.shape}|${c.n}|${c.fill}`;
+  const pool=shuffle([{...ans,n:counts[0]},{...ans,n:counts[1]},{...ans,shape:shapes[1]},{...ans,shape:shapes[0]},withFill?{...ans,fill:fills[(2+2+1)%3]}:null,withFill?{...ans,fill:fills[(2+2+2)%3]}:null].filter(Boolean));
+  const seen=new Set([ck(ans)]),ds=[];for(const p of pool){if(!seen.has(ck(p))){seen.add(ck(p));ds.push(p)}if(ds.length===3)break}
+  const all=shuffle([ans,...ds]);
+  let g='';for(let r=0;r<3;r++)for(let c=0;c<3;c++)g+=(r===2&&c===2)?tileQ(c*110,r*110):cellG(cell(r,c),c*110,r*110);
+  const fname={solid:'black',hollow:'white',grey:'grey'}[ans.fill];
+  const steps=[`Look <b>across each row</b>: the shape stays the same.`,`Look <b>down each column</b>: the number of shapes stays the same.`];
+  if(withFill)steps.push(`Shading: every row and every column uses black, white and grey <b>once each</b>.`);
+  steps.push(`So the missing box has <b>${ans.n} ${ans.shape}${ans.n>1?'s':''}</b>${withFill?`, shaded <b>${fname}</b>`:''}.`);
+  return {q:`Which box <b>completes the grid</b>?`,visual:svgWrap(320,320,g,280),choices:all.map(cellSVG),answer:all.indexOf(ans),svg:true,steps};
+});
+topic('n_cube','NVR','Nets of cubes',13,20,d=>{
+  if(d<17||Math.random()<.35){
+    const good=tnet(pick(NET_VALID)()),bad=shuffle(NET_BAD).slice(0,3).map(tnet),all=shuffle([good,...bad]),ans=all.indexOf(good);
+    return {q:`Which of these nets can be folded to make a <b>cube</b>?`,choices:all.map(c=>netSVG(c)),answer:ans,svg:true,steps:[`A cube net always has <b>6 squares</b>, and never a <b>2 × 2 block</b> of four squares.`,`A straight line of <b>5 or more</b> squares cannot fold into a cube, and flaps must not land on the same face.`,`Only option <b>${'ABCD'[ans]}</b> folds up with no gaps and no overlaps.`]};
+  }
+  const a=R(0,3),b=R(0,3),cells=[[0,1],[1,1],[2,1],[3,1],[a,0],[b,2]],lt=shuffle(['A','B','C','D','E','F']);
+  const opp={0:2,1:3,2:0,3:1,4:5,5:4},x=R(0,5),ans=lt[opp[x]];
+  const rest=shuffle(lt.filter((l,i)=>i!==x&&i!==opp[x])).slice(0,3);
+  return {q:`When this net is folded into a cube, which face is <b>opposite</b> the face marked <b>${lt[x]}</b>?`,visual:svgWrap(110,110,netSVG(tnet(cells),lt).replace(/^<svg[^>]*>|<\/svg>$/g,''),200),...fromBank(ans,rest),steps:[`In the <b>row of four</b>, faces that are <b>two apart</b> are opposite (1st and 3rd, 2nd and 4th).`,`The two <b>flaps</b> sticking out on either side of the row are opposite each other.`,`So the face opposite <b>${lt[x]}</b> is <b>${ans}</b>.`]};
+});
+/*GEN-END*/
+</script>
+<script>
+// ================= game data =================
+const TMAP=Object.fromEntries(T.map(t=>[t.key,t]));
+const SUBJ={Maths:{name:'Maths',c:'var(--maths)'},English:{name:'English',c:'var(--english)'},Verbal:{name:'Verbal Reasoning',c:'var(--verbal)'},NVR:{name:'Non-Verbal Reasoning',c:'var(--nvr)'}};
+const LEVELS=['','First Footsteps','Warm-Up Meadow','Gentle Foundations','Base Camp','Confidence Ridge','Momentum Trail','Pine Forest Path','Streak Stream','Riddle Rocks','Halfway Hut','Exam Foothills','Mist Valley',"Scholar's Pass",'Glacier Steps','Summit Gate','Mastery Cliffs','Thunder Ledge','Grandmaster Challenge',"Eagle's Crest",'The 11+ Summit'];
+const TIERS=['Gentle Foundations · no timer','Building Momentum · streaks & bonus stars','Exam Standard · speed bonus meter','Mastery & Speed · real exam pace'];
+const tierIx=l=>l<=5?0:l<=10?1:l<=15?2:3;
+const need=l=>l<=5?5:l<=10?6:l<=15?7:8;
+const GEAR=[{id:'map',n:'Trail Map',i:'🗺️',l:1},{id:'rope',n:'Climbing Rope',i:'🪢',l:2},{id:'boots',n:'Hiking Boots',i:'🥾',l:4},{id:'lantern',n:'Lantern',i:'🏮',l:6},{id:'compass',n:'Compass',i:'🧭',l:8},{id:'pack',n:'Explorer Pack',i:'🎒',l:10},{id:'scarf',n:'Summit Scarf',i:'🧣',l:12},{id:'goggles',n:'Snow Goggles',i:'🥽',l:14},{id:'hat',n:'Scholar Hat',i:'🎓',l:16},{id:'axe',n:'Golden Ice Axe',i:'⛏️',l:18},{id:'crown',n:'Summit Crown',i:'👑',l:20}];
+const BADGES=[
+ {id:'first',n:'First Star',d:'Answered a question correctly',t:s=>s.stats.firstTryCorrect+s.correctTotal>=1},
+ {id:'never',n:'Never Give Up',d:'Finished 3 Practice Steps after tricky questions',t:s=>s.stats.practiceDone>=3},
+ {id:'streak',n:'Streak Master',d:'Got 5 right in a row',t:s=>s.bestStreak>=5},
+ {id:'maths',n:'Maths Dynamo',d:'15 Maths questions correct',t:s=>s.correctBy.Maths>=15},
+ {id:'vocab',n:'Vocabulary Virtuoso',d:'15 English questions correct',t:s=>s.correctBy.English>=15},
+ {id:'code',n:'Code Cracker',d:'15 Verbal Reasoning questions correct',t:s=>s.correctBy.Verbal>=15},
+ {id:'shape',n:'Shape Shifter',d:'10 Non-Verbal Reasoning questions correct',t:s=>s.correctBy.NVR>=10},
+ {id:'speed',n:'Speed Spark',d:'Earned 5 speed bonuses',t:s=>s.stats.speedBonuses>=5},
+ {id:'half',n:'Halfway Hero',d:'Reached Level 10',t:s=>s.level>=10},
+ {id:'exam',n:'Exam Ready',d:'Reached Level 15',t:s=>s.level>=15},
+ {id:'grand',n:'11+ Grandmaster',d:'Conquered the Level 20 summit',t:s=>s.finished}
+];
+const REC={m_add:'Practise mental adding and subtracting by splitting numbers into tens and ones.',m_times:'Five minutes of times tables a day up to 12 × 12, aiming for instant recall.',m_half:'Practise halving and doubling two-digit numbers in your head.',m_place:'Read big numbers aloud and name the column of each digit.',m_word2:'Underline the key numbers and write each step on its own line.',m_fracamt:'Remember: divide by the bottom number, multiply by the top.',m_round:'Look only at the digit just to the right of the rounding column.',m_percent:'Build any percentage from 10% and 5% blocks.',m_seq:'Write the gaps between terms, then the gaps between those gaps.',m_bidmas:'Say BIDMAS before starting and circle the first operation to do.',m_ratio:'Find the value of one part first, then scale up.',m_area:'Split compound shapes into rectangles and label every side.',m_algebra:'Do the same to both sides and check by putting the answer back in.',m_sdt:'Use D = S × T and change minutes into fractions of an hour first.',m_fdp:'Turn everything into decimals before comparing.',m_angles:'Learn the angle facts: 180° on a line and in a triangle, 360° in a quadrilateral.',m_mean:'Mean = total ÷ how many. For a missing value, work backwards from the total.',m_ages:'Call the unknown age x, write the equation, then solve step by step.',e_syn:'Read widely and keep a word notebook with synonyms for new words.',e_ant:'Learn words in opposite pairs, and watch for synonym traps.',e_spell:'Use memory tricks and Look–Cover–Write–Check for tricky words.',e_spag:'Short daily quizzes on word classes and punctuation rules.',e_cloze:'Read the whole sentence first, then test each option for meaning.',v_analogy:'Say the link in the first pair as a sentence, then reuse it.',v_code_alpha:'Learn letter positions. Handy anchors: E = 5, J = 10, O = 15, T = 20.',v_compound:'Say each option aloud with the base word to hear if it is real.',v_oddone:'Find the group most words belong to before choosing.',v_letterseries:'Write the alphabet with numbers and track each letter separately.',v_anagram:'Sort the letters alphabetically to compare words quickly.',v_code_shift:'Work out how far each letter moves; check if the jump stays the same or grows.',v_hidden:'Read the sentence without spaces and slide a four-letter window along.',v_logic:'Draw a quick line diagram and place each person as you read.',v_prefix:'Test the word against all three endings, not just one.',v_letternum:'Swap every letter for its number before calculating.',n_series:'Track one feature at a time: direction, shading, number.',n_reflect:'Check reflections with a small mirror or tracing paper.',n_rotate:'Track one distinctive feature and physically turn the page to check.',n_oddone:'Look for the mirror image hiding among the rotations.',n_matrix:'Check rows and columns separately for what stays the same.',n_cube:'Fold real paper nets; remember faces two apart in a row are opposite.'};
+const PRAISE=['Brilliant!','Spot on!','Superb thinking!','You nailed it!','Fantastic!','Great climbing!','Excellent work!','Top marks!'];
+
+// ================= state =================
+const $=s=>document.querySelector(s);
+const KEY='mastery-journey-v1';
+let state=null,cur=null,recentQ=[];
+function fresh(name){return {v:1,name,level:1,progress:0,xp:0,stars:0,streak:0,bestStreak:0,badges:[],gearOwned:['map'],gear:'map',title:null,sound:true,speedOn:true,finished:false,qi:0,lastTopic:{},correctTotal:0,
+  stats:{answered:0,firstTryCorrect:0,hints:0,practiceDone:0,speedBonuses:0,time:0,bySubject:{},byTopic:{}},correctBy:{Maths:0,English:0,Verbal:0,NVR:0},lv:{skills:[],badges:[],starsAt:0}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===1)return s}catch(e){}return null}
+
+// ================= audio =================
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume();return AC}
+function tone(f,t0,dur,type='sine',vol=.2){if(!state||!state.sound)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.05)}
+const SFX={
+ ding(){tone(988,0,.16,'square',.06);tone(1319,.08,.4,'square',.06)},
+ star(){[1568,2093,2637].forEach((f,i)=>tone(f,i*.07,.35,'triangle',.12))},
+ soft(){tone(392,0,.3,'triangle',.1);tone(330,.14,.4,'triangle',.08)},
+ harp(){[523,659,784,1047,1319,1568,2093].forEach((f,i)=>{tone(f,i*.075,1.1,'triangle',.13);tone(f*2,i*.075,.4,'sine',.03)})},
+ fanfare(){[[523,0,.14],[523,.15,.14],[523,.3,.14],[698,.45,.5],[880,.98,.18],[784,1.18,.18],[1047,1.38,.9]].forEach(([f,t,d])=>{tone(f,t,d+.1,'square',.07);tone(f/2,t,d+.15,'triangle',.08)})},
+ tap(){tone(660,0,.05,'square',.03)}
+};
+
+// ================= FX canvas =================
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],texts=[],fxOn=false;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function sizeFx(){const r=devicePixelRatio||1;cv.width=innerWidth*r;cv.height=innerHeight*r;cx.setTransform(r,0,0,r,0,0)}
+addEventListener('resize',sizeFx);sizeFx();
+const CONF=['#f2a93b','#2d7a58','#2d6cb0','#b0406f','#6b4fc0','#cf5a43','#ffd684'];
+function confetti(n=140,x=innerWidth/2,y=innerHeight*.35,spread=1){if(reduced)n=Math.min(n,25);for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(3+Math.random()*9)*spread;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-6*spread,r:Math.random()*6,vr:(Math.random()-.5)*.4,w:6+Math.random()*6,h:4+Math.random()*5,c:pick(CONF),life:1})}run()}
+function floatText(t){texts.push({t,y:innerHeight*.42,a:1,s:.4});run()}
+function run(){if(!fxOn){fxOn=true;requestAnimationFrame(loop)}}
+function loop(){cx.clearRect(0,0,innerWidth,innerHeight);
+ parts=parts.filter(p=>p.life>0&&p.y<innerHeight+40);
+ for(const p of parts){p.vy+=.28;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life-=.006;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.globalAlpha=Math.max(0,Math.min(1,p.life*2));cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()}
+ texts=texts.filter(t=>t.a>0);
+ for(const t of texts){t.s=Math.min(1,t.s+.06);t.y-=.7;t.a-=.008;const fs=Math.min(72,innerWidth/7)*t.s;cx.save();cx.globalAlpha=Math.max(0,t.a);cx.font=`800 ${fs}px "Baloo 2","Trebuchet MS",sans-serif`;cx.textAlign='center';cx.lineWidth=8;cx.strokeStyle='#1b2a41';cx.lineJoin='round';cx.strokeText(t.t,innerWidth/2,t.y);cx.fillStyle='#f2a93b';cx.fillText(t.t,innerWidth/2,t.y);cx.restore()}
+ if(parts.length||texts.length)requestAnimationFrame(loop);else{fxOn=false;cx.clearRect(0,0,innerWidth,innerHeight)}}
+function burstAt(el,n=26){const r=el.getBoundingClientRect();confetti(n,r.left+r.width/2,r.top+r.height/2,.55)}
+
+// ================= question engine =================
+function build(t,L){
+  for(let i=0;i<8;i++){
+    let o=null;try{o=t.gen(L)}catch(e){console.error(t.key,e)}
+    if(!o||!o.choices||o.choices.length!==4||o.answer<0||new Set(o.choices).size!==4)continue;
+    if(recentQ.includes(o.q+o.choices.join())&&i<6)continue;
+    return {topic:t.key,topicName:t.name,subject:t.subject,level:L,...o};
+  }
+  return null;
+}
+function subjectsFor(L){return L<6?['Maths','English','Verbal']:['Maths','English','Verbal','NVR']}
+function newQuestion(){
+  const L=state.level,subs=subjectsFor(L),sub=subs[state.qi%subs.length];state.qi++;
+  const pool=T.filter(t=>t.subject===sub&&L>=t.min&&L<=t.max&&t.key!==state.lastTopic[sub]);
+  let q=null,g=0;
+  while(!q&&g++<10){let tot=0;const w=pool.map(t=>{const x=1+2*(t.min/L);tot+=x;return x});let r=Math.random()*tot,k=0;while(r>w[k]){r-=w[k];k++}q=build(pool[Math.min(k,pool.length-1)],L)}
+  if(!q)q=build(TMAP.m_add,L);
+  state.lastTopic[sub]=q.topic;recentQ.push(q.q+q.choices.join());if(recentQ.length>40)recentQ.shift();
+  return q;
+}
+function practiceFor(q){const t=TMAP[q.topic],L=Math.max(t.min,q.level-2);let p=null;for(let i=0;i<5&&(!p||p.q===q.q);i++)p=build(t,L);return p||build(TMAP.m_add,1)}
+
+// ================= flow =================
+let speedRAF=0;
+function nextQuestion(){cur={q:newQuestion(),mode:'main',failed:false,dis:new Set(),pdis:new Set(),hint:0,t0:performance.now(),locked:false,speedStart:performance.now()};render();window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})}
+function shown(){return cur.mode==='practice'?cur.pq:cur.q}
+function render(){
+  const q=shown(),L=state.level;
+  $('#tierName').textContent=TIERS[tierIx(L)];
+  $('#lvlTitle').innerHTML=`Level ${L}: ${LEVELS[L]}`;
+  const sj=SUBJ[q.subject];$('#subj').textContent=sj.name;$('#subj').style.background=sj.c;
+  const n=need(L);$('#qmeta').innerHTML=`<span>Question ${Math.min(state.progress+1,n)} of ${n}</span>`+[...Array(n)].map((_,i)=>`<span class="pip${i<state.progress?' on':''}"></span>`).join('')+`<span>· ${q.topicName}</span>`;
+  $('#ptag').hidden=cur.mode!=='practice';
+  $('#ptag').textContent=cur.mode==='practice'?'Practice Step with Professor Paws':'';
+  $('#qtext').innerHTML=(cur.mode==='retry'?'<span class="eyebrow" style="display:block;margin-bottom:6px">Back to the original question</span>':'')+q.q;
+  const v=$('#visual');v.hidden=!q.visual;v.innerHTML=q.visual||'';
+  const box=$('#choices'),long=!q.svg&&q.choices.some(c=>c.replace(/<[^>]+>/g,'').length>16);
+  box.className='choices'+(long?' text':'');
+  const dis=cur.mode==='practice'?cur.pdis:cur.dis;
+  box.innerHTML=q.choices.map((c,i)=>`<button class="choice${q.svg?' svgc':''}${dis.has(i)?' no':''}" data-i="${i}" ${dis.has(i)?'disabled':''} aria-label="Option ${'ABCD'[i]}"><span class="k">${'ABCD'[i]}</span><span class="v">${c}</span></button>`).join('');
+  $('#fb').hidden=true;$('#paws').hidden=true;cur.locked=false;cur.hint=0;
+  $('#hintBtn').hidden=false;$('#hintBtn').textContent='Break It Down';
+  $('#streak').hidden=L<6;$('#streakTxt').textContent=`Streak ${state.streak}`;
+  startSpeed();updateHUD();
+}
+function lockChoices(){cur.locked=true;document.querySelectorAll('.choice').forEach(b=>b.disabled=true)}
+function showFb(html,btn,fn){const f=$('#fb');f.className='fb ok';f.hidden=false;f.innerHTML=`<div class="msg">${html}</div><button class="btn gold" id="fbBtn">${btn}</button>`;const b=$('#fbBtn');b.onclick=()=>{SFX.tap();fn()};setTimeout(()=>b.focus({preventScroll:false}),60)}
+function showPaws(q,mode){
+  const p=$('#paws'),bub=$('#bubble');p.hidden=false;
+  let n=mode==='hint'?cur.hint:q.steps.length;
+  const title=mode==='hint'?'Professor Paws breaks it down':mode==='wrong'?"Not quite. Let's break it down together.":"Nearly! Let's look at it again.";
+  let acts='';
+  if(mode==='hint'&&n<q.steps.length)acts=`<button class="btn small ghost" id="moreHint">Next hint</button>`;
+  if(mode==='wrong')acts=`<button class="btn gold" id="pracBtn">Try a Practice Step</button>`;
+  bub.innerHTML=`<h3>${title}</h3><ol class="steps">${q.steps.slice(0,n).map(s=>`<li><span>${s}</span></li>`).join('')}</ol>${mode==='wrong'?'<p class="sub" style="margin:0">No stars lost. Mistakes are how climbers find the path.</p>':''}${acts?`<div class="pacts">${acts}</div>`:''}`;
+  const m=$('#moreHint');if(m)m.onclick=()=>{cur.hint++;showPaws(q,'hint')};
+  const pb=$('#pracBtn');if(pb){pb.onclick=startPractice;setTimeout(()=>pb.focus(),60)}
+  if(mode==='hint'&&n>=q.steps.length)$('#hintBtn').textContent='All steps shown';
+}
+function startPractice(){SFX.tap();cur.pq=practiceFor(cur.q);cur.mode='practice';cur.pdis=new Set();render();stopSpeed(true)}
+function recordAttempt(q,ok,t){
+  const s=state.stats;s.answered++;if(ok)s.firstTryCorrect++;t=Math.min(t,180);s.time+=t;
+  const b=s.bySubject[q.subject]||(s.bySubject[q.subject]={a:0,c:0,t:0});b.a++;b.c+=ok?1:0;b.t+=t;
+  const tp=s.byTopic[q.topic]||(s.byTopic[q.topic]={n:q.topicName,s:q.subject,a:0,c:0,t:0});tp.a++;tp.c+=ok?1:0;tp.t+=t;
+}
+function onAnswer(i){
+  if(!cur||cur.locked)return;
+  const q=shown(),ok=i===q.answer,btn=document.querySelector(`.choice[data-i="${i}"]`);
+  if(!btn||btn.disabled)return;
+  const t=(performance.now()-cur.t0)/1000;
+  if(cur.mode==='practice'){
+    if(ok){btn.classList.add('ok');lockChoices();SFX.ding();setTimeout(SFX.star,180);burstAt(btn);state.stats.practiceDone++;state.stars++;state.xp+=5;$('#paws').hidden=true;
+      const nb=checkBadges();save();updateHUD();
+      showFb(`You've got it! +1 star<small>Now try the original question again. You're ready.</small>`,'Back to the question',()=>{cur.mode='retry';render()});toastBadges(nb);}
+    else{btn.classList.add('no');btn.disabled=true;cur.pdis.add(i);SFX.soft();showPaws(q,'again')}
+    return;
+  }
+  const first=cur.mode==='main'&&!cur.failed;
+  if(first)recordAttempt(q,ok,t);
+  if(ok){
+    const speedWon=first&&cur.speedActive&&cur.speedLeft>0;stopSpeed();
+    btn.classList.add('ok');lockChoices();$('#paws').hidden=true;$('#hintBtn').hidden=true;
+    const gain=first?15:8;state.xp+=gain;let stars=1;const extras=[];
+    state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);
+    if(state.level>=6&&state.streak%3===0){stars++;extras.push(`${state.streak} in a row: bonus star!`)}
+    if(speedWon){stars++;state.stats.speedBonuses++;extras.push('Speed bonus star!')}
+    state.stars+=stars;state.correctBy[q.subject]++;state.correctTotal++;state.progress++;
+    if(!state.lv.skills.includes(q.topicName))state.lv.skills.push(q.topicName);
+    SFX.ding();setTimeout(SFX.star,160);if(stars>1)setTimeout(SFX.star,420);burstAt(btn,stars>1?45:26);
+    const nb=checkBadges();save();updateHUD();$('#streakTxt').textContent=`Streak ${state.streak}`;
+    const done=state.progress>=need(state.level);
+    showFb(`${pick(PRAISE)} +${stars} star${stars>1?'s':''} · +${gain} XP${extras.length?`<small>${extras.join(' ')}</small>`:''}`,done?'Finish the level':'Next question',done?levelUp:nextQuestion);
+    toastBadges(nb);
+  }else{
+    cur.failed=true;cur.dis.add(i);state.streak=0;stopSpeed(true);
+    btn.classList.add('no');btn.disabled=true;lockChoices();SFX.soft();
+    $('#streakTxt').textContent='Streak 0';$('#hintBtn').hidden=true;
+    showPaws(q,'wrong');save();
+    setTimeout(()=>$('#paws').scrollIntoView({behavior:reduced?'auto':'smooth',block:'nearest'}),80);
+  }
+}
+$('#choices').addEventListener('click',e=>{const b=e.target.closest('.choice');if(b)onAnswer(+b.dataset.i)});
+$('#hintBtn').onclick=()=>{if(!cur)return;const q=shown();if(cur.hint>=q.steps.length)return;cur.hint++;state.stats.hints++;save();SFX.tap();showPaws(q,'hint')};
+addEventListener('keydown',e=>{if(!$('#modal').hidden||!cur||e.target.tagName==='INPUT')return;const k=e.key.toUpperCase(),i='ABCD'.indexOf(k)>=0?'ABCD'.indexOf(k):'1234'.indexOf(k);if(i>=0&&k.length===1)onAnswer(i)});
+
+// ================= speed meter =================
+function budget(L){return L<=15?60-(L-11)*4:40-(L-16)*2.5}
+function startSpeed(){
+  cancelAnimationFrame(speedRAF);const L=state.level,on=L>=11&&cur.mode==='main'&&!cur.failed;
+  $('#speed').hidden=!(on&&state.speedOn);$('#speedOnBtn').hidden=!(on&&!state.speedOn);
+  cur.speedActive=on&&state.speedOn;if(!cur.speedActive)return;
+  const B=budget(L),st=cur.speedStart;
+  const tick=()=>{const left=Math.max(0,B-(performance.now()-st)/1000);cur.speedLeft=left;$('#speedFill').style.width=(left/B*100)+'%';
+    $('#speedLbl').textContent=left>0?`Speed bonus: answer in ${Math.ceil(left)}s for an extra star`:'No rush. Take all the time you need.';
+    if(left>0)speedRAF=requestAnimationFrame(tick)};
+  tick();
+}
+function stopSpeed(hide){cancelAnimationFrame(speedRAF);if(cur)cur.speedActive=false;if(hide){$('#speed').hidden=true;$('#speedOnBtn').hidden=true}}
+$('#speedToggle').onclick=()=>{state.speedOn=false;save();stopSpeed(true);if(cur&&cur.mode==='main'&&!cur.failed&&state.level>=11)$('#speedOnBtn').hidden=false};
+$('#speedOnBtn').onclick=()=>{state.speedOn=true;save();if(cur){cur.speedStart=performance.now();startSpeed()}};
+
+// ================= badges / level up =================
+function checkBadges(){const nb=[];for(const b of BADGES)if(!state.badges.includes(b.id)&&b.t(state)){state.badges.push(b.id);state.lv.badges.push(b.id);nb.push(b)}if(nb.length&&!state.title)state.title=nb[0].id;return nb}
+function toastBadges(nb){nb.forEach((b,i)=>setTimeout(()=>toast(`Badge earned: <b>${b.n}</b>`),600+i*1800))}
+function toast(h){const t=document.createElement('div');t.className='toast';t.innerHTML=h;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+function levelUp(){
+  const from=state.level,lv=state.lv,starsGained=state.stars-lv.starsAt;let gear=null;
+  if(from<20){state.level++;state.progress=0;gear=GEAR.find(g=>g.l===state.level);if(gear&&!state.gearOwned.includes(gear.id)){state.gearOwned.push(gear.id);state.gear=gear.id}}
+  else{state.finished=true;state.progress=0;const c=GEAR.find(g=>g.id==='crown');if(!state.gearOwned.includes('crown')){state.gearOwned.push('crown');gear=c}state.gear='crown'}
+  checkBadges();
+  const badges=lv.badges.map(id=>BADGES.find(b=>b.id===id));
+  state.lv={skills:[],badges:[],starsAt:state.stars};save();updateHUD();
+  const victory=from===20;
+  if(victory){SFX.fanfare();confetti(260);floatText('11+ Grandmaster!')}else{SFX.harp();confetti(170);floatText('Level Up!')}
+  const L=state.level,newTier=!victory&&tierIx(L)!==tierIx(from);
+  const tierMsg={1:'<b>Building Momentum</b> starts now: two-step problems, bigger vocabulary and <b>Non-Verbal Reasoning</b> shapes. Get 3 in a row for <b>bonus stars</b>.',2:'<b>Exam Standard</b> starts now: these questions match the real 11+. A <b>speed bonus meter</b> gives extra stars for quick answers, and there is never a penalty for taking your time.',3:'<b>Mastery & Speed</b> starts now: top-tier GL and CEM challenge questions at real exam pace. You have trained for this.'}[tierIx(L)];
+  const enc=['Every question you finish makes the next one easier.','Your brain is getting stronger with every step.','Real exam questions are within your reach now.','Only the best climbers see these levels. Keep calm and think it through.'][tierIx(L)];
+  openModal(victory?`
+    <div class="eyebrow">Summit reached</div>
+    <h2>You are an <span style="color:var(--marigold)">11+ Grandmaster</span>, ${esc(state.name)}!</h2>
+    <p>You climbed all 20 levels, from the very first footsteps to the hardest challenge questions on the 11+ exam. That takes real skill and real determination.</p>
+    <div class="chips"><span class="chip gold">${state.stars} stars</span><span class="chip gold">${state.xp} XP</span><span class="chip gold">${state.badges.length} badges</span></div>
+    ${skillsHtml(lv.skills)}
+    <p class="sub">Keep your skills sharp: you can carry on practising Level 20 questions as long as you like.</p>
+    <div class="acts"><button class="btn ghost" data-act="parent">See the parent report</button><button class="btn gold" data-act="close">Keep practising</button></div>`
+  :`
+    <div class="row" style="align-items:flex-end;gap:14px"><div class="hero-lvl">${L}</div><div><div class="eyebrow">Level ${from} complete</div><h2>Welcome to ${LEVELS[L]}</h2></div></div>
+    <div class="chips"><span class="chip gold">+${starsGained} stars this level</span><span class="chip">${state.xp} XP total</span><span class="chip">${Math.round((L-1)/20*100)}% of the journey</span></div>
+    ${skillsHtml(lv.skills)}
+    ${badges.length?`<div><h3>New badges</h3><div class="chips" style="margin-top:6px">${badges.map(b=>`<span class="chip gold">${b.n}</span>`).join('')}</div></div>`:''}
+    ${gear?`<div><h3>New gear unlocked</h3><p style="margin-top:4px"><span style="font-size:28px;vertical-align:middle">${gear.i}</span> <b>${gear.n}</b> is now on your climber. Change it any time in the Treasury.</p></div>`:''}
+    ${newTier?`<div class="newtier">${tierMsg}</div>`:''}
+    <p>${enc}</p>
+    <div class="acts"><button class="btn gold" data-act="close">Climb to Level ${L}</button></div>`,()=>nextQuestion());
+}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function skillsHtml(sk){return sk.length?`<div><h3>Skills you practised</h3><div class="chips" style="margin-top:6px">${sk.map(s=>`<span class="chip">${s}</span>`).join('')}</div></div>`:''}
+
+// ================= HUD =================
+function updateHUD(){
+  $('#pName').textContent=state.name;
+  const tb=BADGES.find(b=>b.id===state.title);$('#pTitle').textContent=tb?tb.n:'Trainee Climber';
+  $('#lvlChip').textContent=`Level ${state.level}`;$('#starCount').textContent=state.stars;$('#xpTxt').textContent=state.xp;
+  const n=need(state.level);$('#lvlProgTxt').textContent=`${state.progress} / ${n}`;$('#lvlBar').style.width=(state.progress/n*100)+'%';
+  const j=state.finished?100:Math.round(((state.level-1)+state.progress/n)/20*100);$('#journeyTxt').textContent=j+'%';$('#journeyBar').style.width=j+'%';
+  $('#gearIcon').textContent=(GEAR.find(g=>g.id===state.gear)||GEAR[0]).i;
+  $('#soundBtn').textContent=state.sound?'SOUND ON':'SOUND OFF';$('#soundBtn').setAttribute('aria-pressed',state.sound);
+  const bs=state.badges.map(id=>BADGES.find(b=>b.id===id)).filter(Boolean);
+  $('#badgeRow').innerHTML=bs.length?bs.map(b=>`<span class="bdg">${b.n}</span>`).join(''):'<span class="bdg none">Badges you earn will appear here</span>';
+  $('#trail').innerHTML=[...Array(20)].map((_,i)=>{const l=i+1,cls=l<state.level||(state.finished)?'done':l===state.level?'cur':'';return `<div class="node ${cls}" style="height:${14+i*2.6}px" title="Level ${l}: ${LEVELS[l]}"><span>${l}</span></div>`}).join('');
+  [...$('#tiers').children].forEach((s,i)=>s.classList.toggle('on',i===tierIx(state.level)));
+}
+$('#soundBtn').onclick=()=>{state.sound=!state.sound;save();updateHUD();if(state.sound)SFX.ding()};
+
+// ================= modals =================
+let modalClose=null;
+function openModal(html,onClose){$('#sheet').innerHTML=html;$('#modal').hidden=false;modalClose=onClose||null;const f=$('#sheet').querySelector('input,.btn.gold,.btn');if(f)setTimeout(()=>f.focus(),50)}
+function closeModal(){$('#modal').hidden=true;const f=modalClose;modalClose=null;if(f)f()}
+$('#modal').addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;const act=a.dataset.act;
+  if(act==='close')closeModal();
+  else if(act==='parent'){const f=modalClose;modalClose=null;openParent(f)}
+  else if(act==='gear'){state.gear=a.dataset.id;save();updateHUD();openTreasury(modalClose,true)}
+  else if(act==='title'){state.title=a.dataset.id;save();updateHUD();openTreasury(modalClose,true)}
+  else if(act==='reset1'){a.outerHTML=`<span class="sub">This wipes all progress for ${esc(state.name)}.</span> <button class="btn small danger" data-act="reset2">Yes, start over</button> <button class="btn small ghost" data-act="close">Keep progress</button>`}
+  else if(act==='reset2'){try{localStorage.removeItem(KEY)}catch(e){}modalClose=null;state=null;cur=null;showStart()}
+  else if(act==='start'){const nm=($('#nameIn').value||'').trim().slice(0,20)||'Climber';state=fresh(nm);save();beginGame()}
+  else if(act==='continue'){beginGame()}
+  else if(act==='new'){state=null;showStart(true)}
+});
+$('#modal').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nameIn'){e.preventDefault();$('#sheet [data-act="start"]').click()}});
+function beginGame(){$('#modal').hidden=true;modalClose=null;ac();updateHUD();nextQuestion()}
+
+function showStart(forceNew){
+  const saved=forceNew?null:load();
+  const art=`<svg viewBox="0 0 380 150" aria-hidden="true"><polygon points="0,150 90,60 140,100 220,20 300,90 340,65 380,95 380,150" fill="#cddbe5"/><polygon points="220,20 245,44 232,40 222,52 210,40 198,44" fill="#fff"/><polygon points="90,60 108,78 96,76 88,84 80,76 72,78" fill="#fff"/><polygon points="0,150 60,110 120,135 200,95 280,140 380,120 380,150" fill="#2d7a58"/><path d="M40,140 Q90,120 120,128 T200,100 T250,70 T222,24" fill="none" stroke="#f2a93b" stroke-width="3" stroke-dasharray="6 6"/><line x1="222" y1="22" x2="222" y2="2" stroke="#1b2a41" stroke-width="2.5"/><polygon points="222,2 240,8 222,14" fill="#f2a93b"/><text x="232" y="34" font-family="Baloo 2, sans-serif" font-weight="800" font-size="13" fill="#1b2a41">20</text></svg>`;
+  openModal(`
+    <div class="startart">${art}</div>
+    <div><div class="eyebrow">Level 1 to Level 20</div><h2 class="title-big">The 11+ <span>Mastery</span> Journey</h2></div>
+    <p>Climb from gentle first steps to the hardest real 11+ questions in Maths, English, Verbal and Non-Verbal Reasoning. Stuck? <b>Professor Paws</b> breaks every question down, and you never lose progress.</p>
+    ${saved?`<div class="newtier"><b>Welcome back, ${esc(saved.name)}!</b> You're on Level ${saved.level} with ${saved.stars} stars.</div>
+      <div class="acts"><button class="btn ghost" data-act="new">New climber</button><button class="btn gold" data-act="continue">Continue climbing</button></div>`
+    :`<label for="nameIn"><b>What's your name, climber?</b></label><input class="inp" id="nameIn" maxlength="20" autocomplete="off" placeholder="Type your name">
+      <div class="acts"><button class="btn gold" data-act="start">Start the climb</button></div>`}`);
+  if(saved)state=saved;
+}
+
+function openTreasury(onClose,keep){
+  const owned=new Set(state.gearOwned);
+  openModal(`
+    <div class="eyebrow">Reward Treasury</div><h2>Your gear and titles</h2>
+    <p class="sub">New gear unlocks as you climb. Tap anything you own to wear it.</p>
+    <h3>Climbing gear</h3>
+    <div class="grid-g">${GEAR.map(g=>{const o=owned.has(g.id);return `<button class="gear${o?'':' lock'}${state.gear===g.id?' eq':''}" ${o?`data-act="gear" data-id="${g.id}"`:'disabled'}><span class="gi">${o?g.i:'🔒'}</span><b>${g.n}</b><span class="sub" style="font-size:12px">${state.gear===g.id?'Wearing':o?'Tap to wear':'Level '+g.l}</span></button>`}).join('')}</div>
+    <h3>Title badges</h3>
+    <div class="tlist">${BADGES.map(b=>{const o=state.badges.includes(b.id);return `<button class="trow${o?'':' lock'}${state.title===b.id?' eq':''}" ${o?`data-act="title" data-id="${b.id}"`:'disabled'}><span><b>${b.n}</b><small>${b.d}</small></span><span class="sub" style="font-size:12px;white-space:nowrap">${state.title===b.id?'Showing':o?'Show':'Locked'}</span></button>`}).join('')}</div>
+    <div class="acts"><button class="btn gold" data-act="close">Back to the climb</button></div>`,onClose);
+}
+$('#treasBtn').onclick=()=>{if(!state)return;pauseForModal();openTreasury(resumeFromModal)};
+$('#avatarBtn').onclick=$('#treasBtn').onclick;
+$('#parentBtn').onclick=()=>{if(!state)return;pauseForModal();openParent(resumeFromModal)};
+function pauseForModal(){if(cur&&cur.speedActive){cur.pausedAt=performance.now();cancelAnimationFrame(speedRAF)}}
+function resumeFromModal(){if(cur&&cur.pausedAt){cur.speedStart+=performance.now()-cur.pausedAt;cur.t0+=performance.now()-cur.pausedAt;cur.pausedAt=0;startSpeed()}}
+
+function openParent(onClose){
+  const s=state.stats,acc=s.answered?Math.round(s.firstTryCorrect/s.answered*100):0,avg=s.answered?(s.time/s.answered).toFixed(1):'–';
+  const subRows=Object.keys(SUBJ).map(k=>{const b=s.bySubject[k];const a=b&&b.a?Math.round(b.c/b.a*100):null;return `<div class="srow"><span><b>${SUBJ[k].name}</b></span><span class="tb"><i style="width:${a||0}%;background:${SUBJ[k].c}"></i></span><span class="v">${a===null?'no data':a+'% · '+(b.t/b.a).toFixed(0)+'s'}</span></div>`}).join('');
+  const tops=Object.entries(s.byTopic).map(([k,v])=>({k,...v,acc:v.c/v.a}));
+  const strong=tops.filter(t=>t.a>=3&&t.acc>=.8).sort((a,b)=>b.acc-a.acc||b.a-a.a).slice(0,5);
+  const weak=tops.filter(t=>t.a>=2&&t.acc<.7).sort((a,b)=>a.acc-b.acc).slice(0,5);
+  const sp=tops.filter(t=>t.a>=2).sort((a,b)=>b.t/b.a-a.t/a.a)[0];
+  openModal(`
+    <div class="eyebrow">Parent & tutor dashboard</div><h2>${esc(state.name)}'s progress</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="n">${state.finished?'20 ✓':state.level}</div><div class="l">Level reached</div></div>
+      <div class="kpi"><div class="n">${acc}%</div><div class="l">First-try accuracy</div></div>
+      <div class="kpi"><div class="n">${s.answered}</div><div class="l">Questions answered</div></div>
+      <div class="kpi"><div class="n">${avg}${s.answered?'s':''}</div><div class="l">Avg time per question</div></div>
+      <div class="kpi"><div class="n">${s.hints}</div><div class="l">Hints used</div></div>
+      <div class="kpi"><div class="n">${s.practiceDone}</div><div class="l">Practice steps done</div></div>
+      <div class="kpi"><div class="n">${state.bestStreak}</div><div class="l">Best streak</div></div>
+      <div class="kpi"><div class="n">${s.speedBonuses}</div><div class="l">Speed bonuses</div></div>
+    </div>
+    <div><h3>By subject</h3><p class="sub" style="font-size:13px">First-try accuracy and average seconds per question.</p><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">${subRows}</div></div>
+    <div><h3>Core strengths</h3>${strong.length?`<ul class="list" style="margin-top:6px">${strong.map(t=>`<li><b>${t.n}</b> <small>${Math.round(t.acc*100)}% over ${t.a} questions (${SUBJ[t.s].name})</small></li>`).join('')}</ul>`:'<p class="sub">Strengths appear once a topic has at least 3 answers at 80% or better.</p>'}</div>
+    <div><h3>Areas to target</h3>${weak.length?`<ul class="list" style="margin-top:6px">${weak.map(t=>`<li><b>${t.n}</b> <small>${Math.round(t.acc*100)}% over ${t.a} questions. Try this: ${REC[t.k]||'Revisit the worked steps from Professor Paws.'}</small></li>`).join('')}</ul>`:'<p class="sub">No weak spots yet. Topics appear here when accuracy drops below 70% over 2 or more questions.</p>'}</div>
+    ${sp?`<div><h3>Speed</h3><p class="sub">Slowest topic so far: <b>${sp.n}</b> at ${(sp.t/sp.a).toFixed(0)}s per question. Levels 11–20 build exam pace with an optional speed meter; accuracy comes first.</p></div>`:''}
+    <p class="sub" style="font-size:13px">Accuracy counts only the first answer to each question. Progress is saved in this browser only.</p>
+    <div class="acts"><button class="btn small ghost danger" data-act="reset1">Reset progress</button><button class="btn gold" data-act="close">Close</button></div>`,onClose);
+}
+
+// ================= boot =================
+function boot(data){
+  if(data&&data.state&&data.state.name){state=data.state;updateHUD();nextQuestion();return}
+  showStart();
+}
+window.claude?.hot?.snapshot?.(()=>({state}));
+window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
+</script>
+
+<p id="arcade-back" style="margin:0;padding:18px 16px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;font:600 15px/1.4 system-ui,-apple-system,sans-serif"><a href="../" style="color:inherit;opacity:.8;text-decoration:underline;text-underline-offset:3px">Back to the Games Arcade</a></p>
+</body></html>

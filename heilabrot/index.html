@@ -1,0 +1,647 @@
+<!doctype html><html lang="is"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Heilabrot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a single playing board — grid + clue bar on the left, Lárétt/Lóðrétt clue columns on the right; stacks on phones with a sticky keyboard. Basalt ink on glacial mist, glacier-teal word highlight, amber cursor. */
+:root{
+  --bg:#ECF0EF; --surface:#FFFFFF; --ink:#13212C; --muted:#5A6A73; --line:#C7D1D3;
+  --block:#13212C; --accent:#1A6C7C; --accent-ink:#FFFFFF; --word:#CDE5EA; --cursor:#F2C14E; --cursor-ink:#13212C;
+  --good:#2D7A4C; --bad:#B3261E; --reveal:#7E57B8; --chip:#E1E8E8; --shadow:0 1px 2px rgba(19,33,44,.08),0 8px 24px rgba(19,33,44,.06);
+  --f-display:"DM Serif Display",Georgia,"Times New Roman",serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D141A; --surface:#16212A; --ink:#E4ECEF; --muted:#92A3AD; --line:#2A3843;
+  --block:#04080B; --accent:#62B8C7; --accent-ink:#06171C; --word:#1D3C46; --cursor:#C99A35; --cursor-ink:#0D141A;
+  --good:#5DBB84; --bad:#F07A70; --reveal:#B79AE6; --chip:#1E2B35; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D141A; --surface:#16212A; --ink:#E4ECEF; --muted:#92A3AD; --line:#2A3843;
+  --block:#04080B; --accent:#62B8C7; --accent-ink:#06171C; --word:#1D3C46; --cursor:#C99A35; --cursor-ink:#0D141A;
+  --good:#5DBB84; --bad:#F07A70; --reveal:#B79AE6; --chip:#1E2B35; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,.clue:focus-visible,.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Masthead */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,5vw,44px);line-height:1;margin:0;letter-spacing:.04em}
+.brand h1 .thorn{color:var(--accent)}
+.brand p{margin:0;color:var(--muted);font-size:13px;letter-spacing:.02em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;cursor:pointer;display:flex;gap:8px;align-items:baseline;font-size:13px}
+.tab b{font-weight:600}
+.tab span{color:var(--muted);font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected="true"] span{color:inherit;opacity:.75}
+
+/* Board */
+.board{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:28px;align-items:start}
+.play{display:flex;flex-direction:column;gap:12px;min-width:0}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.meta h2{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;line-height:1.1}
+.meta .sub{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.timer{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;padding:4px 10px;border-radius:8px;background:var(--chip)}
+
+.cluebar{display:flex;align-items:stretch;background:var(--word);border-radius:10px;min-height:52px;overflow:hidden}
+.cluebar button{border:0;background:transparent;width:40px;cursor:pointer;font-size:18px;color:var(--ink);flex:none}
+.cluebar button:hover{background:rgba(0,0,0,.05)}
+.cluebar .txt{flex:1;display:flex;gap:10px;align-items:center;padding:8px 4px;min-width:0;cursor:pointer}
+.cluebar .num{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cluebar .num small{font-weight:600;color:var(--accent);margin-left:2px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cluebar .ct{min-width:0}
+
+.gridbox{container-type:inline-size;width:100%;max-width:100%}
+.grid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));grid-template-rows:repeat(var(--n),minmax(0,1fr));aspect-ratio:1/1;width:100%;max-width:100%;border:2px solid var(--block);background:var(--block);gap:1px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.cell{position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:600;font-size:calc(100cqw / var(--n) * .56);line-height:1;color:var(--ink)}
+.cell.blk{background:var(--block);cursor:default}
+.cell.inword{background:var(--word)}
+.cell.cur{background:var(--cursor);color:var(--cursor-ink)}
+.cell .n{position:absolute;top:1px;left:2px;font-size:calc(100cqw / var(--n) * .26);font-weight:500;line-height:1;color:var(--muted)}
+.cell.cur .n{color:var(--cursor-ink)}
+.cell .l{transform:translateY(.06em)}
+.cell.wrong .l{color:var(--bad)}
+.cell.wrong::after{content:"";position:absolute;left:12%;right:12%;top:50%;height:2px;background:var(--bad);transform:rotate(-38deg);opacity:.75}
+.cell.right .l{color:var(--good)}
+.cell.revealed::before{content:"";position:absolute;top:0;right:0;border-style:solid;border-width:0 calc(100cqw / var(--n) * .3) calc(100cqw / var(--n) * .3) 0;border-color:transparent var(--reveal) transparent transparent}
+.cell.revealed .l{color:var(--reveal)}
+.grid.done .cell:not(.blk){animation:glow .9s ease both}
+@keyframes glow{0%{background:var(--surface)}40%{background:var(--word)}100%{background:var(--surface)}}
+@media (prefers-reduced-motion:reduce){.grid.done .cell{animation:none}}
+
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.menu{position:relative}
+.pop{position:absolute;top:calc(100% + 4px);left:0;z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:4px;min-width:150px;display:flex;flex-direction:column}
+.pop button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+.pop button:hover{background:var(--chip)}
+.pop button.warn{color:var(--bad)}
+.spacer{flex:1}
+.toast{font-size:13px;color:var(--muted);min-height:1.4em}
+.toast.ok{color:var(--good);font-weight:600}
+.toast.no{color:var(--bad)}
+
+/* Keyboard */
+.kbd{display:flex;flex-direction:column;gap:6px;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg)}
+.kbd .row{display:flex;gap:5px;justify-content:center}
+.key{flex:1 1 0;max-width:46px;min-width:0;height:44px;border:0;border-radius:6px;background:var(--surface);box-shadow:0 1px 0 var(--line);font-weight:600;font-size:16px;cursor:pointer;padding:0}
+.key:active{background:var(--word)}
+.key.acc{background:var(--chip)}
+.key.wide{max-width:70px;flex:1.5 1 0;font-size:13px}
+@media (pointer:coarse){.kbd{position:sticky;bottom:0;z-index:10}}
+
+/* Clues */
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-width:0}
+.col{min-width:0;display:flex;flex-direction:column;gap:6px}
+.col h3{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.col h3 em{font-family:var(--f-display);font-style:normal;text-transform:none;letter-spacing:0;font-size:22px;color:var(--ink);margin-right:8px;font-weight:400}
+.list{position:relative;list-style:none;margin:0;padding:0;max-height:min(68vh,640px);overflow-y:auto;scrollbar-width:thin}
+.clue{display:grid;grid-template-columns:2.2em 1fr;gap:6px;padding:6px 8px;border-radius:6px;cursor:pointer;border-left:3px solid transparent}
+.clue:hover{background:var(--chip)}
+.clue .cn{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.clue .len{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.clue.cross{border-left-color:var(--word);background:color-mix(in srgb,var(--word) 35%,transparent)}
+.clue.act{background:var(--word);border-left-color:var(--accent)}
+.clue.filled .ctext{color:var(--muted)}
+
+/* Certification strip */
+.cert{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.cert .chip{background:var(--chip);border-radius:999px;padding:4px 10px;display:inline-flex;gap:6px;align-items:center;color:var(--ink)}
+.cert .chip i{font-style:normal;color:var(--good);font-weight:700}
+.cert .chip.fail i{color:var(--bad)}
+.cert .lbl{text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-right:4px}
+.help{font-size:12px;color:var(--muted);margin:0}
+.help kbd{font-family:var(--f-body);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:var(--surface);color:var(--ink)}
+
+/* Win dialog */
+.win{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,18,24,.45);z-index:50;padding:16px}
+.win .card{background:var(--surface);border-radius:16px;padding:28px 26px;max-width:380px;width:100%;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;gap:10px}
+.win h2{font-family:var(--f-display);font-weight:400;font-size:34px;margin:0}
+.win p{margin:0;color:var(--muted)}
+.win .t{font-size:28px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+
+#ime{position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0;font-size:16px;border:0;padding:0;pointer-events:none}
+
+@media (max-width:900px){
+  .board{grid-template-columns:minmax(0,1fr)}
+  .play{max-width:600px;margin:0 auto;width:100%}
+  .list{max-height:none}
+}
+@media (max-width:560px){
+  .tabs{width:100%;flex-wrap:nowrap;gap:5px}
+  .tab{padding:6px 10px;gap:6px;flex:1;justify-content:center;font-size:12px}
+  .clues{grid-template-columns:1fr}
+  .wrap{padding-top:14px;gap:14px}
+  .clue{padding:6px 4px}
+}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="brand">
+      <a href="../" lang="en" style="font-size:13px;font-weight:600;color:var(--accent);text-decoration:none;margin-bottom:6px">‹ Games Arcade</a>
+      <h1>HEILABRO<span class="thorn">T</span></h1>
+      <p>Íslenskar krossgátur · Lárétt og lóðrétt</p>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Gátur"></nav>
+  </header>
+
+  <main class="board">
+    <section class="play" aria-label="Gátan">
+      <div class="meta">
+        <div>
+          <div class="sub" id="sub"></div>
+          <h2 id="ptitle"></h2>
+        </div>
+        <div class="timer" id="timer" aria-label="Tími">0:00</div>
+      </div>
+      <div class="cluebar" id="cluebar">
+        <button id="prevClue" aria-label="Fyrri vísbending">‹</button>
+        <div class="txt" id="clueTxt" title="Smelltu til að skipta um stefnu"><span class="num" id="cbNum"></span><span class="ct" id="cbText"></span></div>
+        <button id="nextClue" aria-label="Næsta vísbending">›</button>
+      </div>
+      <div class="gridbox"><div class="grid" id="grid" role="grid" aria-label="Krossgátureitir"></div></div>
+      <div class="tools">
+        <div class="menu"><button class="btn" data-menu="check">Athuga ▾</button></div>
+        <div class="menu"><button class="btn" data-menu="reveal">Sýna ▾</button></div>
+        <div class="menu"><button class="btn" data-menu="clear">Hreinsa ▾</button></div>
+        <span class="spacer"></span>
+        <button class="btn" id="kbdToggle" aria-pressed="false">Íslenskt lyklaborð</button>
+      </div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="kbd" id="kbd" hidden></div>
+      <p class="help" id="help">Skrifaðu beint á lyklaborðið. <kbd>Bil</kbd> skiptir um stefnu, <kbd>Tab</kbd> fer í næsta orð. Án íslensks lyklaborðs: sláðu sérhljóða og svo <kbd>'</kbd> fyrir broddstaf (a' → Á), og <kbd>;</kbd> eftir d, t, a eða o fyrir Ð, Þ, Æ, Ö.</p>
+    </section>
+
+    <section class="clues" aria-label="Vísbendingar">
+      <div class="col"><h3><em>Lárétt</em>Across</h3><ol class="list" id="listA"></ol></div>
+      <div class="col"><h3><em>Lóðrétt</em>Down</h3><ol class="list" id="listD"></ol></div>
+    </section>
+  </main>
+
+  <footer class="cert" id="cert" aria-label="Vottun gátunnar"></footer>
+</div>
+
+<input id="ime" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" aria-hidden="true" tabindex="-1">
+
+<div class="win" id="win" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+    <h2 id="winTitle">Til hamingju!</h2>
+    <p id="winText"></p>
+    <div class="t" id="winTime"></div>
+    <button class="btn primary" id="winClose" style="justify-content:center">Loka</button>
+  </div>
+</div>
+
+<script>
+/* ===================== Puzzle archive (HEILABROT format) ===================== */
+const PUZZLES = [{"id":"A001","title":"Heilabrot #001","level":"Klassísk","dimensions":{"rows":15,"cols":15},"grid":[["E","L","S","T","I","#","H","I","N","A","#","F","Á","A","R"],["L","Í","K","A","N","#","Á","L","A","G","#","I","L","L","A"],["S","K","Á","L","D","#","A","M","M","A","#","M","Í","L","U"],["T","I","L","#","Í","S","N","U","M","#","U","M","T","A","L"],["#","#","#","N","Á","I","#","R","I","G","N","T","#","#","#"],["S","T","R","Ö","N","G","U","#","#","L","A","U","G","S","T"],["L","A","U","S","U","#","G","U","L","A","#","G","E","T","U"],["E","L","G","#","M","A","G","N","A","S","T","#","F","E","R"],["K","A","L","A","#","L","A","G","S","#","Í","S","I","N","N"],["K","R","A","F","T","I","#","#","T","E","G","U","N","D","A"],["#","#","#","S","E","N","N","A","#","F","U","M","#","#","#"],["Ú","R","V","A","L","#","O","F","T","A","R","#","B","R","Á"],["L","E","I","K","#","Á","T","T","U","#","I","L","L","I","R"],["F","I","T","A","#","R","A","U","Ð","#","N","J","Ó","T","A"],["A","F","A","R","#","A","Ð","R","A","#","N","Á","Ð","A","R"]],"clues":{"across":[{"number":1,"row":0,"col":0,"clue":"„___ sonurinn“ – frumburðurinn","answer":"ELSTI"},{"number":6,"row":0,"col":6,"clue":"Ekki þessa, heldur ___","answer":"HINA"},{"number":10,"row":0,"col":11,"clue":"Ekki margar","answer":"FÁAR"},{"number":14,"row":1,"col":0,"clue":"Smækkuð eftirmynd, t.d. af skipi","answer":"LÍKAN"},{"number":15,"row":1,"col":6,"clue":"Streita eða þrýstingur í starfi","answer":"ÁLAG"},{"number":16,"row":1,"col":11,"clue":"Ekki vel","answer":"ILLA"},{"number":17,"row":2,"col":0,"clue":"Ljóðasmiður","answer":"SKÁLD"},{"number":18,"row":2,"col":6,"clue":"Móðir foreldris","answer":"AMMA"},{"number":19,"row":2,"col":11,"clue":"Gekk heila ___ (vegalengd)","answer":"MÍLU"},{"number":20,"row":3,"col":0,"clue":"Frá og með deginum ___ í dag","answer":"TIL"},{"number":21,"row":3,"col":4,"clue":"Renndi sér á ___ á tjörninni","answer":"ÍSNUM"},{"number":23,"row":3,"col":10,"clue":"Slúður, kjaftasögur","answer":"UMTAL"},{"number":24,"row":4,"col":3,"clue":"Vona að ég ___ strætó","answer":"NÁI"},{"number":25,"row":4,"col":7,"clue":"Það hefur ___ í allan dag","answer":"RIGNT"},{"number":27,"row":5,"col":0,"clue":"Undir ___ eftirliti","answer":"STRÖNGU"},{"number":31,"row":5,"col":9,"clue":"Þú sagðir ekki satt; þú ___","answer":"LAUGST"},{"number":35,"row":6,"col":0,"clue":"Hangir í ___ lofti","answer":"LAUSU"},{"number":36,"row":6,"col":6,"clue":"___ spjaldið (í fótbolta)","answer":"GULA"},{"number":39,"row":6,"col":11,"clue":"Eftir bestu ___","answer":"GETU"},{"number":40,"row":7,"col":0,"clue":"Sá stóran ___ í skóginum","answer":"ELG"},{"number":41,"row":7,"col":4,"clue":"Eflast, færast í aukana","answer":"MAGNAST"},{"number":44,"row":7,"col":12,"clue":"Ég ___ heim núna","answer":"FER"},{"number":45,"row":8,"col":0,"clue":"Skemmast af frosti (um tún)","answer":"KALA"},{"number":47,"row":8,"col":5,"clue":"Gera öðrum til ___","answer":"LAGS"},{"number":48,"row":8,"col":10,"clue":"Brjóta ___ (hefja samræður)","answer":"ÍSINN"},{"number":50,"row":9,"col":0,"clue":"Af öllum ___","answer":"KRAFTI"},{"number":52,"row":9,"col":8,"clue":"Fuglar margra ___","answer":"TEGUNDA"},{"number":54,"row":10,"col":3,"clue":"Rifrildi, þras","answer":"SENNA"},{"number":57,"row":10,"col":9,"clue":"Óðagot, flaustur","answer":"FUM"},{"number":58,"row":11,"col":0,"clue":"Mikið ___ í búðinni","answer":"ÚRVAL"},{"number":61,"row":11,"col":6,"clue":"Í fleiri skipti","answer":"OFTAR"},{"number":63,"row":11,"col":12,"clue":"Honum ___ í brún","answer":"BRÁ"},{"number":66,"row":12,"col":0,"clue":"Mæta á ___ í handbolta","answer":"LEIK"},{"number":67,"row":12,"col":5,"clue":"„___ smá stund aflögu?“","answer":"ÁTTU"},{"number":68,"row":12,"col":10,"clue":"Góðir menn og ___","answer":"ILLIR"},{"number":70,"row":13,"col":0,"clue":"Smjör er að mestu ___","answer":"FITA"},{"number":71,"row":13,"col":5,"clue":"Hún varð ___ í framan","answer":"RAUÐ"},{"number":72,"row":13,"col":10,"clue":"___ lífsins","answer":"NJÓTA"},{"number":73,"row":14,"col":0,"clue":"Mjög","answer":"AFAR"},{"number":74,"row":14,"col":5,"clue":"Hugsa um ___ en sjálfa sig","answer":"AÐRA"},{"number":75,"row":14,"col":10,"clue":"Biðjast ___ (vægðar)","answer":"NÁÐAR"}],"down":[{"number":1,"row":0,"col":0,"clue":"Hún er ___ systranna","answer":"ELST"},{"number":2,"row":0,"col":1,"clue":"Í ___ manns (í mannsmynd)","answer":"LÍKI"},{"number":3,"row":0,"col":2,"clue":"Lyftum glösum: ___!","answer":"SKÁL"},{"number":4,"row":0,"col":3,"clue":"Mál, ræða","answer":"TAL"},{"number":5,"row":0,"col":4,"clue":"Kúrekar börðust við ___","answer":"INDÍÁNUM"},{"number":6,"row":0,"col":6,"clue":"Sá ___ mann á götunni","answer":"HÁAN"},{"number":7,"row":0,"col":7,"clue":"Góð lykt","answer":"ILMUR"},{"number":8,"row":0,"col":8,"clue":"Sælgæti (barnamál)","answer":"NAMMI"},{"number":9,"row":0,"col":9,"clue":"Halda ___ í bekknum","answer":"AGA"},{"number":10,"row":0,"col":11,"clue":"Hálfrar aldar gömul","answer":"FIMMTUG"},{"number":11,"row":0,"col":12,"clue":"Ég ___ að þú hafir rétt fyrir þér","answer":"ÁLÍT"},{"number":12,"row":0,"col":13,"clue":"___ daga vikunnar","answer":"ALLA"},{"number":13,"row":0,"col":14,"clue":"Lágvært söngl","answer":"RAUL"},{"number":22,"row":3,"col":5,"clue":"Hann þvoði ___ í framan","answer":"SIG"},{"number":23,"row":3,"col":10,"clue":"___ hag sínum vel","answer":"UNA"},{"number":24,"row":4,"col":3,"clue":"Önnur hlið nefsins","answer":"NÖS"},{"number":26,"row":4,"col":9,"clue":"Drykkjarílát","answer":"GLAS"},{"number":27,"row":5,"col":0,"clue":"Ég ___ ljósið áður en ég sofna","answer":"SLEKK"},{"number":28,"row":5,"col":1,"clue":"Hann ___ reiprennandi íslensku","answer":"TALAR"},{"number":29,"row":5,"col":2,"clue":"___ saman reytum (ganga í hjónaband)","answer":"RUGLA"},{"number":30,"row":5,"col":6,"clue":"Fiskurinn blakaði ___","answer":"UGGA"},{"number":32,"row":5,"col":12,"clue":"Hún er ___ fyrir sætindi","answer":"GEFIN"},{"number":33,"row":5,"col":13,"clue":"Hér ___ ég og get ekki annað","answer":"STEND"},{"number":34,"row":5,"col":14,"clue":"Kirkja með tvo ___","answer":"TURNA"},{"number":37,"row":6,"col":7,"clue":"Ekki gömul","answer":"UNG"},{"number":38,"row":6,"col":8,"clue":"Lof og ___","answer":"LAST"},{"number":42,"row":7,"col":5,"clue":"___ upp í sveit","answer":"ALIN"},{"number":43,"row":7,"col":10,"clue":"Röndótt kattardýr (með greini)","answer":"TÍGURINN"},{"number":46,"row":8,"col":3,"clue":"Ef þú ___ mig, þá þarf ég að fara","answer":"AFSAKAR"},{"number":49,"row":8,"col":11,"clue":"___ börn eru feimin","answer":"SUM"},{"number":51,"row":9,"col":4,"clue":"Ég ___ upp að tíu","answer":"TEL"},{"number":53,"row":9,"col":9,"clue":"Draga í ___","answer":"EFA"},{"number":55,"row":10,"col":6,"clue":"Ekki nýtt","answer":"NOTAÐ"},{"number":56,"row":10,"col":7,"clue":"Á ný","answer":"AFTUR"},{"number":58,"row":11,"col":0,"clue":"Hópur ___ (varga)","answer":"ÚLFA"},{"number":59,"row":11,"col":1,"clue":"Hún ___ blaðið í tætlur","answer":"REIF"},{"number":60,"row":11,"col":2,"clue":"Hafa vitneskju um","answer":"VITA"},{"number":62,"row":11,"col":8,"clue":"Nöldra, jagast","answer":"TUÐA"},{"number":63,"row":11,"col":12,"clue":"Rennur um æðar","answer":"BLÓÐ"},{"number":64,"row":11,"col":13,"clue":"Skrifa","answer":"RITA"},{"number":65,"row":11,"col":14,"clue":"Knýja árabát","answer":"ÁRAR"},{"number":67,"row":12,"col":5,"clue":"Hundrað ___ gamall","answer":"ÁRA"},{"number":69,"row":12,"col":11,"clue":"___ máls á einhverju","answer":"LJÁ"}]}},{"id":"A002","title":"Heilabrot #002","level":"Miðlungs","dimensions":{"rows":11,"cols":11},"grid":[["S","T","E","L","U","M","#","B","L","Æ","S"],["K","A","N","Í","N","U","#","R","Æ","S","T"],["E","L","S","K","A","N","#","E","K","T","A"],["R","A","K","#","#","#","U","N","N","I","N"],["F","R","A","M","#","A","N","N","A","R","S"],["#","#","#","Á","H","U","G","I","#","#","#"],["S","T","O","L","I","Ð","#","R","E","K","A"],["T","A","P","A","Ð","#","#","#","G","A","F"],["O","P","I","N","#","L","E","G","G","S","T"],["F","A","N","N","#","Á","R","E","I","T","A"],["A","R","N","A","#","S","U","N","N","A","N"]],"clues":{"across":[{"number":1,"row":0,"col":0,"clue":"Við ___ senunni","answer":"STELUM"},{"number":7,"row":0,"col":7,"clue":"Vindurinn ___ úr norðri","answer":"BLÆS"},{"number":11,"row":1,"col":0,"clue":"Töframaðurinn dró ___ upp úr hattinum","answer":"KANÍNU"},{"number":12,"row":1,"col":7,"clue":"Draumurinn hefur ___","answer":"RÆST"},{"number":13,"row":2,"col":0,"clue":"Ástin mín","answer":"ELSKAN"},{"number":14,"row":2,"col":7,"clue":"Ósvikinn","answer":"EKTA"},{"number":15,"row":3,"col":0,"clue":"Hann ___ hundinn út","answer":"RAK"},{"number":16,"row":3,"col":6,"clue":"Orrustan er ___","answer":"UNNIN"},{"number":17,"row":4,"col":0,"clue":"___ og til baka","answer":"FRAM"},{"number":19,"row":4,"col":5,"clue":"Ella","answer":"ANNARS"},{"number":20,"row":5,"col":3,"clue":"Löngun til að kynna sér eitthvað","answer":"ÁHUGI"},{"number":22,"row":6,"col":0,"clue":"Hjólinu var ___","answer":"STOLIÐ"},{"number":25,"row":6,"col":7,"clue":"___ fyrirtæki","answer":"REKA"},{"number":29,"row":7,"col":0,"clue":"Spilið er ___","answer":"TAPAÐ"},{"number":30,"row":7,"col":8,"clue":"Hún ___ mér gjöf","answer":"GAF"},{"number":31,"row":8,"col":0,"clue":"Búðin er ___ til tíu","answer":"OPIN"},{"number":32,"row":8,"col":5,"clue":"Hann ___ til svefns","answer":"LEGGST"},{"number":35,"row":9,"col":0,"clue":"Ég ___ lyklana loksins","answer":"FANN"},{"number":36,"row":9,"col":5,"clue":"Angra, ónáða","answer":"ÁREITA"},{"number":37,"row":10,"col":0,"clue":"Hreiður ___ (ránfugla)","answer":"ARNA"},{"number":38,"row":10,"col":5,"clue":"Vindur að ___","answer":"SUNNAN"}],"down":[{"number":1,"row":0,"col":0,"clue":"Leggja sinn ___ af mörkum","answer":"SKERF"},{"number":2,"row":0,"col":1,"clue":"Hún ___ hátt og skýrt","answer":"TALAR"},{"number":3,"row":0,"col":2,"clue":"Mál Shakespeares","answer":"ENSKA"},{"number":4,"row":0,"col":3,"clue":"Nár","answer":"LÍK"},{"number":5,"row":0,"col":4,"clue":"Kunna vel við sig","answer":"UNA"},{"number":6,"row":0,"col":5,"clue":"Það ___ rigna á morgun","answer":"MUN"},{"number":7,"row":0,"col":7,"clue":"Sólin ___ húðina","answer":"BRENNIR"},{"number":8,"row":0,"col":8,"clue":"Gera heilbrigðan","answer":"LÆKNA"},{"number":9,"row":0,"col":9,"clue":"Áhorfendur voru ___","answer":"ÆSTIR"},{"number":10,"row":0,"col":10,"clue":"Án ___ (í sífellu)","answer":"STANS"},{"number":16,"row":3,"col":6,"clue":"___ og efnileg","answer":"UNG"},{"number":18,"row":4,"col":3,"clue":"Staða ___ (eins og hlutirnir standa)","answer":"MÁLANNA"},{"number":19,"row":4,"col":5,"clue":"Safna ___ (ríkidæmi)","answer":"AUÐ"},{"number":21,"row":5,"col":4,"clue":"___ íslenska bókmenntafélag","answer":"HIÐ"},{"number":22,"row":6,"col":0,"clue":"Herbergi fyrir gesti","answer":"STOFA"},{"number":23,"row":6,"col":1,"clue":"Sá sem ___ borgar","answer":"TAPAR"},{"number":24,"row":6,"col":2,"clue":"Hann er ___ fyrir nýjungum","answer":"OPINN"},{"number":26,"row":6,"col":8,"clue":"Hænan verpti ___","answer":"EGGIN"},{"number":27,"row":6,"col":9,"clue":"___ bolta","answer":"KASTA"},{"number":28,"row":6,"col":10,"clue":"Að ___ og framan","answer":"AFTAN"},{"number":32,"row":8,"col":5,"clue":"Lykillinn gengur að honum","answer":"LÁS"},{"number":33,"row":8,"col":6,"clue":"Þau ___ heima","answer":"ERU"},{"number":34,"row":8,"col":7,"clue":"Erfðaeining","answer":"GEN"}]}},{"id":"A003","title":"Heilabrot #003","level":"Hraðgáta","dimensions":{"rows":9,"cols":9},"grid":[["H","R","E","S","S","#","Á","R","A"],["V","I","R","K","T","#","S","E","L"],["E","F","T","I","R","#","T","I","L"],["#","#","#","N","Á","V","I","S","T"],["#","M","A","N","#","I","N","N","#"],["L","Í","T","I","L","L","#","#","#"],["A","L","A","#","A","L","V","E","G"],["U","N","S","#","S","T","Ö","Ð","U"],["G","A","T","#","T","A","L","A","Ð"]],"clues":{"across":[{"number":1,"row":0,"col":0,"clue":"Kátur og líflegur","answer":"HRESS"},{"number":6,"row":0,"col":6,"clue":"Tíu ___ afmæli","answer":"ÁRA"},{"number":9,"row":1,"col":0,"clue":"Eldfjallið er enn ___","answer":"VIRKT"},{"number":10,"row":1,"col":6,"clue":"Sá ___ á skerinu","answer":"SEL"},{"number":11,"row":2,"col":0,"clue":"Á ___ (seinna)","answer":"EFTIR"},{"number":12,"row":2,"col":6,"clue":"Ferðinni er heitið ___ Akureyrar","answer":"TIL"},{"number":13,"row":3,"col":3,"clue":"Nærvera","answer":"NÁVIST"},{"number":15,"row":4,"col":1,"clue":"Ég ___ ekki hvað hann heitir","answer":"MAN"},{"number":17,"row":4,"col":5,"clue":"Gakktu ___!","answer":"INN"},{"number":18,"row":5,"col":0,"clue":"Smár","answer":"LÍTILL"},{"number":20,"row":6,"col":0,"clue":"___ upp börn","answer":"ALA"},{"number":21,"row":6,"col":4,"clue":"Algjörlega","answer":"ALVEG"},{"number":25,"row":7,"col":0,"clue":"Þangað til","answer":"UNS"},{"number":26,"row":7,"col":4,"clue":"Gegna ___ (embætti)","answer":"STÖÐU"},{"number":27,"row":8,"col":0,"clue":"Op, hola","answer":"GAT"},{"number":28,"row":8,"col":4,"clue":"Hann hefur ___ við hana","answer":"TALAÐ"}],"down":[{"number":1,"row":0,"col":0,"clue":"Hversu","answer":"HVE"},{"number":2,"row":0,"col":1,"clue":"Bein í brjóstkassa","answer":"RIF"},{"number":3,"row":0,"col":2,"clue":"Þú ___ frábær","answer":"ERT"},{"number":4,"row":0,"col":3,"clue":"Blautur inn að ___","answer":"SKINNI"},{"number":5,"row":0,"col":4,"clue":"Grasstilkur","answer":"STRÁ"},{"number":6,"row":0,"col":6,"clue":"___ er blind","answer":"ÁSTIN"},{"number":7,"row":0,"col":7,"clue":"Tign í fasi","answer":"REISN"},{"number":8,"row":0,"col":8,"clue":"___ eða ekkert","answer":"ALLT"},{"number":14,"row":3,"col":5,"clue":"___ vestrið","answer":"VILLTA"},{"number":15,"row":4,"col":1,"clue":"Fimmtíu ___ hraði","answer":"MÍLNA"},{"number":16,"row":4,"col":2,"clue":"___ í einhverjum (angra)","answer":"ATAST"},{"number":18,"row":5,"col":0,"clue":"Sundstaður","answer":"LAUG"},{"number":19,"row":5,"col":4,"clue":"Ámæli, aðfinnsla","answer":"LAST"},{"number":22,"row":6,"col":6,"clue":"Eiga ekki annars ___","answer":"VÖL"},{"number":23,"row":6,"col":7,"clue":"Annaðhvort þetta ___ hitt","answer":"EÐA"},{"number":24,"row":6,"col":8,"clue":"Skapari heimsins","answer":"GUÐ"}]}}];
+
+/* ===================== Engine ===================== */
+const ALPHABET = "AÁBDÐEÉFGHIÍJKLMNOÓPRSTUÚVXYÝÞÆÖ";
+const ALPHA_SET = new Set([...ALPHABET]);
+const Engine = {
+  isBlock: (g, r, c) => g[r][c] === "#",
+  /* Standard numbering: a white cell gets a number if it starts an across word (left edge/black on its left, white on its right)
+     or a down word (top edge/black above, white below). Scan row by row, left to right. */
+  autoNumber(grid) {
+    const R = grid.length, C = grid[0].length;
+    const W = (r, c) => r >= 0 && c >= 0 && r < R && c < C && grid[r][c] !== "#";
+    const numbers = grid.map(row => row.map(() => 0));
+    const across = [], down = [];
+    let n = 0;
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      if (!W(r, c)) continue;
+      const a = !W(r, c - 1) && W(r, c + 1), d = !W(r - 1, c) && W(r + 1, c);
+      if (!a && !d) continue;
+      numbers[r][c] = ++n;
+      if (a) { const cells = []; for (let x = c; W(r, x); x++) cells.push([r, x]); across.push({ number: n, row: r, col: c, cells }); }
+      if (d) { const cells = []; for (let y = r; W(y, c); y++) cells.push([y, c]); down.push({ number: n, row: r, col: c, cells }); }
+    }
+    return { numbers, across, down };
+  },
+  validateGeometry(grid, minLen = 3) {
+    const R = grid.length, C = grid[0].length;
+    let symmetric = true, blocks = 0;
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      if (grid[r][c] === "#") blocks++;
+      if ((grid[r][c] === "#") !== (grid[R - 1 - r][C - 1 - c] === "#")) symmetric = false;
+    }
+    const { across, down } = Engine.autoNumber(grid);
+    const inA = new Set(), inD = new Set();
+    across.forEach(w => w.cells.forEach(([r, c]) => inA.add(r * C + c)));
+    down.forEach(w => w.cells.forEach(([r, c]) => inD.add(r * C + c)));
+    const whites = [];
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (grid[r][c] !== "#") whites.push(r * C + c);
+    const fullyChecked = whites.every(k => inA.has(k) && inD.has(k));
+    const shortest = Math.min(...[...across, ...down].map(w => w.cells.length));
+    const seen = new Set(whites.slice(0, 1)), stack = whites.slice(0, 1);
+    while (stack.length) {
+      const k = stack.pop(), r = Math.floor(k / C), c = k % C;
+      for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const y = r + dr, x = c + dc, kk = y * C + x;
+        if (y >= 0 && y < R && x >= 0 && x < C && grid[y][x] !== "#" && !seen.has(kk)) { seen.add(kk); stack.push(kk); }
+      }
+    }
+    return { symmetric, connected: seen.size === whites.length, fullyChecked, minLenOk: shortest >= minLen, shortest,
+             blocks, whites: whites.length, words: across.length + down.length };
+  },
+  validatePuzzle(p) {
+    const errors = [];
+    const g = p.grid;
+    if (g.length !== p.dimensions.rows || g.some(r => r.length !== p.dimensions.cols)) errors.push("Stærð grindar passar ekki");
+    g.forEach((row, r) => row.forEach((ch, c) => { if (ch !== "#" && !ALPHA_SET.has(ch)) errors.push(`Ógildur stafur „${ch}“ í reit ${r},${c}`); }));
+    const num = Engine.autoNumber(g);
+    for (const [key, list] of [["across", num.across], ["down", num.down]]) {
+      const given = p.clues[key];
+      if (given.length !== list.length) errors.push(`Fjöldi vísbendinga (${key}) passar ekki`);
+      list.forEach(w => {
+        const e = given.find(x => x.number === w.number);
+        const ans = w.cells.map(([r, c]) => g[r][c]).join("");
+        if (!e) errors.push(`Vantar ${key} ${w.number}`);
+        else if (e.row !== w.row || e.col !== w.col || e.answer !== ans) errors.push(`${key} ${w.number} passar ekki við grind`);
+      });
+    }
+    return { ok: errors.length === 0, errors };
+  }
+};
+
+/* Input helpers: accent / special-letter composition for non-Icelandic keyboards */
+const ACCENT = { A: "Á", E: "É", I: "Í", O: "Ó", U: "Ú", Y: "Ý" };
+const SPECIAL = { D: "Ð", T: "Þ", A: "Æ", O: "Ö" };
+const normalizeKey = k => {
+  if (!k || [...k].length !== 1) return null;
+  const u = k.toLocaleUpperCase("is-IS");
+  return ALPHA_SET.has(u) ? u : null;
+};
+
+/* ===================== Game ===================== */
+const $ = id => document.getElementById(id);
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+
+let P, N, R, C, cellEls, wordOf, fill, status, cur, dir, elapsed = 0, ticking = false, lastTick = 0, lastTyped = null, solved = false;
+
+function load(id) {
+  P = PUZZLES.find(p => p.id === id) || PUZZLES[0];
+  R = P.dimensions.rows; C = P.dimensions.cols;
+  N = Engine.autoNumber(P.grid);
+  N.across.forEach(w => w.clue = P.clues.across.find(e => e.number === w.number).clue);
+  N.down.forEach(w => w.clue = P.clues.down.find(e => e.number === w.number).clue);
+  wordOf = { A: P.grid.map(r => r.map(() => null)), D: P.grid.map(r => r.map(() => null)) };
+  N.across.forEach(w => w.cells.forEach(([r, c]) => wordOf.A[r][c] = w));
+  N.down.forEach(w => w.cells.forEach(([r, c]) => wordOf.D[r][c] = w));
+  const saved = store.get("heilabrot:" + P.id);
+  fill = saved && saved.fill && saved.fill.length === R ? saved.fill : P.grid.map(r => r.map(() => ""));
+  status = saved && saved.status && saved.status.length === R ? saved.status : P.grid.map(r => r.map(() => ""));
+  elapsed = saved ? saved.elapsed || 0 : 0;
+  solved = !!(saved && saved.solved);
+  dir = "A";
+  const first = N.across[0];
+  cur = firstEmpty(first) || first.cells[0];
+  store.set("heilabrot:last", P.id);
+  renderTabs(); renderGrid(); renderClues(); renderCert(); update(); paintTimer();
+  $("toast").textContent = solved ? "Þessi gáta er leyst." : "";
+  $("toast").className = "toast" + (solved ? " ok" : "");
+  ticking = false;
+}
+
+function save() { store.set("heilabrot:" + P.id, { fill, status, elapsed: Math.round(elapsed), solved }); }
+
+function renderTabs() {
+  $("tabs").innerHTML = "";
+  PUZZLES.forEach(p => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", p.id === P.id ? "true" : "false");
+    b.innerHTML = `<b>#${p.id.slice(1)}</b><span>${p.dimensions.rows}×${p.dimensions.cols}</span>`;
+    b.title = `${p.title} · ${p.level}`;
+    b.onclick = () => { save(); load(p.id); };
+    $("tabs").appendChild(b);
+  });
+  $("ptitle").textContent = P.title;
+  $("sub").textContent = `${P.level} · ${R}×${C} · ${P.clues.across.length + P.clues.down.length} orð`;
+}
+
+function renderGrid() {
+  const g = $("grid");
+  g.style.setProperty("--n", C);
+  g.classList.remove("done");
+  g.innerHTML = "";
+  cellEls = P.grid.map((row, r) => row.map((ch, c) => {
+    const d = document.createElement("div");
+    d.className = "cell" + (ch === "#" ? " blk" : "");
+    if (ch !== "#") {
+      d.setAttribute("role", "gridcell");
+      if (N.numbers[r][c]) d.innerHTML = `<span class="n">${N.numbers[r][c]}</span>`;
+      const l = document.createElement("span"); l.className = "l"; d.appendChild(l);
+      d.addEventListener("pointerdown", e => { e.preventDefault(); clickCell(r, c); });
+    }
+    g.appendChild(d);
+    return d;
+  }));
+}
+
+function renderClues() {
+  for (const [key, list, el] of [["A", N.across, $("listA")], ["D", N.down, $("listD")]]) {
+    el.innerHTML = "";
+    list.forEach(w => {
+      const li = document.createElement("li");
+      li.className = "clue"; li.tabIndex = 0;
+      li.innerHTML = `<span class="cn">${w.number}</span><span><span class="ctext"></span> <span class="len">(${w.cells.length})</span></span>`;
+      li.querySelector(".ctext").textContent = w.clue;
+      li.onclick = () => { dir = key; cur = firstEmpty(w) || w.cells[0]; update(); focusInput(); };
+      li.onkeydown = e => { if (e.key === "Enter") li.onclick(); };
+      w.el = li;
+      el.appendChild(li);
+    });
+  }
+}
+
+function renderCert() {
+  const v = Engine.validateGeometry(P.grid);
+  const pv = Engine.validatePuzzle(P);
+  const chip = (ok, txt) => `<span class="chip${ok ? "" : " fail"}"><i>${ok ? "✓" : "✕"}</i>${txt}</span>`;
+  $("cert").innerHTML = `<span class="lbl">Vottun</span>` +
+    chip(v.symmetric, "180° samhverfa") +
+    chip(v.connected, "Samfelld grind") +
+    chip(v.fullyChecked, "Allir reitir krossaðir") +
+    chip(v.minLenOk, `Orð ≥ ${v.shortest} stafir`) +
+    chip(pv.ok, "Tölusetning og svör staðfest") +
+    `<span>${v.words} orð · ${v.blocks} svartir reitir · ${v.whites} hvítir · auðkenni ${P.id}</span>`;
+  if (!pv.ok) console.warn(P.id, pv.errors);
+}
+
+function firstEmpty(w) { return w.cells.find(([r, c]) => !fill[r][c]); }
+function curWord() { return wordOf[dir][cur[0]][cur[1]] || wordOf[dir === "A" ? "D" : "A"][cur[0]][cur[1]]; }
+function allWords() { return [...N.across.map(w => ["A", w]), ...N.down.map(w => ["D", w])]; }
+
+function update() {
+  if (!wordOf[dir][cur[0]][cur[1]]) dir = dir === "A" ? "D" : "A";
+  const w = curWord(), cross = wordOf[dir === "A" ? "D" : "A"][cur[0]][cur[1]];
+  const inW = new Set(w.cells.map(([r, c]) => r * C + c));
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+    if (P.grid[r][c] === "#") continue;
+    const el = cellEls[r][c];
+    el.querySelector(".l").textContent = fill[r][c];
+    el.className = "cell" + (inW.has(r * C + c) ? " inword" : "") + (r === cur[0] && c === cur[1] ? " cur" : "") + (status[r][c] ? " " + status[r][c] : "");
+  }
+  $("cbNum").innerHTML = `${w.number}<small>${dir === "A" ? "Lár." : "Lóð."}</small>`;
+  $("cbText").textContent = w.clue;
+  allWords().forEach(([k, x]) => {
+    x.el.className = "clue" + (x === w ? " act" : x === cross ? " cross" : "") + (x.cells.every(([r, c]) => fill[r][c]) ? " filled" : "");
+  });
+  scrollClue(w.el); if (cross) scrollClue(cross.el);
+}
+
+function scrollClue(li) {
+  const list = li.parentElement;
+  if (list.scrollHeight <= list.clientHeight) return;
+  const top = li.offsetTop, bottom = top + li.offsetHeight;
+  if (top < list.scrollTop) list.scrollTop = top - 8;
+  else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight + 8;
+}
+
+function clickCell(r, c) {
+  if (cur[0] === r && cur[1] === c) dir = dir === "A" ? "D" : "A";
+  cur = [r, c]; update(); focusInput();
+}
+
+function focusInput() {
+  if (coarse && !$("kbd").hidden) return; // on-screen keyboard: keep the system keyboard closed
+  try { $("ime").focus({ preventScroll: true }); } catch (e) {}
+}
+
+function startClock() { if (!ticking && !solved) { ticking = true; lastTick = performance.now(); } }
+function paintTimer() { const s = Math.floor(elapsed); $("timer").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+setInterval(() => { if (ticking && !document.hidden) { const now = performance.now(); elapsed += (now - lastTick) / 1000; lastTick = now; paintTimer(); } else lastTick = performance.now(); }, 250);
+document.addEventListener("visibilitychange", () => { lastTick = performance.now(); if (document.hidden) save(); });
+
+function locked(r, c) { return status[r][c] === "right" || status[r][c] === "revealed"; }
+
+function typeLetter(ch) {
+  if (solved) return;
+  startClock();
+  const [r, c] = cur;
+  if (!locked(r, c)) { fill[r][c] = ch; status[r][c] = ""; }
+  lastTyped = [r, c];
+  advance();
+  update(); save(); checkDone();
+}
+
+/* Turns the last typed letter into its accented / special counterpart (a' → Á, d; → Ð). */
+function composeLast(table) {
+  if (!lastTyped) return false;
+  const [r, c] = lastTyped;
+  const nv = table[fill[r][c]];
+  if (!nv || locked(r, c)) return false;
+  fill[r][c] = nv; update(); save(); checkDone();
+  return true;
+}
+
+function advance() {
+  const w = curWord(), i = w.cells.findIndex(([r, c]) => r === cur[0] && c === cur[1]);
+  for (let k = i + 1; k < w.cells.length; k++) { const [r, c] = w.cells[k]; if (!fill[r][c]) { cur = w.cells[k]; return; } }
+  const e = firstEmpty(w); if (e) { cur = e; return; }
+  if (i < w.cells.length - 1) { cur = w.cells[i + 1]; return; }
+  jumpWord(1, true);
+}
+
+function jumpWord(step, preferEmpty) {
+  const list = allWords(), w = curWord();
+  let idx = list.findIndex(([k, x]) => x === w);
+  for (let t = 0; t < list.length; t++) {
+    idx = (idx + step + list.length) % list.length;
+    const [k, x] = list[idx];
+    const e = firstEmpty(x);
+    if (!preferEmpty || e || t === list.length - 1) { dir = k; cur = e || x.cells[0]; return; }
+  }
+}
+
+function backspace() {
+  if (solved) return;
+  const [r, c] = cur;
+  if (fill[r][c] && !locked(r, c)) { fill[r][c] = ""; status[r][c] = ""; }
+  else {
+    const w = curWord(), i = w.cells.findIndex(([y, x]) => y === r && x === c);
+    if (i > 0) cur = w.cells[i - 1];
+    else { jumpWord(-1, false); const nw = curWord(); cur = nw.cells[nw.cells.length - 1]; }
+    const [y, x] = cur; if (!locked(y, x)) { fill[y][x] = ""; status[y][x] = ""; }
+  }
+  lastTyped = null;
+  update(); save();
+}
+
+function move(dr, dc) {
+  const want = dr ? "D" : "A";
+  if (dir !== want && wordOf[want][cur[0]][cur[1]]) { dir = want; update(); return; }
+  let r = cur[0] + dr, c = cur[1] + dc;
+  while (r >= 0 && r < R && c >= 0 && c < C) {
+    if (P.grid[r][c] !== "#") { cur = [r, c]; break; }
+    r += dr; c += dc;
+  }
+  update();
+}
+
+function onKey(e, fromIme) {
+  if (e.metaKey || (e.ctrlKey && !e.altKey)) return;
+  if (!$("win").hidden) { if (e.key === "Escape" || e.key === "Enter") closeWin(); return; }
+  const k = e.key;
+  const nav = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] };
+  if (nav[k]) { e.preventDefault(); move(...nav[k]); return; }
+  if (k === "Tab") { e.preventDefault(); jumpWord(e.shiftKey ? -1 : 1, !e.shiftKey); update(); return; }
+  if (k === " " || k === "Enter") { e.preventDefault(); dir = dir === "A" ? "D" : "A"; update(); return; }
+  if (k === "Backspace") { e.preventDefault(); backspace(); return; }
+  if (k === "Delete") { e.preventDefault(); const [r, c] = cur; if (!locked(r, c)) { fill[r][c] = ""; status[r][c] = ""; } update(); save(); return; }
+  if (fromIme) return; // letters typed into the hidden field arrive through its input event
+  if (k === "'" || k === "´") { e.preventDefault(); composeLast(ACCENT); return; }
+  if (k === ";") { e.preventDefault(); composeLast(SPECIAL); return; }
+  const ch = normalizeKey(k);
+  if (ch) { e.preventDefault(); typeLetter(ch); }
+}
+
+document.addEventListener("keydown", e => {
+  if (e.target === $("ime")) return;
+  if (e.target.closest && e.target.closest("button,.clue") && (e.key === "Enter" || e.key === " ")) return;
+  onKey(e, false);
+});
+
+/* Hidden text field: catches dead keys (´ + a), IME composition and mobile system keyboards. */
+const ime = $("ime");
+const SENT = "​";
+function resetIme() { ime.value = SENT; try { ime.setSelectionRange(1, 1); } catch (e) {} }
+resetIme();
+ime.addEventListener("keydown", e => onKey(e, true));
+function consumeIme() {
+  const v = ime.value;
+  if (!v.includes(SENT)) { backspace(); }
+  for (const raw of v.replace(SENT, "")) {
+    if (raw === "'" || raw === "´") composeLast(ACCENT);
+    else if (raw === ";") composeLast(SPECIAL);
+    else { const ch = normalizeKey(raw); if (ch) typeLetter(ch); }
+  }
+  resetIme();
+}
+ime.addEventListener("input", e => { if (!e.isComposing) consumeIme(); });
+ime.addEventListener("compositionend", () => setTimeout(consumeIme, 0));
+ime.addEventListener("focus", resetIme);
+
+/* On-screen Icelandic keyboard (all 32 letters, no C/Q/W/Z). */
+const ROWS = [["E", "R", "T", "Y", "U", "I", "O", "P", "Ð"], ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Æ"], ["X", "V", "B", "N", "M", "Þ", "Ö", "⌫"], ["Á", "É", "Í", "Ó", "Ú", "Ý", "⇄"]];
+ROWS.forEach(row => {
+  const d = document.createElement("div"); d.className = "row";
+  row.forEach(k => {
+    const b = document.createElement("button");
+    b.className = "key" + ("ÁÉÍÓÚÝ".includes(k) ? " acc" : "") + (k === "⌫" || k === "⇄" ? " wide" : "");
+    b.textContent = k; b.type = "button";
+    b.setAttribute("aria-label", k === "⌫" ? "Eyða" : k === "⇄" ? "Skipta um stefnu" : k);
+    b.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      if (k === "⌫") backspace(); else if (k === "⇄") { dir = dir === "A" ? "D" : "A"; update(); } else typeLetter(k);
+    });
+    d.appendChild(b);
+  });
+  $("kbd").appendChild(d);
+});
+function setKbd(on) {
+  $("kbd").hidden = !on;
+  $("kbdToggle").setAttribute("aria-pressed", on ? "true" : "false");
+  $("kbdToggle").textContent = on ? "Fela lyklaborð" : "Íslenskt lyklaborð";
+  if (on && coarse) ime.blur();
+}
+$("kbdToggle").onclick = () => setKbd($("kbd").hidden);
+if (coarse) { setKbd(true); $("help").textContent = "Pikkaðu á reit; pikkaðu aftur til að skipta á milli láréttra og lóðréttra orða. Lyklaborðið hefur alla 32 íslensku stafina."; }
+
+$("prevClue").onclick = () => { jumpWord(-1, false); update(); focusInput(); };
+$("nextClue").onclick = () => { jumpWord(1, false); update(); focusInput(); };
+$("clueTxt").onclick = () => { dir = dir === "A" ? "D" : "A"; update(); focusInput(); };
+
+/* Check / reveal / clear */
+function scopeCells(scope) {
+  if (scope === "cell") return [cur];
+  if (scope === "word") return curWord().cells;
+  const all = []; for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (P.grid[r][c] !== "#") all.push([r, c]);
+  return all;
+}
+function doCheck(scope) {
+  let wrong = 0, checked = 0;
+  scopeCells(scope).forEach(([r, c]) => {
+    if (!fill[r][c] || status[r][c] === "revealed") return;
+    checked++;
+    if (fill[r][c] === P.grid[r][c]) status[r][c] = "right"; else { status[r][c] = "wrong"; wrong++; }
+  });
+  toast(checked === 0 ? "Ekkert útfyllt til að athuga." : wrong ? `${wrong} ${wrong === 1 ? "stafur er rangur" : "stafir eru rangir"}.` : "Allt rétt hingað til.", wrong ? "no" : checked ? "ok" : "");
+  update(); save();
+}
+function doReveal(scope) {
+  startClock();
+  scopeCells(scope).forEach(([r, c]) => { if (fill[r][c] !== P.grid[r][c]) { fill[r][c] = P.grid[r][c]; status[r][c] = "revealed"; } });
+  update(); save(); checkDone();
+}
+function doClear(scope) {
+  scopeCells(scope).forEach(([r, c]) => { if (scope === "puzzle" || !locked(r, c)) { fill[r][c] = ""; status[r][c] = ""; } });
+  if (scope === "puzzle") { elapsed = 0; solved = false; ticking = false; paintTimer(); $("grid").classList.remove("done"); }
+  toast(""); update(); save();
+}
+function toast(t, cls) { $("toast").textContent = t; $("toast").className = "toast" + (cls ? " " + cls : ""); }
+
+const MENUS = {
+  check: [["Reit", () => doCheck("cell")], ["Orð", () => doCheck("word")], ["Alla gátuna", () => doCheck("puzzle")]],
+  reveal: [["Reit", () => doReveal("cell")], ["Orð", () => doReveal("word")], ["Alla gátuna", () => doReveal("puzzle"), true]],
+  clear: [["Orð", () => doClear("word")], ["Alla gátuna", () => doClear("puzzle"), true]]
+};
+let openPop = null;
+function closePop() { if (openPop) { openPop.remove(); openPop = null; } }
+document.querySelectorAll("[data-menu]").forEach(btn => {
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+    const had = openPop && openPop.parentElement === btn.parentElement; closePop(); if (had) return;
+    const pop = document.createElement("div"); pop.className = "pop";
+    MENUS[btn.dataset.menu].forEach(([label, fn, confirmFirst]) => {
+      const b = document.createElement("button"); b.textContent = label; b.type = "button";
+      b.onclick = ev => {
+        ev.stopPropagation();
+        if (confirmFirst && !b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Ertu viss? Smelltu aftur"; b.className = "warn"; return; }
+        closePop(); fn(); focusInput();
+      };
+      pop.appendChild(b);
+    });
+    btn.parentElement.appendChild(pop); openPop = pop;
+  });
+});
+document.addEventListener("click", closePop);
+
+function checkDone() {
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (P.grid[r][c] !== "#" && !fill[r][c]) return;
+  const ok = P.grid.every((row, r) => row.every((ch, c) => ch === "#" || fill[r][c] === ch));
+  if (!ok) { toast("Gátan er fullútfyllt en eitthvað er ekki rétt. Prófaðu „Athuga“.", "no"); return; }
+  if (solved) return;
+  solved = true; ticking = false; save();
+  $("grid").classList.add("done");
+  const revealed = status.flat().filter(s => s === "revealed").length;
+  $("winText").textContent = revealed ? `Þú kláraðir ${P.title} með ${revealed} sýndum stöfum.` : `Þú leystir ${P.title} án hjálpar.`;
+  $("winTime").textContent = $("timer").textContent;
+  toast("Gátan er leyst.", "ok");
+  setTimeout(() => { $("win").hidden = false; $("winClose").focus(); }, 650);
+}
+function closeWin() { $("win").hidden = true; focusInput(); }
+$("winClose").onclick = closeWin;
+$("win").addEventListener("click", e => { if (e.target === $("win")) closeWin(); });
+
+/* Boot */
+window.Heilabrot = { Engine, PUZZLES, ALPHABET };
+load(store.get("heilabrot:last") || PUZZLES[0].id);
+</script>
+
+</body></html>

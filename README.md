@@ -7,6 +7,7 @@ One site for all our games. The home page (`index.html`) lists every game; each 
 | Debris Dynasty | `debris-dynasty/` |
 | Joker Vault Deluxe | `joker-vault/` |
 | Heilabrot (Icelandic crosswords) | `heilabrot/` |
+| KALEO Ring of Fire (rhythm game) | `kaleo-ring-of-fire/` |
 | Quest 11: The Spellbound Citadel | `quest-11/` |
 | 11+ Mastery Journey | `mastery-journey/` |
 | Cognitive Conquest + Junior | links to https://cognitive-conquest.netlify.app (its own repo) |

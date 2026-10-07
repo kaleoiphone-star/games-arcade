@@ -158,6 +158,58 @@ h1 {
 .btn:hover { filter: brightness(1.1); }
 .btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
 
+/* Dev build: band tracks loaded from this device (only shown with #dev) */
+.vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.dev {
+  display: grid; gap: 12px; padding: 14px;
+  border: 1px dashed rgba(111, 211, 240, .6); border-radius: 6px;
+  background: rgba(17, 12, 11, .9);
+}
+.dev-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dev h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.1; }
+.dev-badge {
+  font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
+  color: #03141a; background: var(--glacier); padding: 3px 8px; border-radius: 3px;
+}
+.dev-note { margin: 0; font-size: 15px; line-height: 1.4; color: var(--smoke); max-width: 56ch; }
+.dev-controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
+.field { display: grid; gap: 4px; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--smoke); }
+.field select, .field input {
+  font: 600 16px var(--body); letter-spacing: 0; text-transform: none;
+  color: var(--bone); background: var(--ash);
+  border: 1px solid rgba(243, 231, 214, .3); border-radius: 4px; padding: 6px 8px;
+}
+.field input { width: 88px; }
+.field select:focus-visible, .field input:focus-visible { outline: 2px solid var(--ember); outline-offset: 1px; }
+.seg { display: inline-flex; border: 1px solid rgba(243, 231, 214, .3); border-radius: 4px; overflow: hidden; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { padding: 6px 12px; font-size: 16px; font-weight: 700; letter-spacing: .04em; text-transform: none; color: var(--bone); cursor: pointer; }
+.seg input:checked + label { background: var(--glacier); color: #03141a; }
+.seg input:focus-visible + label { outline: 2px solid var(--ember); outline-offset: -2px; }
+.dev-tracks { display: grid; gap: 8px; }
+.dev-empty { margin: 0; font-size: 15px; color: var(--smoke); }
+.track { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.track-play {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 14px;
+  text-align: left; padding: 11px 14px; cursor: pointer;
+  background: rgba(36, 27, 25, .9); color: var(--bone);
+  border: 1px solid rgba(111, 211, 240, .35); border-radius: 6px; font-family: var(--body);
+}
+.track-play:hover:not(:disabled), .track-play:focus-visible { border-color: var(--glacier); background: rgba(58, 44, 40, .95); }
+.track-play:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.track-play:disabled { cursor: default; opacity: .7; }
+.track-play .st-name { overflow-wrap: anywhere; }
+.track-play .st-place.err { color: #ff8a7a; }
+.track-del {
+  padding: 0 12px; border-radius: 6px; cursor: pointer;
+  background: transparent; color: var(--smoke);
+  border: 1px solid rgba(243, 231, 214, .25); font: 700 14px var(--body); letter-spacing: .06em;
+}
+.track-del:hover { color: var(--bone); border-color: rgba(243, 231, 214, .5); }
+.track-del:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.dev-add { justify-self: start; display: inline-block; background: transparent; color: var(--bone); border-color: var(--glacier); }
+#devFile:focus-visible + .dev-add { outline: 2px solid var(--ember); outline-offset: 3px; }
+
 @media (prefers-reduced-motion: reduce) {
   .stage, #mult, .meter b { transition: none; }
   .stage:hover, .stage:focus-visible { transform: none; }
@@ -191,6 +243,35 @@ h1 {
     <div>
       <div class="stages" id="stages"></div>
     </div>
+    <section id="dev" class="dev" hidden aria-labelledby="devTitle">
+      <div class="dev-top">
+        <h2 id="devTitle">Band tracks</h2>
+        <span class="dev-badge">Dev build</span>
+      </div>
+      <p class="dev-note">Load your own mixes from this device. The game charts them in your browser. Nothing is uploaded and nothing is added to the site. <span id="devKeep"></span></p>
+      <div class="dev-controls">
+        <div class="field"><span id="diffLbl">Difficulty</span>
+          <div class="seg" role="radiogroup" aria-labelledby="diffLbl">
+            <input type="radio" name="devDiff" id="devDiffEasy" value="easy"><label for="devDiffEasy">Easy</label>
+            <input type="radio" name="devDiff" id="devDiffNormal" value="normal"><label for="devDiffNormal">Normal</label>
+            <input type="radio" name="devDiff" id="devDiffHard" value="hard"><label for="devDiffHard">Hard</label>
+          </div>
+        </div>
+        <label class="field" for="devVenue">Venue
+          <select id="devVenue">
+            <option value="0">Bromo Sunrise</option>
+            <option value="1">Aso Caldera</option>
+            <option value="2">Jeju Lava Fields</option>
+          </select>
+        </label>
+        <label class="field" for="devOffset">Timing (ms)
+          <input id="devOffset" type="number" inputmode="numeric" step="5" min="-200" max="200" value="0">
+        </label>
+      </div>
+      <div class="dev-tracks" id="devTracks"></div>
+      <input id="devFile" class="vh" type="file" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac" multiple>
+      <label class="btn dev-add" for="devFile">Add audio files</label>
+    </section>
     <div style="display:grid;gap:10px">
       <p class="how">Tap the lanes when the rocks hit the line. On a keyboard use <strong>D F J K</strong>. String hits together to fill the <strong>Eruption</strong> meter for double points.</p>
       <p class="fine">Turn your sound on. Fan-made concept prototype, not an official KALEO release. The music is original and generated live in your browser.</p>
@@ -257,6 +338,11 @@ const STAGES = [
     sky: ['#03101a', '#0c2a3e', '#b23a17'], far: '#0a2030',
     words: { perfect: '완벽', great: '최고', good: '좋아', miss: '놓침' } }
 ];
+const DIFFS = {
+  easy: { label: 'Easy', gap: 0.34, density: 1.4, approach: 1.9, chord: false },
+  normal: { label: 'Normal', gap: 0.18, density: 2.5, approach: 1.6, chord: true },
+  hard: { label: 'Hard', gap: 0.11, density: 3.8, approach: 1.35, chord: true }
+};
 const BLUES = [0, 3, 5, 6, 7, 10, 12];
 const LANE_OF = [0, 1, 1, 2, 2, 3, 3];
 const PROG = [0, 0, 0, 0, 5, 5, 0, 0, 7, 5, 0, 7];
@@ -330,11 +416,14 @@ function buildSong(st) {
     }
   }
   const totalSteps = st.bars * 16;
-  return { notes, sections, spb, stepDur, totalSteps, length: totalSteps * stepDur, endScheduled: false };
+  const beats = [];
+  for (let k = -4; k <= st.bars * 4; k++) beats.push(k * spb);
+  return { notes, sections, spb, stepDur, totalSteps, length: totalSteps * stepDur, endScheduled: false, audio: false, beats };
 }
 
 /* ---------- Audio ---------- */
 let ac = null, master = null, gtrIn = null, gtrTone = null, noiseBuf = null;
+let trackFilter = null, trackGain = null, trackSrc = null, trackMaxF = 20000;
 function makeCurve(k) {
   const n = 2048, c = new Float32Array(n);
   for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (1 + k) * x / (1 + k * Math.abs(x)); }
@@ -359,6 +448,10 @@ function audioInit() {
   gtrTone = ac.createBiquadFilter(); gtrTone.type = 'lowpass'; gtrTone.frequency.value = 3200; gtrTone.Q.value = 0.8;
   const post = ac.createGain(); post.gain.value = 0.2;
   gtrIn.connect(pre); pre.connect(shaper); shaper.connect(mid); mid.connect(gtrTone); gtrTone.connect(post); post.connect(master);
+  trackMaxF = Math.min(20000, ac.sampleRate / 2 - 200);
+  trackFilter = ac.createBiquadFilter(); trackFilter.type = 'lowpass'; trackFilter.frequency.value = trackMaxF; trackFilter.Q.value = 0;
+  trackGain = ac.createGain(); trackGain.gain.value = 0.85;
+  trackFilter.connect(trackGain); trackGain.connect(ac.destination);
   const dl = ac.createDelay(); dl.delayTime.value = 0.11;
   const fb = ac.createGain(); fb.gain.value = 0.25;
   const wet = ac.createGain(); wet.gain.value = 0.3;
@@ -455,10 +548,29 @@ function failSound(t) {
   o.connect(gn); gn.connect(gtrIn); o.start(t); o.stop(t + 1.2);
 }
 const latency = () => ac ? (ac.outputLatency || ac.baseLatency || 0) : 0;
+function decodeWith(ctx, ab) {
+  return new Promise((res, rej) => {
+    const p = ctx.decodeAudioData(ab, res, rej);
+    if (p && p.catch) p.catch(rej);
+  });
+}
+function stopTrack() {
+  if (!trackSrc) return;
+  try { trackSrc.stop(); } catch (e) { /* already stopped */ }
+  try { trackSrc.disconnect(); } catch (e) { /* already disconnected */ }
+  trackSrc = null;
+}
+function muffle() {
+  const f = trackFilter.frequency, t = ac.currentTime;
+  f.cancelScheduledValues(t);
+  f.setValueAtTime(650, t);
+  f.setTargetAtTime(trackMaxF, t + 0.08, 0.15);
+}
 
 /* ---------- State ---------- */
 let state = 'menu';
 let stageIdx = 0, viewStage = 0, stage = STAGES[0];
+let mode = 'stage', currentTrack = null;
 let song = null, laneNotes = null, lanePtr = null;
 let songStart = 0, nextStep = 0, schedTimer = 0;
 let score = 0, combo = 0, maxCombo = 0, counts = null;
@@ -507,7 +619,7 @@ function scheduleStep(i, t) {
   if (first && s === 0 && b > 0) crash(t);
 }
 function scheduler() {
-  if (state !== 'play' || !song) return;
+  if (state !== 'play' || !song || song.audio) return;
   const ahead = ac.currentTime + 0.15;
   while (nextStep < song.totalSteps && songStart + nextStep * song.stepDur < ahead) {
     scheduleStep(nextStep, songStart + nextStep * song.stepDur);
@@ -529,12 +641,7 @@ function setViewStage(i) {
   if (viewStage === i) return;
   viewStage = i; buildScenery();
 }
-function startStage(i) {
-  audioInit();
-  if (!ac) return;
-  ac.resume();
-  stageIdx = i; stage = STAGES[i]; setViewStage(i);
-  song = buildSong(stage);
+function resetRun() {
   laneNotes = [[], [], [], []];
   song.notes.forEach(n => laneNotes[n.lane].push(n));
   lanePtr = [0, 0, 0, 0];
@@ -542,8 +649,10 @@ function startStage(i) {
   counts = { perfect: 0, great: 0, good: 0, miss: 0 };
   crowd = 60; fever = 0; erupting = false; eruptAmt = 0;
   chordPlayed = new Set(); judgment = null; banner = null; particles = [];
+  gtrTone.frequency.cancelScheduledValues(ac.currentTime);
   gtrTone.frequency.setValueAtTime(3200, ac.currentTime);
-  songStart = ac.currentTime + 0.3 + 4 * song.spb;
+}
+function beginPlay() {
   for (let k = 0; k < 4; k++) stick(songStart - (4 - k) * song.spb);
   nextStep = 0;
   clearInterval(schedTimer);
@@ -552,6 +661,37 @@ function startStage(i) {
   scheduler();
   showOnly(null);
   renderHud(true);
+}
+function startStage(i) {
+  audioInit();
+  if (!ac) return;
+  ac.resume();
+  stopTrack();
+  mode = 'stage';
+  stageIdx = i; stage = STAGES[i]; setViewStage(i);
+  song = buildSong(stage);
+  resetRun();
+  songStart = ac.currentTime + 0.3 + 4 * song.spb;
+  beginPlay();
+}
+function startTrack(tr, buf) {
+  stopTrack();
+  mode = 'track'; currentTrack = tr;
+  const d = DIFFS[devState.diff], v = devState.venue;
+  stageIdx = v; setViewStage(v);
+  stage = Object.assign({}, STAGES[v], { id: 'dev:' + tr.id + ':' + devState.diff, name: tr.title, approach: d.approach, diff: d.label });
+  const spb = 60 / tr.an.bpm;
+  song = { audio: true, notes: chartFrom(tr.an, devState.diff, devState.offset / 1000), spb, length: buf.duration, beats: tr.an.beats, endScheduled: true };
+  resetRun();
+  const t = ac.currentTime;
+  trackGain.gain.cancelScheduledValues(t); trackGain.gain.setValueAtTime(0.85, t);
+  trackFilter.frequency.cancelScheduledValues(t); trackFilter.frequency.setValueAtTime(trackMaxF, t);
+  songStart = t + 0.3 + Math.max(4 * spb, stage.approach + 0.3);
+  trackSrc = ac.createBufferSource();
+  trackSrc.buffer = buf;
+  trackSrc.connect(trackFilter);
+  trackSrc.start(songStart);
+  beginPlay();
 }
 function pauseGame() {
   if (state !== 'play') return;
@@ -568,9 +708,11 @@ function resumeGame() {
 function quitToMenu() {
   clearInterval(schedTimer);
   state = 'menu';
+  stopTrack();
   if (ac && ac.state === 'suspended') ac.resume();
   song = null;
   renderStageCards();
+  renderDev();
   showOnly('menu');
 }
 function gradeOf(acc, failed) {
@@ -585,15 +727,23 @@ function finish(failed) {
   if (state !== 'play') return;
   state = 'results';
   clearInterval(schedTimer);
-  if (failed) failSound(ac.currentTime + 0.02);
-  else roar(ac.currentTime + 0.4, 2);
+  if (failed) {
+    failSound(ac.currentTime + 0.02);
+    if (trackSrc) {
+      const t = ac.currentTime;
+      trackGain.gain.cancelScheduledValues(t);
+      trackGain.gain.setValueAtTime(trackGain.gain.value, t);
+      trackGain.gain.linearRampToValueAtTime(0, t + 0.8);
+      try { trackSrc.stop(t + 0.9); } catch (e) { /* already stopped */ }
+    }
+  } else roar(ac.currentTime + 0.4, 2);
   const total = song.notes.length;
   const acc = (counts.perfect + counts.great * 0.7 + counts.good * 0.4) / Math.max(1, total);
   const grade = gradeOf(acc, failed);
   const prev = best[stage.id];
   const isBest = !failed && (!prev || score > prev.score);
   if (isBest) { best[stage.id] = { score, grade }; saveBest(best); }
-  $('#rStage').textContent = stage.name + ' · ' + stage.place;
+  $('#rStage').textContent = mode === 'track' ? stage.name + ' · ' + stage.diff : stage.name + ' · ' + stage.place;
   $('#rGrade').textContent = grade;
   $('#rLine').textContent = LINES[grade];
   $('#rBest').hidden = !isBest;
@@ -603,7 +753,7 @@ function finish(failed) {
   $('#sMiss').textContent = counts.miss;
   $('#sCombo').textContent = maxCombo;
   $('#sAcc').textContent = Math.round(acc * 100) + '%';
-  $('#nextBtn').hidden = stageIdx >= STAGES.length - 1;
+  $('#nextBtn').hidden = mode === 'track' || stageIdx >= STAGES.length - 1;
   showOnly('results');
   const target = score, t0 = performance.now(), el = $('#rScore');
   const tick = now => {
@@ -639,6 +789,7 @@ function missNote(n) {
   crowd = Math.max(0, crowd - 8);
   if (!erupting) fever = Math.max(0, fever - 10);
   deadString(ac.currentTime);
+  if (song.audio) muffle();
   judgment = { kind: 'miss', t0: performance.now() };
   if (crowd <= 0) finish(true);
 }
@@ -669,8 +820,12 @@ function hitNote(n, kind) {
   }
   const tt = ac.currentTime;
   if (n.chord) {
-    if (!chordPlayed.has(n.t)) { chordPlayed.add(n.t); guitar(tt, n.midi, true); shake = Math.max(shake, 5); }
-  } else {
+    if (!chordPlayed.has(n.t)) {
+      chordPlayed.add(n.t);
+      if (!song.audio) guitar(tt, n.midi, true);
+      shake = Math.max(shake, 5);
+    }
+  } else if (!song.audio) {
     guitar(tt, n.midi, false);
   }
   judgment = { kind, t0: performance.now() };
@@ -842,7 +997,30 @@ function drawBg(ts, pulse) {
   }
   g.globalCompositeOperation = 'source-over';
 }
-function drawHighway(beatNow, spb, pulse, playing) {
+function lowerBound(a, x) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < x) lo = m + 1; else hi = m; }
+  return lo;
+}
+function beatPulse(clock, inSong) {
+  if (inSong && song.beats.length > 1) {
+    const b = song.beats, i = lowerBound(b, clock);
+    const next = i < b.length ? b[i] : b[b.length - 1] + song.spb;
+    const prev = i > 0 ? b[i - 1] : next - song.spb;
+    const ph = Math.min(1, Math.max(0, (clock - prev) / Math.max(0.05, next - prev)));
+    return Math.pow(1 - ph, 3);
+  }
+  const spb = 0.6, ph = (((clock % spb) + spb) % spb) / spb;
+  return Math.pow(1 - ph, 3);
+}
+function beatLine(dt, down, approach) {
+  const p = proj(dt / approach);
+  const y = yAt(p), hw = hwAt(p);
+  g.strokeStyle = `rgba(243,231,214,${(down ? 0.2 : 0.08) * Math.min(1, p * 1.4)})`;
+  g.lineWidth = down ? 2 : 1;
+  g.beginPath(); g.moveTo(geo.cx - hw, y); g.lineTo(geo.cx + hw, y); g.stroke();
+}
+function drawHighway(clock, pulse, inSong) {
   const bottomP = (H - geo.hy) / (geo.ly - geo.hy);
   const bw = hwAt(bottomP);
   const road = g.createLinearGradient(0, geo.hy, 0, H);
@@ -870,16 +1048,13 @@ function drawHighway(beatNow, spb, pulse, playing) {
     g.lineWidth = edge ? 2 : 1;
     g.beginPath(); g.moveTo(geo.cx + f * geo.thw, geo.hy); g.lineTo(geo.cx + f * bw, H); g.stroke();
   }
-  const approach = playing ? stage.approach : 1.7;
-  const k0 = Math.ceil(beatNow / spb);
-  for (let k = k0; k * spb <= beatNow + approach; k++) {
-    const u = (k * spb - beatNow) / approach;
-    const p = proj(u);
-    const y = yAt(p), hw = hwAt(p);
-    const down = ((k % 4) + 4) % 4 === 0;
-    g.strokeStyle = `rgba(243,231,214,${(down ? 0.2 : 0.08) * Math.min(1, p * 1.4)})`;
-    g.lineWidth = down ? 2 : 1;
-    g.beginPath(); g.moveTo(geo.cx - hw, y); g.lineTo(geo.cx + hw, y); g.stroke();
+  const approach = inSong ? stage.approach : 1.7;
+  if (inSong) {
+    const b = song.beats;
+    for (let i = lowerBound(b, clock); i < b.length && b[i] <= clock + approach; i++) beatLine(b[i] - clock, i % 4 === 0, approach);
+  } else {
+    const spb = 0.6;
+    for (let k = Math.ceil(clock / spb); k * spb <= clock + approach; k++) beatLine(k * spb - clock, ((k % 4) + 4) % 4 === 0, approach);
   }
 }
 function capsule(x, y, w, h) {
@@ -1074,15 +1249,13 @@ function loop(ts) {
   shake *= Math.pow(0.02, dt);
   if (shake < 0.3) shake = 0;
   if (state !== 'paused') stepParticles(dt);
-  const spb = inSong ? song.spb : 0.6;
-  const beatNow = inSong ? now : ts / 1000;
-  const phase = (((beatNow % spb) + spb) % spb) / spb;
-  const pulse = Math.pow(1 - phase, 3);
+  const clock = inSong ? now : ts / 1000;
+  const pulse = beatPulse(clock, inSong);
 
   g.save();
   if (shake && !reduceMotion) g.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
   drawBg(ts / 1000, pulse);
-  drawHighway(beatNow, spb, pulse, inSong);
+  drawHighway(clock, pulse, inSong);
   if (inSong) drawNotes(now);
   drawReceptors(pulse);
   drawParticles();
@@ -1137,14 +1310,366 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 $('#pauseBtn').addEventListener('click', pauseGame);
 $('#resumeBtn').addEventListener('click', resumeGame);
 $('#quitBtn').addEventListener('click', quitToMenu);
-$('#againBtn').addEventListener('click', () => startStage(stageIdx));
+$('#againBtn').addEventListener('click', () => { if (mode === 'track') playTrack(currentTrack); else startStage(stageIdx); });
 $('#nextBtn').addEventListener('click', () => startStage(Math.min(STAGES.length - 1, stageIdx + 1)));
 $('#menuBtn').addEventListener('click', quitToMenu);
 window.addEventListener('resize', resize);
 
+/* ---------- Dev build: band tracks from this device ---------- */
+/* Open with #dev. Audio files stay in this browser (IndexedDB); nothing is uploaded. */
+const isDev = () => location.hash === '#dev' || /(?:^|&)dev(?:=1)?(?:&|$)/.test(location.search.slice(1));
+const ANALYSIS_SR = 22050, HOP = 256;
+const devState = { diff: 'normal', venue: 0, offset: 0 };
+let tracks = [], idb = null, devReady = false, lastBuf = null;
+let analysisQueue = Promise.resolve();
+
+function renderOffline(oc) {
+  return new Promise((res, rej) => {
+    oc.oncomplete = e => res(e.renderedBuffer);
+    const p = oc.startRendering();
+    if (p && p.then) p.then(res, rej);
+  });
+}
+function pct(arr, q) {
+  const a = Float32Array.from(arr).sort();
+  if (!a.length) return 0;
+  return a[Math.min(a.length - 1, Math.floor(q * (a.length - 1)))];
+}
+async function analyzeBuffer(buf) {
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const len = Math.max(HOP * 8, Math.ceil(buf.duration * ANALYSIS_SR));
+  const oc = new OAC(4, len, ANALYSIS_SR);
+  const src = oc.createBufferSource();
+  src.buffer = buf;
+  const merger = oc.createChannelMerger(4);
+  [['lowpass', 140, 0.7], ['bandpass', 450, 0.9], ['bandpass', 1800, 0.9], ['highpass', 4200, 0.7]].forEach((sp, i) => {
+    const f = oc.createBiquadFilter();
+    f.type = sp[0]; f.frequency.value = sp[1]; f.Q.value = sp[2];
+    src.connect(f); f.connect(merger, 0, i);
+  });
+  merger.connect(oc.destination);
+  src.start(0);
+  const out = await renderOffline(oc);
+  const fps = ANALYSIS_SR / HOP, N = Math.floor(len / HOP);
+  const bands = [];
+  for (let c = 0; c < 4; c++) {
+    const x = out.getChannelData(c);
+    const e = new Float32Array(N);
+    for (let n = 0; n < N; n++) {
+      let s = 0;
+      const o = n * HOP;
+      for (let i = 0; i < HOP; i++) { const v = x[o + i]; s += v * v; }
+      e[n] = Math.log(1e-5 + s / HOP);
+    }
+    const raw = new Float32Array(N);
+    for (let n = 1; n < N; n++) raw[n] = Math.max(0, e[n] - e[n - 1]);
+    const fl = new Float32Array(N);
+    for (let n = 1; n < N - 1; n++) fl[n] = 0.25 * raw[n - 1] + 0.5 * raw[n] + 0.25 * raw[n + 1];
+    const p = pct(fl, 0.97) || 1;
+    for (let n = 0; n < N; n++) fl[n] = Math.min(3, fl[n] / p);
+    bands.push(fl);
+  }
+  const total = new Float32Array(N);
+  for (let n = 0; n < N; n++) total[n] = 1.1 * bands[0][n] + bands[1][n] + bands[2][n] + 0.8 * bands[3][n];
+  const bpm = estimateTempo(total, fps);
+  const beats = trackBeats(total, fps, bpm);
+  return { fps, N, bands, total, bpm, beats };
+}
+function estimateTempo(o, fps) {
+  const N = o.length;
+  let mean = 0;
+  for (let n = 0; n < N; n++) mean += o[n];
+  mean /= N;
+  const d = Float32Array.from(o, v => v - mean);
+  const minLag = Math.floor(fps * 60 / 190), maxLag = Math.ceil(fps * 60 / 60);
+  const acv = new Float32Array(maxLag + 2);
+  let best = -Infinity, bestLag = minLag;
+  for (let L = minLag; L <= maxLag + 1; L++) {
+    let s = 0;
+    for (let n = L; n < N; n++) s += d[n] * d[n - L];
+    acv[L] = s / Math.max(1, N - L);
+    if (L > maxLag) continue;
+    const bpm = 60 * fps / L;
+    const w = Math.exp(-0.5 * Math.pow(Math.log2(bpm / 110) / 0.5, 2));
+    if (acv[L] * w > best) { best = acv[L] * w; bestLag = L; }
+  }
+  let lag = bestLag;
+  if (bestLag > minLag) {
+    const a = acv[bestLag - 1], b = acv[bestLag], c = acv[bestLag + 1];
+    const den = a - 2 * b + c;
+    if (den < 0) lag = bestLag + 0.5 * (a - c) / den;
+  }
+  return Math.min(190, Math.max(60, 60 * fps / lag));
+}
+function trackBeats(o, fps, bpm) {
+  const N = o.length, P = fps * 60 / bpm;
+  let m = 0, sd = 0;
+  for (let n = 0; n < N; n++) m += o[n];
+  m /= N;
+  for (let n = 0; n < N; n++) sd += (o[n] - m) * (o[n] - m);
+  sd = Math.sqrt(sd / N) || 1;
+  const lo = Math.max(1, Math.round(P / 2)), hi = Math.round(2 * P);
+  const pen = new Float32Array(hi + 1);
+  for (let dd = lo; dd <= hi; dd++) pen[dd] = -100 * Math.pow(Math.log(dd / P), 2);
+  const C = new Float32Array(N), back = new Int32Array(N).fill(-1);
+  for (let n = 0; n < N; n++) {
+    const local = o[n] / sd;
+    let bestV = -Infinity, bp = -1;
+    for (let dd = lo; dd <= hi; dd++) {
+      const p = n - dd;
+      if (p < 0) break;
+      const v = C[p] + pen[dd];
+      if (v > bestV) { bestV = v; bp = p; }
+    }
+    if (bp >= 0 && bestV > 0) { C[n] = local + bestV; back[n] = bp; } else C[n] = local;
+  }
+  let end = N - 1, bestC = -Infinity;
+  for (let n = Math.max(0, N - hi); n < N; n++) if (C[n] > bestC) { bestC = C[n]; end = n; }
+  const frames = [];
+  for (let n = end; n >= 0; n = back[n]) { frames.push(n); if (back[n] < 0) break; }
+  frames.reverse();
+  return frames.map(n => (n + 0.5) / fps);
+}
+function chartFrom(an, key, offset) {
+  const D = DIFFS[key], fps = an.fps, N = an.N, tot = an.total, B = an.bands;
+  const W = Math.round(fps * 0.5);
+  const pre = new Float64Array(N + 1);
+  for (let n = 0; n < N; n++) pre[n + 1] = pre[n] + tot[n];
+  const cands = [];
+  for (let n = 3; n < N - 3; n++) {
+    const v = tot[n];
+    if (v <= 0.2) continue;
+    if (!(v >= tot[n - 1] && v >= tot[n - 2] && v >= tot[n - 3] && v > tot[n + 1] && v > tot[n + 2] && v > tot[n + 3])) continue;
+    const a = Math.max(0, n - W), b = Math.min(N, n + W + 1);
+    const s = v - (pre[b] - pre[a]) / (b - a);
+    if (s > 0.25) cands.push({ n, s });
+  }
+  if (!cands.length) return [];
+  const floor = 0.2 * pct(cands.map(c => c.s), 0.9);
+  const pool = cands.filter(c => c.s >= floor).sort((x, y) => y.s - x.s);
+  const gapF = Math.max(1, Math.round(D.gap * fps)), WL = 4, maxPer = Math.max(1, Math.round(D.density * WL));
+  const blocked = new Uint8Array(N), perWin = new Map(), chosen = [];
+  for (const c of pool) {
+    if (blocked[c.n]) continue;
+    const w = Math.floor(c.n / fps / WL), k = perWin.get(w) || 0;
+    if (k >= maxPer) continue;
+    perWin.set(w, k + 1);
+    chosen.push(c);
+    for (let i = Math.max(0, c.n - gapF + 1); i < Math.min(N, c.n + gapF); i++) blocked[i] = 1;
+  }
+  chosen.sort((x, y) => x.n - y.n);
+  const strong = pct(chosen.map(c => c.s), 0.85);
+  const notes = [];
+  let prevLane = -1, run = 0;
+  for (const c of chosen) {
+    const sc = [0, 1, 2, 3].map(b => Math.max(B[b][c.n - 1], B[b][c.n], B[b][c.n + 1]));
+    const order = [0, 1, 2, 3].sort((x, y) => sc[y] - sc[x]);
+    let lane = order[0];
+    if (lane === prevLane && run >= 2) lane = order[1];
+    run = lane === prevLane ? run + 1 : 0;
+    prevLane = lane;
+    const t = (c.n + 0.5) / fps + offset;
+    if (t < 0.05) continue;
+    const other = lane === order[0] ? order[1] : order[0];
+    if (D.chord && c.s >= strong && sc[other] >= 0.75 * sc[order[0]]) {
+      notes.push({ t, lane, chord: true, mate: other, j: 0, midi: 0 });
+      notes.push({ t, lane: other, chord: true, mate: lane, j: 0, midi: 0 });
+    } else {
+      notes.push({ t, lane, chord: false, j: 0, midi: 0 });
+    }
+  }
+  return notes;
+}
+
+/* storage: tracks live in this browser only */
+function idbOpen() {
+  return new Promise((res, rej) => {
+    if (!window.indexedDB) { rej(new Error('IndexedDB unavailable')); return; }
+    const r = indexedDB.open('kaleo-ring-dev', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('tracks', { keyPath: 'id' });
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+function idbReq(txMode, op) {
+  return new Promise((res, rej) => {
+    const r = op(idb.transaction('tracks', txMode).objectStore('tracks'));
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+function loadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem('kaleo-ring-dev-prefs') || '{}') || {};
+    if (DIFFS[p.diff]) devState.diff = p.diff;
+    if (p.venue >= 0 && p.venue < STAGES.length) devState.venue = p.venue | 0;
+    if (Number.isFinite(p.offset)) devState.offset = Math.max(-200, Math.min(200, p.offset));
+  } catch (e) { /* storage blocked: defaults */ }
+}
+function savePrefs() { try { localStorage.setItem('kaleo-ring-dev-prefs', JSON.stringify(devState)); } catch (e) { /* storage blocked */ } }
+
+function cleanTitle(name) {
+  return name.replace(/\.[a-z0-9]{2,5}$/i, '').replace(/^\s*\d{1,2}\s*[-._)]\s*/, '').replace(/[_]+/g, ' ').replace(/\s+/g, ' ').trim() || name;
+}
+function fmtTime(s) {
+  const t = Math.round(s || 0);
+  return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
+}
+function queueAnalysis(tr) {
+  analysisQueue = analysisQueue.then(() => analyzeTrack(tr));
+  return analysisQueue;
+}
+async function analyzeTrack(tr) {
+  if (!tracks.includes(tr)) return;
+  tr.status = 'analysing'; renderDev();
+  try {
+    const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const buf = await decodeWith(new OAC(1, 1, ANALYSIS_SR), tr.data.slice(0));
+    tr.duration = buf.duration;
+    tr.an = await analyzeBuffer(buf);
+    tr.counts = {};
+    Object.keys(DIFFS).forEach(k => { tr.counts[k] = chartFrom(tr.an, k, 0).length; });
+    if (tr.counts.easy < 20) { tr.status = 'error'; tr.err = 'Not enough clear beats in this file to chart.'; }
+    else tr.status = 'ready';
+  } catch (e) {
+    tr.status = 'error';
+    tr.err = 'This file could not be read as audio. Try MP3, M4A or WAV.';
+  }
+  renderDev();
+}
+async function addFiles(files) {
+  for (const f of files) {
+    const id = f.name + ':' + f.size;
+    if (tracks.some(t => t.id === id)) continue;
+    const tr = { id, title: cleanTitle(f.name), size: f.size, data: null, status: 'reading', saved: false };
+    tracks.push(tr); renderDev();
+    try { tr.data = await f.arrayBuffer(); }
+    catch (e) { tr.status = 'error'; tr.err = 'Could not read this file.'; renderDev(); continue; }
+    if (idb) {
+      try { await idbReq('readwrite', s => s.put({ id, title: tr.title, size: f.size, data: tr.data, added: Date.now() })); tr.saved = true; }
+      catch (e) { tr.saved = false; }
+    }
+    tr.status = 'queued'; renderDev();
+    queueAnalysis(tr);
+  }
+}
+async function removeTrack(tr) {
+  tracks = tracks.filter(t => t !== tr);
+  if (lastBuf && lastBuf.id === tr.id) lastBuf = null;
+  if (idb) { try { await idbReq('readwrite', s => s.delete(tr.id)); } catch (e) { /* already gone */ } }
+  renderDev();
+}
+async function playTrack(tr) {
+  if (!tr || tr.status !== 'ready' || tr.busy || state === 'play') return;
+  audioInit();
+  if (!ac) return;
+  ac.resume();
+  let buf = lastBuf && lastBuf.id === tr.id ? lastBuf.buf : null;
+  if (!buf) {
+    tr.busy = true; renderDev();
+    try {
+      buf = await decodeWith(ac, tr.data.slice(0));
+      lastBuf = { id: tr.id, buf };
+    } catch (e) {
+      tr.busy = false; tr.status = 'error'; tr.err = 'This file could not be played.'; renderDev();
+      return;
+    }
+    tr.busy = false;
+  }
+  if (state === 'play') return;
+  startTrack(tr, buf);
+}
+function trackMeta(tr) {
+  if (tr.busy) return 'Loading…';
+  if (tr.status === 'reading') return 'Reading file…';
+  if (tr.status === 'queued') return 'Waiting to analyse…';
+  if (tr.status === 'analysing') return 'Finding the beat…';
+  if (tr.status === 'error') return tr.err;
+  return `${fmtTime(tr.duration)} · ${Math.round(tr.an.bpm)} BPM · ${tr.counts[devState.diff]} notes`;
+}
+function renderDev() {
+  const wrap = $('#devTracks');
+  if (!wrap || $('#dev').hidden) return;
+  wrap.textContent = '';
+  if (!tracks.length) {
+    const p = document.createElement('p');
+    p.className = 'dev-empty';
+    p.textContent = 'No tracks yet. Add MP3, M4A or WAV mixes from this device.';
+    wrap.appendChild(p);
+  }
+  tracks.forEach(tr => {
+    const row = document.createElement('div');
+    row.className = 'track';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'track-play';
+    b.disabled = tr.status !== 'ready' || !!tr.busy;
+    b.innerHTML = '<span class="st-text"><span class="st-name"></span><span class="st-place"></span></span>' +
+      '<span class="st-side"><span class="st-grade"></span><span class="st-best"></span></span>';
+    b.querySelector('.st-name').textContent = tr.title;
+    const meta = b.querySelector('.st-place');
+    meta.textContent = trackMeta(tr);
+    meta.classList.toggle('err', tr.status === 'error');
+    const rec = best['dev:' + tr.id + ':' + devState.diff];
+    b.querySelector('.st-grade').textContent = rec ? rec.grade : '';
+    b.querySelector('.st-best').textContent = tr.status !== 'ready' ? '' : rec ? 'Best ' + rec.score.toLocaleString('en-US') : 'Play';
+    b.setAttribute('aria-label', tr.status === 'ready' ? `Play ${tr.title}, ${DIFFS[devState.diff].label}` : tr.title + ', ' + trackMeta(tr));
+    b.addEventListener('click', () => playTrack(tr));
+    const del = document.createElement('button');
+    del.type = 'button'; del.className = 'track-del';
+    del.textContent = 'Remove';
+    del.setAttribute('aria-label', 'Remove ' + tr.title);
+    del.addEventListener('click', () => removeTrack(tr));
+    row.append(b, del);
+    wrap.appendChild(row);
+  });
+  $('#devKeep').textContent = idb
+    ? 'Tracks are kept in this browser on this device until you remove them.'
+    : 'This browser can’t keep them, so add them again next visit.';
+}
+function syncDevControls() {
+  const r = document.querySelector(`input[name="devDiff"][value="${devState.diff}"]`);
+  if (r) r.checked = true;
+  $('#devVenue').value = String(devState.venue);
+  $('#devOffset').value = String(devState.offset);
+}
+async function initDev() {
+  $('#dev').hidden = false;
+  if (devReady) { renderDev(); return; }
+  devReady = true;
+  loadPrefs(); syncDevControls(); setViewStage(devState.venue); renderDev();
+  document.querySelectorAll('input[name="devDiff"]').forEach(r => r.addEventListener('change', () => {
+    if (r.checked) { devState.diff = r.value; savePrefs(); renderDev(); }
+  }));
+  $('#devVenue').addEventListener('change', e => { devState.venue = +e.target.value || 0; setViewStage(devState.venue); savePrefs(); });
+  $('#devVenue').addEventListener('focus', () => setViewStage(devState.venue));
+  $('#devOffset').addEventListener('change', e => {
+    const v = Math.round(+e.target.value);
+    devState.offset = Number.isFinite(v) ? Math.max(-200, Math.min(200, v)) : 0;
+    e.target.value = String(devState.offset); savePrefs();
+  });
+  $('#devFile').addEventListener('change', e => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (files.length) addFiles(files);
+  });
+  try {
+    idb = await idbOpen();
+    const recs = await idbReq('readonly', s => s.getAll());
+    recs.sort((a, b) => a.added - b.added).forEach(r => {
+      if (tracks.some(t => t.id === r.id)) return;
+      const tr = { id: r.id, title: r.title, size: r.size, data: r.data, status: 'queued', saved: true };
+      tracks.push(tr);
+      queueAnalysis(tr);
+    });
+  } catch (e) { idb = null; }
+  renderDev();
+}
+
 renderStageCards();
 resize();
 requestAnimationFrame(loop);
+if (isDev()) initDev();
+window.addEventListener('hashchange', () => { if (isDev()) initDev(); else $('#dev').hidden = true; });
 })();
 </script>
 </body>

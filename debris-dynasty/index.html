@@ -117,6 +117,17 @@ kbd{border:1px solid rgba(255,255,255,.4);border-radius:4px;padding:0 5px;font-s
 .btn::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);animation:btnsheen 2.4s infinite}
 @keyframes btnsheen{0%{left:-60%}60%,100%{left:130%}}
 .btnrow{display:flex;gap:14px;justify-content:center}
+.cname em.mk3{color:#ff3dcb;text-shadow:0 0 8px #ff3dcb}
+.mboss small.fr{color:var(--f);font-weight:700;margin-top:3px}
+.mboss.frac{border-style:dashed}
+.title.fracture{background:linear-gradient(180deg,#fff,#ff9ad8 45%,#ff3dcb 70%,#7a3aff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 16px rgba(255,61,203,.6))}
+.flist{display:flex;flex-direction:column;gap:8px;margin:12px 0 4px}
+.frow{--f:#fff;position:relative;display:grid;grid-template-columns:34px 150px 1fr;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--f);border-radius:10px;background:rgba(0,0,0,.35);opacity:.75}
+.frow.new{opacity:1;box-shadow:0 0 18px var(--f);animation:rise .5s}
+.frow i{font-style:normal;font-size:20px;color:var(--f);text-align:center}
+.frow b{font-family:var(--display);font-size:12px;color:#fff;letter-spacing:.5px}
+.frow span{font-size:12px;color:rgba(220,240,255,.9);line-height:1.35}
+.frow u{position:absolute;right:8px;top:-8px;text-decoration:none;font-size:9px;letter-spacing:2px;background:var(--f);color:#000;padding:1px 6px;border-radius:6px;font-weight:700}
 .dock-lbl .relics{display:flex;align-items:center;gap:8px}
 #relicBar{display:flex;gap:3px}
 .relic{--c:#fff;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:4px;border:1px solid var(--c);color:var(--c);font-size:11px;letter-spacing:0;background:rgba(0,0,0,.4);box-shadow:0 0 6px var(--c);cursor:help}
@@ -293,9 +304,25 @@ const STAGES=[
   {name:'FOUNDRY-KING',moves:['jam','curse','drain'],title:'SCRAP FABRICATOR',sub:'DEPLOYS NEW DEBRIS AFTER EVERY LAUNCH',hp:16000,target:1500000,bx:360,by:520,r:54,sway:100,swaySpeed:0.5,debris:6,teeth:16,layout:'columns',minGap:30,
     counts:{gold:13,energy:10,shield:12,titan:7,bomb:5},rings:[{n:16,R:96,w:-0.6,pattern:['shield','titan']}],
     theme:{hull:['#704038','#2a1010','#080303'],plate:['#3a1a14','#060202'],rivet:'#ff7a3a',teethC:'#ffb080',core:['#fff0c0','#ff3a00'],aura:'#ff2a00',aura2:'#ff8a00',eye:'#ffb000',crack:'#ffd080',ring:'#ff6a20',bar:['#5a0a00','#ff8a00'],label:'#ffb890'}},
-  {name:'OMEGA DYNAST',moves:['curse','repair','drain','wall','jam'],title:'THE FINAL SOVEREIGN',sub:'EVERY DEFENCE AT ONCE — THE LAST STAND',hp:18000,target:1600000,bx:360,by:500,r:56,sway:60,swaySpeed:0.4,swayY:25,swaySpeedY:0.6,regen:4,gravity:600,lock:true,teeth:24,layout:'honeycomb',
+  {name:'OMEGA DYNAST',phases:2,phaseHp:[1,0.6],phaseMods:[{sway:120,swaySpeed:0.8,regen:6,gravity:850}],moves:['curse','repair','drain','wall','jam'],title:'THE FINAL SOVEREIGN?',sub:'EVERY DEFENCE AT ONCE — THE LAST STAND',hp:30000,target:1600000,bx:360,by:500,r:56,sway:60,swaySpeed:0.4,swayY:25,swaySpeedY:0.6,regen:4,gravity:600,lock:true,teeth:24,layout:'honeycomb',
     counts:{gold:14,energy:11,shield:18,titan:12,bomb:6},rings:[{n:14,R:92,w:-0.8,pattern:['titan','shield']},{n:22,R:136,w:0.45,pattern:['shield','std',null]}],
-    theme:{hull:['#e0e8ff','#5a4a9a','#0c0820'],plate:['#2a2050','#06040e'],rivet:'#7df9ff',teethC:'#ffffff',core:['#ffffff','#ff3dcb'],aura:'#7a3aff',aura2:'#29f3ff',eye:'#ffffff',crack:'#7df9ff',ring:'#b07aff',bar:['#3a1a9a','#29f3ff'],label:'#d0c0ff'}}
+    theme:{hull:['#e0e8ff','#5a4a9a','#0c0820'],plate:['#2a2050','#06040e'],rivet:'#7df9ff',teethC:'#ffffff',core:['#ffffff','#ff3dcb'],aura:'#7a3aff',aura2:'#29f3ff',eye:'#ffffff',crack:'#7df9ff',ring:'#b07aff',bar:['#3a1a9a','#29f3ff'],label:'#d0c0ff'}},
+  {name:'RIFT-SPAWN',moves:['curse','drain','wall','plating'],title:'DIMENSIONAL STALKER',sub:'TELEPORTS AFTER EVERY SHOT',hp:44000,target:0,bx:190,by:440,r:48,teleport:true,spots:[[190,440],[530,440],[360,660]],teeth:18,layout:'grid',minGap:38,
+    counts:{gold:14,energy:11,shield:18,titan:10,bomb:6},rings:[{n:12,R:80,w:0.9,pattern:['shield','titan','shield']}],
+    theme:{hull:['#60f0d0','#106050','#021410'],plate:['#0a3a30','#010806'],rivet:'#a0fff0',teethC:'#e0fff8',core:['#e0fffa','#00ffc8'],aura:'#00d0b0',aura2:'#60ffe0',eye:'#b0fff0',crack:'#c0fff4',ring:'#40ffd8',bar:['#00604c','#60ffe0'],label:'#a0fff0'}},
+  {name:'HIVE-MOTHER',moves:['jam','curse','plating','drain'],title:'SWARM QUEEN',sub:'DEPLOYS A SWARM AND REBUILDS EVERY SHOT',hp:72000,target:0,bx:360,by:520,r:54,sway:90,swaySpeed:0.5,regen:5,debris:7,teeth:20,layout:'lattice',
+    counts:{gold:14,energy:11,shield:16,titan:10,bomb:6},rings:[{n:14,R:88,w:0.9,pattern:['titan','shield']},{n:24,R:136,w:-0.55,pattern:['shield','std','shield',null]}],
+    theme:{hull:['#d0f040','#506010','#141a02'],plate:['#3a4a0a','#0a0e02'],rivet:'#f0ff90',teethC:'#faffd0',core:['#ffffd0','#c8ff00'],aura:'#a0e000',aura2:'#f0ff60',eye:'#ffff80',crack:'#f8ffc0',ring:'#d8ff40',bar:['#4a6a00','#e8ff40'],label:'#e8ffa0'}},
+  {name:'PHANTOM',moves:['curse','repair','wall','drain'],title:'THE UNSEEN',sub:'PHASES OUT EVERY OTHER SHOT — ONLY SHATTERED PEGS HURT IT THEN',hp:40000,target:0,bx:360,by:500,r:50,swayY:40,swaySpeedY:0.5,regen:3,phasing:true,teeth:16,layout:'waves',
+    counts:{gold:14,energy:11,shield:16,titan:12,bomb:6},rings:[{n:16,R:96,w:-0.7,pattern:['shield','titan']}],
+    theme:{hull:['#e8e8ff','#5a5a8a','#0c0c1a'],plate:['#30305a','#06060e'],rivet:'#d0d0ff',teethC:'#ffffff',core:['#ffffff','#a090ff'],aura:'#8070ff',aura2:'#e0e0ff',eye:'#ffffff',crack:'#ffffff',ring:'#b0a8ff',bar:['#3a2a8a','#d0c8ff'],label:'#d8d0ff'}},
+  {name:'OBSIDIAN TITAN',moves:['plating','repair','curse','jam','drain'],title:'WORLD BREAKER',sub:'COLOSSAL CORE INSIDE A CRUSHING GRAVITY WELL',hp:105000,target:0,bx:360,by:520,r:66,gravity:1100,lock:true,regen:4,teeth:26,layout:'columns',minGap:30,
+    counts:{gold:14,energy:12,shield:14,titan:12,bomb:6},rings:[{n:14,R:100,w:0.6,pattern:['titan']},{n:20,R:140,w:-0.4,pattern:['titan','shield']},{n:28,R:180,w:0.3,pattern:['shield','std',null,'shield']}],
+    theme:{hull:['#5a5a66','#1a1a20','#020203'],plate:['#16161c','#020203'],rivet:'#ff5a2a',teethC:'#ff9a6a',core:['#fff0e0','#ff3a00'],aura:'#ff2a00',aura2:'#ff7a3a',eye:'#ff5a00',crack:'#ffb070',ring:'#ff6a3a',bar:['#5a0a00','#ff6a2a'],label:'#ffb8a0'}},
+  {name:'THE ARCHITECT',phases:3,phaseHp:[1,0.75,0.6],phaseMods:[{phasing:true,regen:5,sway:90,swaySpeed:0.7},{phasing:false,debris:7,gravity:950,sway:140,swaySpeed:0.95,regen:6}],moves:['curse','repair','drain','wall','jam','plating'],title:'SHAPER OF THE FRACTURE',sub:'THREE PHASES — EVERY DEFENCE, EVERY TRICK',hp:36000,target:0,bx:360,by:500,r:58,sway:50,swaySpeed:0.45,regen:4,gravity:500,lock:true,teeth:28,layout:'honeycomb',
+    counts:{gold:16,energy:12,shield:16,titan:14,bomb:6},rings:[{n:16,R:94,w:-0.8,pattern:['titan','shield']},{n:24,R:138,w:0.45,pattern:['shield','titan',null]}],
+    theme:{hull:['#ffffff','#8a7a50','#100c04'],plate:['#3a3020','#080602'],rivet:'#ffe680',teethC:'#ffffff',core:['#ffffff','#ff3dcb'],aura:'#ff3dcb',aura2:'#ffe680',eye:'#29f3ff',crack:'#ffffff',ring:'#ffe680',bar:['#8a1a6a','#ffe680'],label:'#fff0c0'}}
+
 ];
 /* ===================== UPGRADES ===================== */
 const BOONS=[
@@ -315,6 +342,13 @@ const BOONS=[
   {id:'bombs',icon:'✺',name:'DEMOLITION CACHE',desc:'+3 bomb pegs in every future stage.',color:'#ff5a5a',max:3,apply(){S.boons.bombs+=3;}},
   {id:'breaker',icon:'⛏',name:'SHIELD BREAKER',desc:'Shielded and titan pegs take double damage.',color:'#ff8a4a',max:1,apply(){S.boons.breaker=1;}},
   {id:'discount',icon:'▼',name:'EFFICIENT CIRCUITS',desc:'Every trigger card costs 1 less energy (min 1).',color:'#c58bff',max:1,apply(){S.boons.discount=1;}}
+];
+/* THE FRACTURE: rules that switch on at a stage index and stay on for every stage after */
+const FRACTURES=[
+  {id:'kill',from:10,icon:'⚔',name:'NO MERCY',color:'#ff4130',desc:'Score targets are gone — you must destroy the core.'},
+  {id:'bay',from:11,icon:'⊘',name:'BAY OFFLINE',color:'#7dff7a',desc:'The Recovery Bay gives +1 energy instead of a launch.'},
+  {id:'dark',from:12,icon:'◐',name:'BLACKOUT',color:'#b0a8ff',desc:'The field goes dark — only pegs near your marbles are visible.'},
+  {id:'tax',from:13,icon:'▲',name:'CARD TAX',color:'#c58bff',desc:'Every trigger card costs +1 energy.'}
 ];
 const PEG_VALUES={std:100,gold:500,energy:150,shield:200,titan:400,bomb:300,scrap:25,cursed:0};
 /* Boss moves: shown as a warning before each shot, carried out after it */
@@ -337,19 +371,19 @@ const MARBLE_COLORS={std:'#7df9ff',split:'#c58bff',laser:'#ff4fd8',mortar:'#ff8a
 const GEAR_ORDER=['split','laser','mortar','scatter','chain','singularity','seeker'];
 const SV='<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">';
 const CARDS={
-  split:{id:'split',tip:'Splits into 3 marbles',tip2:'Splits into 5 marbles',name:'QUANTUM SPLITTER',short:'SPLITTER',cost:2,color:'#c58bff',desc:'Marble fractures into 3 marbles on its first peg collision.',mk2:'Fractures into 5 marbles instead of 3.',
+  split:{id:'split',mk3:'Fractures into 7 marbles.',tip3:'Splits into 7 marbles',tip:'Splits into 3 marbles',tip2:'Splits into 5 marbles',name:'QUANTUM SPLITTER',short:'SPLITTER',cost:2,color:'#c58bff',desc:'Marble fractures into 3 marbles on its first peg collision.',mk2:'Fractures into 5 marbles instead of 3.',
     icon:SV+'<circle cx="20" cy="9" r="5" fill="currentColor"/><path d="M20 14v8M20 22L9 30M20 22L31 30M20 22v9"/><circle cx="8" cy="32" r="3.5"/><circle cx="32" cy="32" r="3.5"/><circle cx="20" cy="35" r="3"/></svg>'},
-  laser:{id:'laser',tip:'Laser every 3rd bounce',tip2:'Wide laser every 2nd bounce',name:'LASER BEAM SURGE',short:'LASER',cost:2,color:'#ff4fd8',desc:'Fires full-width horizontal laser beams on every 3rd bounce.',mk2:'Fires every 2nd bounce with wider beams.',
+  laser:{id:'laser',mk3:'Fires a wide laser on EVERY bounce.',tip3:'Laser on every bounce',tip:'Laser every 3rd bounce',tip2:'Wide laser every 2nd bounce',name:'LASER BEAM SURGE',short:'LASER',cost:2,color:'#ff4fd8',desc:'Fires full-width horizontal laser beams on every 3rd bounce.',mk2:'Fires every 2nd bounce with wider beams.',
     icon:SV+'<path d="M2 20h11M27 20h11" stroke-width="3.6"/><circle cx="20" cy="20" r="6" fill="currentColor"/><path d="M20 4v6M20 30v6M9 9l4 4M31 31l-4-4M31 9l-4 4M9 31l4-4" stroke-width="1.6"/></svg>'},
-  mortar:{id:'mortar',tip:'Crushes 5 pegs, then blasts',tip2:'Crushes 8 · huge blast',name:'SCRAPRUNNER MORTAR',short:'MORTAR',cost:1,color:'#ff8a2a',desc:'2× heavy shell crushes through 5 pegs, then detonates in a blast.',mk2:'Crushes through 8 pegs, bigger blast, +50% core damage.',
+  mortar:{id:'mortar',mk3:'Crushes 12 pegs, massive blast, double core damage.',tip3:'Crushes 12 · mega blast',tip:'Crushes 5 pegs, then blasts',tip2:'Crushes 8 · huge blast',name:'SCRAPRUNNER MORTAR',short:'MORTAR',cost:1,color:'#ff8a2a',desc:'2× heavy shell crushes through 5 pegs, then detonates in a blast.',mk2:'Crushes through 8 pegs, bigger blast, +50% core damage.',
     icon:SV+'<circle cx="20" cy="15" r="10" fill="currentColor" fill-opacity=".35"/><path d="M14 13a6 6 0 0 1 6-5"/><path d="M9 33l4-5M20 37v-8M31 33l-4-5"/><path d="M5 38h30" stroke-width="1.6"/></svg>'},
-  scatter:{id:'scatter',tip:'Fires 3 marbles at once',tip2:'Fires 5 marbles at once',name:'SCATTER VOLLEY',short:'SCATTER',cost:3,color:'#7dff7a',desc:'Fires a fan of 3 marbles in a single launch.',mk2:'Fires a 5-marble volley.',
+  scatter:{id:'scatter',mk3:'Fires a 7-marble volley.',tip3:'Fires 7 marbles at once',tip:'Fires 3 marbles at once',tip2:'Fires 5 marbles at once',name:'SCATTER VOLLEY',short:'SCATTER',cost:3,color:'#7dff7a',desc:'Fires a fan of 3 marbles in a single launch.',mk2:'Fires a 5-marble volley.',
     icon:SV+'<path d="M20 36V14M20 36L8 16M20 36L32 16"/><circle cx="20" cy="9" r="4" fill="currentColor"/><circle cx="6" cy="12" r="3.5" fill="currentColor"/><circle cx="34" cy="12" r="3.5" fill="currentColor"/></svg>'},
-  chain:{id:'chain',tip:'Hits arc to 2 pegs',tip2:'Hits arc to 3 pegs',name:'CHAIN ARC',short:'CHAIN ARC',cost:2,color:'#ffe14a',desc:'Every peg the marble hits arcs lightning into the 2 nearest pegs.',mk2:'Each hit arcs into the 3 nearest pegs.',
+  chain:{id:'chain',mk3:'Arcs into 4 pegs, and every arc chains onward again.',tip3:'Arcs chain onward',tip:'Hits arc to 2 pegs',tip2:'Hits arc to 3 pegs',name:'CHAIN ARC',short:'CHAIN ARC',cost:2,color:'#ffe14a',desc:'Every peg the marble hits arcs lightning into the 2 nearest pegs.',mk2:'Each hit arcs into the 3 nearest pegs.',
     icon:SV+'<path d="M22 3L10 21h9l-3 16 14-20h-9l3-14z" fill="currentColor" fill-opacity=".3"/></svg>'},
-  singularity:{id:'singularity',tip:'Black hole on 3rd bounce',tip2:'Huge hole on 2nd bounce',name:'SINGULARITY CHARGE',short:'SINGULARITY',cost:2,color:'#9a7dff',desc:'On its 3rd bounce, implodes into a black hole that shatters every peg nearby.',mk2:'Implodes on the 2nd bounce with a much wider radius.',
+  singularity:{id:'singularity',mk3:'Implodes twice — on the 2nd and 5th bounce — with a huge radius.',tip3:'Two huge black holes',tip:'Black hole on 3rd bounce',tip2:'Huge hole on 2nd bounce',name:'SINGULARITY CHARGE',short:'SINGULARITY',cost:2,color:'#9a7dff',desc:'On its 3rd bounce, implodes into a black hole that shatters every peg nearby.',mk2:'Implodes on the 2nd bounce with a much wider radius.',
     icon:SV+'<circle cx="20" cy="20" r="5" fill="currentColor"/><path d="M20 6a14 14 0 0 1 14 14M34 20a14 14 0 0 1-14 14M20 34A14 14 0 0 1 6 20M6 20A14 14 0 0 1 20 6" stroke-dasharray="6 5"/></svg>'},
-  seeker:{id:'seeker',tip:'Homes in on the core',tip2:'Hard homing · +50% core dmg',name:'SEEKER ROUND',short:'SEEKER',cost:1,color:'#ff5a5a',desc:'Homing marble steers toward the boss core after its first bounce.',mk2:'Stronger homing and +50% core damage.',
+  seeker:{id:'seeker',mk3:'Homes in from launch and deals double core damage.',tip3:'Homes from launch · 2× core',tip:'Homes in on the core',tip2:'Hard homing · +50% core dmg',name:'SEEKER ROUND',short:'SEEKER',cost:1,color:'#ff5a5a',desc:'Homing marble steers toward the boss core after its first bounce.',mk2:'Stronger homing and +50% core damage.',
     icon:SV+'<circle cx="20" cy="20" r="12"/><circle cx="20" cy="20" r="4" fill="currentColor"/><path d="M20 2v8M20 30v8M2 20h8M30 20h8"/></svg>'}
 };
 const PEG_STYLE={
@@ -473,6 +507,7 @@ const AudioSys={
   curse(){this.tone(300,0.5,'sawtooth',0.1,150);this.tone(450,0.5,'triangle',0.1,220,0.05);},
   drumroll(){let t=0;for(let i=0;i<24;i++){t+=Math.max(0.024,0.075-i*0.0022);this.noise(0.05,0.16+i*0.012,2600,'bandpass',t,1.4);}this.tone(196,1.1,'sawtooth',0.07,784);this.tone(98,1.1,'triangle',0.12,196);},
   finalHit(){[523,659,784,1047,1319].forEach((f,i)=>{this.tone(f,1.6,'triangle',0.09,0,0.08+i*0.03);this.tone(f*0.5,1.4,'sawtooth',0.035,0,0.08);});this.noise(1.2,0.3,7000,'highpass',0.05);},
+  phase(){this.tone(55,1.6,'sawtooth',0.3,30);this.tone(110,1.4,'square',0.08,220,0.2);[220,277,330,440].forEach((f,i)=>this.tone(f,0.9,'triangle',0.08,f*2,0.3+i*0.08));this.noise(1.2,0.4,800,'lowpass',0,1,3000);},
   regen(){this.tone(220,0.6,'sawtooth',0.07,880);this.tone(330,0.6,'triangle',0.08,1320,0.08);this.noise(0.5,0.12,800,'bandpass',0,4,3000);},
   victory(){this.fanfare(0);[523,659,784,1047,1319,1568,2093].forEach((f,i)=>this.tone(f,0.5,'triangle',0.08,0,1.6+i*0.09));},
   tally(total){this.tone(1047,0.35,'triangle',0.14);this.tone(1568,0.45,'triangle',0.1,0,0.08);if(total>=300000)this.tone(2093,0.6,'sine',0.1,0,0.16);},
@@ -617,7 +652,9 @@ const S={phase:'boot',paused:false,starting:false,score:0,displayScore:0,launche
   relics:[],scrap:0,map:[],elite:false,eliteWon:false,bonusLaunch:0,cloverUsed:false,windUsed:false,stageScrap:0,shop:null};
 const STAGE=()=>STAGES[S.stage];
 const maxEnergy=()=>MAX_ENERGY+S.boons.battery*2;
-const cardCost=id=>(hasRelic('clover')&&!S.cloverUsed)?0:Math.max(1,CARDS[id].cost-(S.boons.discount?1:0));
+const cardCost=id=>(hasRelic('clover')&&!S.cloverUsed)?0:Math.max(1,CARDS[id].cost-(S.boons.discount?1:0))+(fractureOn('tax')?1:0);
+const MKN=['','','MK II','MK III'];
+const cardDesc=(c,lv)=>lv>2?c.mk3:lv>1?c.mk2:c.desc, cardTip=(c,lv)=>lv>2?c.tip3:lv>1?c.tip2:c.tip;
 const gearLv=id=>S.gear[id]||0;
 const ownedCards=()=>GEAR_ORDER.filter(id=>gearLv(id)>0);
 const launchSpeed=()=>LAUNCH_SPEED*(1+0.12*S.boons.rail);
@@ -686,11 +723,20 @@ function layoutPoints(kind){
   return pts;
 }
 function distToSeg(px,py,x1,x2,y){const cx=clamp(px,x1,x2);return Math.hypot(px-cx,py-y);}
+/* distance from a point to anywhere the boss can be this stage (all teleport spots, full sway range) */
+function maxSway(st){let m=st.sway||0;(st.phaseMods||[]).forEach(p=>{if(p.sway)m=Math.max(m,p.sway);});return m;}
+function bossZoneDist(x,y,st){
+  st=st||STAGE(); const sw=maxSway(st), anchors=st.spots||[[st.bx,st.by]];
+  let d=1e9; for(const a of anchors) d=Math.min(d,distToSeg(x,y,a[0]-sw,a[0]+sw,a[1]));
+  return d;
+}
+const fractureOn=id=>{const f=FRACTURES.find(x=>x.id===id);return !!f&&S.stage>=f.from;};
+const activeFractures=()=>FRACTURES.filter(f=>S.stage>=f.from);
 function freeSpot(minGap){
   const st=STAGE(),excl=boss.maxR+PEG_R+58+(st.swayY||0);
   for(let tries=0;tries<60;tries++){
     const x=rand(34,W-34),y=rand(180,790);
-    if(distToSeg(x,y,st.bx-(st.sway||0),st.bx+(st.sway||0),st.by)<excl) continue;
+    if(bossZoneDist(x,y,st)<excl) continue;
     let ok=true;
     for(const p of pegs){if(p.alive&&Math.abs(p.x-x)<minGap&&Math.hypot(p.x-x,p.y-y)<minGap){ok=false;break;}}
     if(ok) return [x,y];
@@ -710,7 +756,9 @@ function buildLevel(){
   const bhp=Math.round(st.hp*(S.elite?1.4:1));
   boss={x:st.bx,y:st.by,baseX:st.bx,baseY:st.by,vx:0,vy:0,t:0,r:st.r,hp:bhp,maxHp:bhp,ghost:bhp,flash:0,rot:0,alive:true,kick:0,cracks,
     theme:st.theme,name:st.name,teeth:st.teeth,sway:st.sway||0,swaySpeed:st.swaySpeed||0,swayY:st.swayY||0,swaySpeedY:st.swaySpeedY||0,
-    gravity:st.gravity||0,lock:!!st.lock,lockMsgT:0,moveIdx:0,intent:null,intentPop:1,maxR,ringDefs:st.rings,slots:[]};
+    gravity:st.gravity||0,lock:!!st.lock,lockMsgT:0,moveIdx:0,intent:null,intentPop:1,maxR,ringDefs:st.rings,slots:[],
+    regen:st.regen||0,debris:st.debris||0,teleport:!!st.teleport,phasing:!!st.phasing,phased:false,phase:1,phases:st.phases||1,spotIdx:0};
+  if(st.phases){boss.hp=boss.maxHp=boss.ghost=Math.round(bhp*st.phaseHp[0]);boss.name=st.name+' · PHASE I';}
   for(const rd of st.rings){
     for(let i=0;i<rd.n;i++){
       const type=rd.pattern[i%rd.pattern.length]; if(!type) continue;
@@ -723,7 +771,7 @@ function buildLevel(){
   const excl=maxR+PEG_R+58+(st.swayY||0), gap=st.minGap||40, raw=layoutPoints(st.layout), field=[];
   for(const p of raw){
     if(p[0]<26||p[0]>W-26||p[1]<168||p[1]>800) continue;
-    if(distToSeg(p[0],p[1],st.bx-(st.sway||0),st.bx+(st.sway||0),st.by)<excl) continue;
+    if(bossZoneDist(p[0],p[1],st)<excl) continue;
     let ok=true; for(const q of field){if(Math.abs(q[0]-p[0])<gap&&Math.hypot(q[0]-p[0],q[1]-p[1])<gap){ok=false;break;}}
     if(ok) field.push(p);
   }
@@ -739,8 +787,8 @@ function buildLevel(){
 function bossTurn(){
   const st=STAGE();
   if(!boss||!boss.alive) return;
-  if(st.regen){
-    const dead=shuffle(boss.slots.filter(s=>!s.peg.alive)).slice(0,st.regen);
+  if(boss.regen){
+    const dead=shuffle(boss.slots.filter(s=>!s.peg.alive)).slice(0,boss.regen);
     if(dead.length){
       for(const s of dead){const p=makePeg(0,0,s.type,s.orbit);p.spawn=S.stageT;p.spawned=true;s.peg=p;pegs.push(p);}
       updateRing(0);
@@ -750,9 +798,9 @@ function bossTurn(){
       AudioSys.regen();
     }
   }
-  if(st.debris){
+  if(boss.debris){
     let made=0;
-    for(let i=0;i<st.debris;i++){
+    for(let i=0;i<boss.debris;i++){
       const sp=freeSpot(42); if(!sp) break;
       const p=makePeg(sp[0],sp[1],Math.random()<0.35?'titan':Math.random()<0.5?'shield':'std',null);
       p.spawn=S.stageT+i*0.06; p.spawned=true; pegs.push(p); made++;
@@ -765,6 +813,41 @@ function bossTurn(){
     boss.moveIdx=(boss.moveIdx+1)%st.moves.length; boss.intent=st.moves[boss.moveIdx];
   }
   boss.intentPop=1;
+  if(boss.teleport&&st.spots&&boss.alive){
+    const ox=boss.x,oy=boss.y; boss.spotIdx=(boss.spotIdx+1+((Math.random()*(st.spots.length-1))|0))%st.spots.length;
+    const sp=st.spots[boss.spotIdx];
+    wave(ox,oy,boss.maxR+60,boss.theme.aura2,0.5,4); glows(ox,oy,boss.theme.aura2,8,260,0.6,60);
+    boss.baseX=boss.x=sp[0]; boss.baseY=boss.y=sp[1]; updateRing(0);
+    wave(sp[0],sp[1],boss.maxR+90,boss.theme.aura2,0.6,5); glows(sp[0],sp[1],boss.theme.aura2,8,200,0.6,60); addArc(ox,oy,sp[0],sp[1],boss.theme.aura2,0.5);
+    addText(sp[0],sp[1]-boss.maxR-50,'⇄ TELEPORTED',boss.theme.label,18,true); AudioSys.vortex();
+  }
+  if(boss.phasing&&boss.alive){
+    boss.phased=!boss.phased;
+    addText(boss.x,boss.y+boss.maxR+50,boss.phased?'◌ PHASED OUT — SHATTER PEGS NEAR IT':'● SOLID AGAIN — HIT THE CORE',boss.phased?'#b0a8ff':'#ffffff',16,true);
+    wave(boss.x,boss.y,boss.r+60,'#b0a8ff',0.5,3);
+  }
+}
+/* multi-phase bosses: a "kill" before the last phase triggers the next phase instead */
+function phaseShift(){
+  const st=STAGE(); boss.phase++;
+  const hpBase=Math.round(st.hp*(S.elite?1.4:1)*st.phaseHp[boss.phase-1]);
+  boss.maxHp=boss.hp=boss.ghost=hpBase;
+  const mods=(st.phaseMods||[])[boss.phase-2]||{};
+  Object.assign(boss,mods); boss.phased=false; boss.unlocked=true;
+  for(const s of boss.slots){if(!s.peg.alive){const p=makePeg(0,0,s.type,s.orbit);p.spawn=S.stageT;p.spawned=true;s.peg=p;pegs.push(p);}}
+  updateRing(0);
+  const roman=['','I','II','III'][boss.phase];
+  boss.name=st.name+' · PHASE '+roman;
+  setBossLabel();
+  bigExplosion(boss.x,boss.y); slowT=1.0;
+  addText(boss.x,boss.y-boss.maxR-40,'PHASE '+roman+' — IT RISES AGAIN','#ff3dcb',26,true);
+  S.launches++; addText(LAUNCHER.x,LAUNCHER.y+100,'+1 LAUNCH — REINFORCEMENTS','#7dff7a',18,true);
+  for(const p of pegs) if(p.alive&&p.orbit) p.flash=1;
+  AudioSys.phase();
+}
+function setBossLabel(){
+  const st=STAGE();
+  $('bossLbl').textContent=(S.elite?'☠ ELITE · ':'')+'STAGE '+(S.stage+1)+'/'+STAGES.length+' // '+(boss?boss.name:st.name);
 }
 function fieldPegs(type){return pegs.filter(p=>p.alive&&!p.orbit&&p.type===type);}
 function doBossMove(id){
@@ -779,7 +862,7 @@ function doBossMove(id){
       placed=0; const y=rand(240,770), x0=rand(40,W-40-(n-1)*34), spots=[];
       for(let i=0;i<n;i++){
         const x=x0+i*34;
-        if(distToSeg(x,y,STAGE().bx-boss.sway,STAGE().bx+boss.sway,STAGE().by)<boss.maxR+PEG_R+40+boss.swayY) continue;
+        if(bossZoneDist(x,y)<boss.maxR+PEG_R+40+boss.swayY) continue;
         if(pegs.some(p=>p.alive&&Math.hypot(p.x-x,p.y-y)<27)) continue;
         spots.push([x,y]);
       }
@@ -898,8 +981,8 @@ function buildCards(){
     const c=CARDS[id],lv=gearLv(id),cost=cardCost(id),el=document.createElement('div');
     el.className='card'; el.style.setProperty('--c',c.color);
     el.innerHTML='<div class="key">'+(i+1)+'</div><div class="card-top"><div class="icon">'+c.icon+'</div><div class="cost">'+'<i></i>'.repeat(cost)+'<span>'+cost+' EN</span></div></div>'+
-      '<div class="cname">'+(compact?c.short:c.name)+(lv>1?' <em>MK II</em>':'')+'</div><div class="cdesc">'+(compact?(lv>1?c.tip2:c.tip):(lv>1?c.mk2:c.desc))+'</div><div class="armed">ARMED</div>';
-    el.title=c.name+(lv>1?' MK II':'')+' — '+(lv>1?c.mk2:c.desc);
+      '<div class="cname">'+(compact?c.short:c.name)+(lv>1?' <em'+(lv>2?' class="mk3"':'')+'>'+MKN[lv]+'</em>':'')+'</div><div class="cdesc">'+(compact?cardTip(c,lv):cardDesc(c,lv))+'</div><div class="armed">ARMED</div>';
+    el.title=c.name+(lv>1?' '+MKN[lv]:'')+' — '+cardDesc(c,lv);
     el.addEventListener('click',()=>selectCard(id));
     wrap.appendChild(el); cardEls[id]=el;
   });
@@ -938,8 +1021,8 @@ function startStage(){
   shake=0;flash=0;slowT=0;timeScale=1;finale=null;cam.z=1;
   catcher.w=124*(1+S.boons.bay);
   buildLevel(); buildBackdrops(); buildCards(); S.phase='intro';
-  $('targetLbl').textContent='TARGET '+fmt(st.target);
-  $('bossLbl').textContent=(S.elite?'☠ ELITE · ':'')+'STAGE '+(S.stage+1)+'/'+STAGES.length+' // '+st.name;
+  $('targetLbl').textContent=fractureOn('kill')?'TARGET: DESTROY THE CORE':'TARGET '+fmt(st.target);
+  setBossLabel();
   renderRelics();
   $('runLbl').textContent=S.runScore>0?'RUN '+fmt(S.runScore):'';
   $('bossBar').style.background='linear-gradient(90deg,'+st.theme.bar[0]+','+st.theme.bar[1]+')';
@@ -959,22 +1042,23 @@ function retryStage(){
 function continueRun(d){
   S.stage=d.stage;S.runScore=d.runScore||0;S.energy=d.energy||START_ENERGY;
   S.boons=Object.assign(freshBoons(),d.boons||{});S.gear=Object.assign(freshGear(),d.gear||{});
-  S.relics=d.relics||[];S.scrap=d.scrap||0;S.map=(d.map&&d.map.length)?d.map:genMap();S.elite=!!d.elite;S.eliteWon=!!d.eliteWon;S.bonusLaunch=d.bonusLaunch||0;S.shop=d.shop||null;
+  S.relics=d.relics||[];S.scrap=d.scrap||0;S.map=(d.map&&d.map.length)?d.map:genMap(); if(S.map.length<STAGES.length-1){const g=genMap();S.map=S.map.concat(g.slice(S.map.length));}S.elite=!!d.elite;S.eliteWon=!!d.eliteWon;S.bonusLaunch=d.bonusLaunch||0;S.shop=d.shop||null;
   renderRelics();
   if(d.at==='map'&&S.stage>0) showMap(); else startStage();
 }
 function nextStage(boon){
   if(boon){boon.apply();S.boons.count[boon.id]=(S.boons.count[boon.id]||0)+1;}
   S.stage=Math.min(STAGES.length-1,S.stage+1);
-  if(S.eliteWon){S.eliteWon=false;showRelicPick('ELITE SPOILS','// ELITE DEFEATED — CLAIM A RELIC',()=>showMap());}
-  else showMap();
+  const toMap=()=>{const f=FRACTURES.find(x=>x.from===S.stage);if(f)showFracture(f,()=>showMap());else showMap();};
+  if(S.eliteWon){S.eliteWon=false;showRelicPick('ELITE SPOILS','// ELITE DEFEATED — CLAIM A RELIC',toMap);}
+  else toMap();
 }
 function makeMarble(x,y,vx,vy,card){
   const lv=card==='std'?1:gearLv(card)||1, mortar=card==='mortar';
-  return {id:++marbleSeq,x,y,vx,vy,r:mortar?(lv>1?22:18):MARBLE_R,card,lv,color:MARBLE_COLORS[card],trail:[],bounces:0,
-    pierce:mortar?(lv>1?8:5):0,splitPending:card==='split',imploded:false,bossCD:0,stallT:0,alive:true};
+  return {id:++marbleSeq,x,y,vx,vy,r:mortar?(lv>2?26:lv>1?22:18):MARBLE_R,card,lv,color:MARBLE_COLORS[card],trail:[],bounces:0,
+    pierce:mortar?(lv>2?12:lv>1?8:5):0,vortexes:0,splitPending:card==='split',imploded:false,bossCD:0,stallT:0,alive:true};
 }
-function marbleRadius(card){return card==='mortar'?(gearLv('mortar')>1?22:18):MARBLE_R;}
+function marbleRadius(card){return card==='mortar'?(gearLv('mortar')>2?26:gearLv('mortar')>1?22:18):MARBLE_R;}
 function launch(){
   if(S.paused||S.phase!=='aim'||S.launches<=0) return;
   AudioSys.init();
@@ -986,7 +1070,7 @@ function launch(){
   const ox=LAUNCHER.x+Math.cos(a)*d, oy=LAUNCHER.y+Math.sin(a)*d;
   marbles=[];
   if(card==='scatter'){
-    const offs=gearLv('scatter')>1?[-0.3,-0.15,0,0.15,0.3]:[-0.2,0,0.2];
+    const offs=gearLv('scatter')>2?[-0.36,-0.24,-0.12,0,0.12,0.24,0.36]:gearLv('scatter')>1?[-0.3,-0.15,0,0.15,0.3]:[-0.2,0,0.2];
     for(const o of offs){const aa=clamp(a+o,0.05,Math.PI-0.05);marbles.push(makeMarble(ox,oy,Math.cos(aa)*sp,Math.sin(aa)*sp,'scatter'));}
   } else marbles.push(makeMarble(ox,oy,Math.cos(a)*sp,Math.sin(a)*sp,card||'std'));
   const m=marbles[0];
@@ -994,7 +1078,7 @@ function launch(){
   S.phase='flight'; recoil=1; prediction=null;
   sparks(m.x,m.y,m.color,18,420,0.4,2); glows(m.x,m.y,m.color,5,140,0.4,40); wave(m.x,m.y,50,m.color,0.35,3);
   addShake(card==='mortar'?9:card==='scatter'?7:3); AudioSys.launch(card);
-  if(card) addText(LAUNCHER.x,LAUNCHER.y+78,CARDS[card].name+(gearLv(card)>1?' MK II':'')+' ENGAGED',m.color,14);
+  if(card) addText(LAUNCHER.x,LAUNCHER.y+78,CARDS[card].name+(gearLv(card)>1?' '+MKN[gearLv(card)]:'')+' ENGAGED',m.color,14);
   updateDock();
 }
 function registerHit(v,x,y,color,label,big){
@@ -1075,6 +1159,10 @@ function explodeAt(x,y,R,bossDmg,skip){
 }
 function damageBoss(amount,x,y,viaPeg){
   if(!boss||!boss.alive) return;
+  if(boss.phased&&!viaPeg){
+    if(boss.lockMsgT<=0){boss.lockMsgT=0.6;addText(boss.x,boss.y-boss.r-30,'PHASED OUT — SHATTER PEGS NEAR IT','#b0a8ff',15);AudioSys.deflect();}
+    return;
+  }
   if(bossLocked()&&!viaPeg){
     if(boss.lockMsgT<=0){boss.lockMsgT=0.6;addText(boss.x,boss.y-boss.r-30,'CORE LOCKED — BREAK THE RING','#ffffff',15);AudioSys.deflect();}
     sparks(x,y,'#ffffff',4,200,0.3,1.5); return;
@@ -1086,19 +1174,21 @@ function damageBoss(amount,x,y,viaPeg){
   sparks(x,y,'#ff6a2a',viaPeg?6:16,viaPeg?260:460,0.5,2.2);
   if(!viaPeg){wave(x,y,50,'#ff4130',0.4,3);glows(x,y,'#ff4130',4,100,0.5,40);}
   addShake(viaPeg?2:6); AudioSys.bossHit(viaPeg);
-  if(boss.hp<=0) bossDefeated();
+  if(boss.hp<=0){if(boss.phase<boss.phases) phaseShift(); else bossDefeated();}
 }
 function coreDamage(m){
   const mult=1+Math.min(turn?turn.hits+1:0,COMBO_CAP)*0.04;
   let base=350;
-  if(m.card==='mortar') base=1100*(m.lv>1?1.5:1);
-  if(m.card==='seeker'&&m.lv>1) base*=1.5;
-  return Math.round(base*mult*S.boons.core);
+  if(m.card==='mortar') base=1100*(m.lv>2?2:m.lv>1?1.5:1);
+  if(m.card==='seeker'&&m.lv>1) base*=m.lv>2?2:1.5;
+  const fatigue=Math.max(0.12,Math.pow(0.85,turn?turn.coreHits||0:0));
+  return Math.round(base*mult*S.boons.core*fatigue);
 }
 function bossContact(m){
-  m.bossCD=0.14; m.bounces++;
+  m.bossCD=0.22; m.bounces++;
   registerHit(250,m.x,m.y,'#ffb36b','+250 CORE');
   damageBoss(coreDamage(m),m.x,m.y,false);
+  if(turn) turn.coreHits=(turn.coreHits||0)+1;
   if(S.phase!=='flight') return;
   if(hasRelic('splinter')&&!m.splintered&&marbles.length<14){
     m.splintered=true; relicPing('splinter');
@@ -1112,10 +1202,10 @@ function afterBounce(m,p){
   if(m.splitPending) splitMarble(m);
   if(S.phase!=='flight') return;
   if(p&&hasRelic('static')&&turn&&turn.hits>=turn.nextStatic){turn.nextStatic=turn.hits+10;relicPing('static');chainArc(p,2);if(S.phase!=='flight') return;}
-  if(m.card==='laser'&&m.bounces%(m.lv>1?2:3)===0) fireLaser(m);
+  if(m.card==='laser'&&m.bounces%(m.lv>2?1:m.lv>1?2:3)===0) fireLaser(m);
   if(S.phase!=='flight') return;
-  if(m.card==='singularity'&&!m.imploded&&m.bounces>=(m.lv>1?2:3)) startVortex(m);
-  if(m.card==='chain'&&p) chainArc(p,m.lv>1?3:2);
+  if(m.card==='singularity'&&m.vortexes<(m.lv>2?2:1)&&m.bounces>=(m.vortexes?5:(m.lv>1?2:3))) startVortex(m);
+  if(m.card==='chain'&&p) chainArc(p,m.lv>2?4:m.lv>1?3:2,m.lv>2?1:0);
 }
 function pegContact(p,m){
   p.hitCD=0.09; m.bounces++;
@@ -1128,14 +1218,14 @@ function crush(p,m){
   directHit=true; damagePeg(p,p.hp); directHit=false;
   m.vx*=0.93; m.vy*=0.93; addShake(5);
   sparks(p.x,p.y,'#ff8a2a',14,420,0.5,2.5); AudioSys.crush();
-  if(m.pierce===0&&S.phase==='flight'){addText(m.x,m.y-26,'SHELL DETONATED','#ff8a2a',15,true);explodeAt(m.x,m.y,(m.lv>1?115:85)*(hasRelic('volatile')?1.5:1),m.lv>1?700:450,p);
+  if(m.pierce===0&&S.phase==='flight'){addText(m.x,m.y-26,'SHELL DETONATED','#ff8a2a',15,true);explodeAt(m.x,m.y,(m.lv>2?150:m.lv>1?115:85)*(hasRelic('volatile')?1.5:1),m.lv>2?1200:m.lv>1?700:450,p);
     if(hasRelic('demolition')&&S.phase==='flight'){relicPing('demolition');for(const a of [-2.2,-1.57,-0.95]){const c=makeMarble(m.x,m.y,Math.cos(a)*620,Math.sin(a)*620,'std');c.color='#ffb36b';marbles.push(c);}}}
 }
 function splitMarble(m){
   m.splitPending=false;
   const sp=Math.max(420,Math.hypot(m.vx,m.vy)),a=Math.atan2(m.vy,m.vx);
   m.vx=Math.cos(a)*sp; m.vy=Math.sin(a)*sp;
-  const offs=m.lv>1?[-0.85,-0.42,0.42,0.85]:[-0.55,0.55];
+  const offs=m.lv>2?[-1.05,-0.7,-0.35,0.35,0.7,1.05]:m.lv>1?[-0.85,-0.42,0.42,0.85]:[-0.55,0.55];
   for(const da of offs){
     const c=makeMarble(m.x,m.y,Math.cos(a+da)*sp,Math.sin(a+da)*sp,'split');
     c.splitPending=false; c.bounces=m.bounces; c.trail=m.trail.slice(-4);
@@ -1146,6 +1236,7 @@ function splitMarble(m){
 }
 function fireLaser(m){
   const y=m.y, tol=m.lv>1?12:6;
+  if(m.lv>2&&lasers.length>3) return;
   const vert=hasRelic('prism'), x=m.x; if(vert) relicPing('prism');
   lasers.push({x:m.x,y,life:0.45,max:0.45,w:m.lv>1?1.6:1,vert});
   AudioSys.laser(); addShake(6); doFlash(0.12,'#ff4fd8');
@@ -1157,7 +1248,7 @@ function fireLaser(m){
   }
   if(boss&&boss.alive&&(Math.abs(boss.y-y)<boss.r+tol||(vert&&Math.abs(boss.x-x)<boss.r+tol))){registerHit(250,boss.x,y,'#ff4fd8','+250 BEAM');damageBoss(300,boss.x,y,false);}
 }
-function chainArc(src,n){
+function chainArc(src,n,depth){
   const cands=[];
   for(const q of pegs){
     if(!q.alive||q===src||q.hitCD>0) continue;
@@ -1172,12 +1263,13 @@ function chainArc(src,n){
     if(S.phase!=='flight') return;
     addArc(src.x,src.y,q.x,q.y,'#ffe14a',0.28); sparks(q.x,q.y,'#ffe14a',6,240,0.3,1.5);
     q.hitCD=0.09; damagePeg(q,1);
+    if(depth>0&&S.phase==='flight') chainArc(q,2,depth-1);
     if(hasRelic('thunder')&&boss&&boss.alive&&S.phase==='flight'&&Math.hypot(q.x-boss.x,q.y-boss.y)<boss.maxR+180){addArc(q.x,q.y,boss.x,boss.y,'#ffe14a',0.25);relicPing('thunder');damageBoss(60,q.x,q.y,true);}
   }
 }
 function startVortex(m){
-  m.imploded=true;
-  const R=m.lv>1?200:150;
+  m.imploded=true; m.vortexes++;
+  const R=m.lv>2?230:m.lv>1?200:150;
   vortices.push({x:m.x,y:m.y,R,t:0,fired:false,lv:m.lv});
   addText(m.x,m.y-28,'SINGULARITY','#9a7dff',18,true);
   AudioSys.vortex(); addShake(4);
@@ -1191,12 +1283,13 @@ function fireVortex(v){
     if(!q.alive) continue;
     if(Math.hypot(q.x-v.x,q.y-v.y)<v.R){q.hitCD=0.09;addArc(v.x,v.y,q.x,q.y,'#9a7dff',0.25);damagePeg(q,q.hp);if(S.phase!=='flight') return;}
   }
-  if(boss&&boss.alive&&Math.hypot(boss.x-v.x,boss.y-v.y)<v.R+boss.r) damageBoss(v.lv>1?1500:900,v.x,v.y,false);
+  if(boss&&boss.alive&&Math.hypot(boss.x-v.x,boss.y-v.y)<v.R+boss.r) damageBoss(v.lv>2?2000:v.lv>1?1500:900,v.x,v.y,false);
 }
 function catchMarble(m){
   m.alive=false; catcher.glow=1;
   glows(m.x,H-26,'#29f3ff',8,160,0.6,40); sparks(m.x,H-30,'#7df9ff',20,380,0.6); wave(m.x,H-26,70,'#29f3ff',0.5,3);
   if(catcher.jam){addText(catcher.x,H-74,'BAY JAMMED','#ff4130',18,true);AudioSys.deny();}
+  else if(fractureOn('bay')){if(turn&&turn.free<1){turn.free++;addText(catcher.x,H-74,'BAY OFFLINE · +1 ENERGY','#7dff7a',16,true);gainEnergy(catcher.x,H-60);}}
   else if(turn&&turn.free<(S.boons.salvage?2:1)){
     turn.free++; S.launches++; S.stats.freeLaunches++;
     addText(catcher.x,H-74,'FREE LAUNCH +1','#7dff7a',22,true); AudioSys.free(); addShake(4);
@@ -1237,7 +1330,7 @@ function endLaunch(){
 }
 function resolveAfterTally(){
   tally=null;
-  if(S.bossKilled||S.score>=STAGE().target) startClear();
+  if(S.bossKilled||(!fractureOn('kill')&&S.score>=STAGE().target)) startClear();
   else if(S.launches<=0&&hasRelic('secondwind')&&!S.windUsed){S.windUsed=true;S.launches=1;relicPing('secondwind');addText(W/2,420,'↺ SECOND WIND — +1 LAUNCH','#7dff7a',24,true);AudioSys.free();S.phase='aim';bossTurn();updateDock();}
   else if(S.launches<=0) gameOver();
   else {S.phase='aim';bossTurn();updateDock();}
@@ -1279,11 +1372,14 @@ function upgradeOffers(){
     const c=CARDS[id],lv=gearLv(id);
     if(lv===0) gear.push({id:'new_'+id,icon:'+',name:'NEW GEAR: '+c.name,desc:c.desc+' Costs '+cardCost(id)+' energy.',color:c.color,tag:'NEW GEAR',apply(){S.gear[id]=1;}});
     else if(lv===1) gear.push({id:'mk2_'+id,icon:'▲',name:c.name+' MK II',desc:c.mk2,color:c.color,tag:'GEAR UPGRADE',apply(){S.gear[id]=2;}});
+    else if(lv===2&&S.stage>=9) gear.push({id:'mk3_'+id,icon:'★',name:c.name+' MK III',desc:c.mk3,color:c.color,tag:'LEGENDARY GEAR',legend:1,apply(){S.gear[id]=3;}});
   }
   for(const b of BOONS){if((S.boons.count[b.id]||0)<b.max) perks.push(b);}
   shuffle(gear); shuffle(perks);
   const out=[];
-  if(gear.length) out.push(gear.shift());
+  const leg=gear.filter(g=>g.legend);
+  if(leg.length){out.push(leg[0]);gear.splice(gear.indexOf(leg[0]),1);}
+  else if(gear.length) out.push(gear.shift());
   const rest=shuffle(gear.concat(perks));
   while(out.length<3&&rest.length) out.push(rest.shift());
   return shuffle(out);
@@ -1292,9 +1388,9 @@ function showEnd(win){
   const st=STAGE(), n=S.stage+1, last=S.stage===STAGES.length-1, runOver=!win||last;
   $('endBox').className='box '+(win?'win':'lose');
   $('endTag').textContent=win
-    ?(last?'// ALL '+STAGES.length+' STAGES COMPLETE — THE DYNASTY IS YOURS':'// STAGE '+pad2(n)+' COMPLETE — '+st.name+' NEUTRALIZED')
+    ?(last?'// ALL '+STAGES.length+' STAGES COMPLETE — THE FRACTURE IS SEALED':S.stage===9?'// THE DYNASTY FALLS... BUT REALITY BEGINS TO FRACTURE':'// STAGE '+pad2(n)+' COMPLETE — '+st.name+' NEUTRALIZED')
     :'// STAGE '+pad2(n)+' — LINK SEVERED, LAUNCH RESERVES DEPLETED';
-  const title=$('endTitle'); title.textContent=win?(last?'DYNASTY SECURED':'STAGE '+pad2(n)+' CLEARED'):'SIMULATION FAILED';
+  const title=$('endTitle'); title.textContent=win?(last?'REALITY RESTORED':S.stage===9?'DYNASTY FALLEN':'STAGE '+pad2(n)+' CLEARED'):'SIMULATION FAILED';
   title.classList.remove('pop'); void title.offsetWidth; title.classList.add('pop');
   const rows=[];
   rows.push(['STAGE '+n+' IMPACT SCORE',fmt(S.score)]);
@@ -1376,7 +1472,7 @@ function physicsStep(h){
     if(boss&&boss.alive){
       const gx=boss.x-m.x,gy=boss.y-m.y,gd=Math.hypot(gx,gy)||1;
       if(boss.gravity&&gd<330){const f=boss.gravity*(1-gd/330)*h;m.vx+=gx/gd*f;m.vy+=gy/gd*f;}
-      if(m.card==='seeker'&&m.bounces>0){const f=(m.lv>1?1300:750)*h;m.vx+=gx/gd*f;m.vy+=gy/gd*f;}
+      if(m.card==='seeker'&&(m.bounces>0||m.lv>2)){const f=(m.lv>2?1500:m.lv>1?1300:750)*h;m.vx+=gx/gd*f;m.vy+=gy/gd*f;}
     }
     if(m.wallCD>0) m.wallCD-=h;
     if(boss&&boss.alive&&m.bounces>0&&(m.card==='split'||m.card==='scatter')&&hasRelic('homing')){const gx=boss.x-m.x,gy=boss.y-m.y,gd=Math.hypot(gx,gy)||1,f=480*h; if(Math.random()<0.004)relicPing('homing');m.vx+=gx/gd*f;m.vy+=gy/gd*f;}
@@ -1409,7 +1505,7 @@ function physicsStep(h){
       if(!m.alive) break;
     }
     if(!m.alive) continue;
-    if(boss&&boss.alive){
+    if(boss&&boss.alive&&!boss.phased){
       const dx=m.x-boss.x,dy=m.y-boss.y,rr=m.r+boss.r,d2=dx*dx+dy*dy;
       if(d2<rr*rr){
         const d=Math.sqrt(d2)||0.001,nx=dx/d,ny=dy/d;
@@ -1463,7 +1559,7 @@ function predictPath(){
         }
       }
     }
-    if(!col&&boss&&boss.alive){
+    if(!col&&boss&&boss.alive&&!boss.phased){
       const dx=x-boss.x,dy=y-boss.y,rr=r+boss.r,d2=dx*dx+dy*dy;
       if(d2<rr*rr){
         const d=Math.sqrt(d2)||0.001,nx=dx/d,ny=dy/d;
@@ -1540,7 +1636,7 @@ function update(dt,raw){
 
   if(boss){
     boss.rot+=0.25*dt; boss.flash=Math.max(0,boss.flash-dt*4); boss.kick=Math.max(0,boss.kick-dt*4); boss.lockMsgT-=dt;
-    if(S.phase==='flight'&&!finale&&boss.alive&&!bossLocked()){
+    if(S.phase==='flight'&&!finale&&boss.alive&&!bossLocked()&&!boss.phased&&boss.phase>=boss.phases){
       for(const m of marbles){
         if(!m.alive||m.bossCD>0) continue;
         const dx=boss.x-m.x,dy=boss.y-m.y,d=Math.hypot(dx,dy)||1,gap=d-boss.r-m.r;
@@ -1688,7 +1784,8 @@ function showMap(){
     '<div class="maphdr"><span>◆ <b>'+S.scrap+'</b> SCRAP</span><span>RELICS <b>'+S.relics.length+'</b></span><span>ARSENAL <b>'+ownedCards().length+'/7</b></span></div><div class="map" id="mapScroll">';
   for(let s=STAGES.length-1;s>=S.stage;s--){
     const st=STAGES[s], cur=s===S.stage;
-    html+='<div class="mrow brow'+(cur?' next':'')+'"><div class="mboss" style="--c:'+st.theme.bar[1]+'">STAGE '+pad2(s+1)+' · '+st.name+'<small>'+st.sub+'</small></div></div>';
+    const newF=FRACTURES.find(f=>f.from===s), ph=st.phases?' · '+st.phases+' PHASES':'';
+    html+='<div class="mrow brow'+(cur?' next':'')+'"><div class="mboss'+(s>=9?' frac':'')+'" style="--c:'+st.theme.bar[1]+'">STAGE '+pad2(s+1)+' · '+st.name+ph+'<small>'+st.sub+'</small>'+(newF?'<small class="fr" style="--f:'+newF.color+'">+ FRACTURE: '+newF.icon+' '+newF.name+'</small>':'')+'</div></div>';
     if(s-1>=S.stage-1&&s>=1){
       const r=S.map[s-1], active=s-1===S.stage-1;
       html+='<div class="mrow'+(active?' active':'')+'">'+r.opts.map((t,i)=>{
@@ -1735,7 +1832,7 @@ function shopStock(){
   const items=[];
   relicOffers(3).forEach(id=>items.push({kind:'relic',id,price:RELICS[id].rare?110:70}));
   const gear=[];
-  for(const id of GEAR_ORDER){const lv=gearLv(id);if(lv===0)gear.push({kind:'gear',id,lv:1,price:90});else if(lv===1)gear.push({kind:'gear',id,lv:2,price:80});}
+  for(const id of GEAR_ORDER){const lv=gearLv(id);if(lv===0)gear.push({kind:'gear',id,lv:1,price:90});else if(lv===1)gear.push({kind:'gear',id,lv:2,price:80});else if(lv===2&&S.stage>=10)gear.push({kind:'gear',id,lv:3,price:150});}
   if(gear.length) items.push(pick(gear));
   const perks=BOONS.filter(b=>b.id!=='cap'&&(S.boons.count[b.id]||0)<b.max);
   if(perks.length) items.push({kind:'perk',id:pick(perks).id,price:55});
@@ -1745,7 +1842,7 @@ function shopStock(){
 }
 function itemInfo(it){
   if(it.kind==='relic'){const r=RELICS[it.id];return {icon:r.icon,name:r.name,desc:r.desc,color:r.color,tag:r.rare?'RARE RELIC':'RELIC'};}
-  if(it.kind==='gear'){const c=CARDS[it.id];return {icon:it.lv>1?'▲':'+',name:it.lv>1?c.name+' MK II':c.name,desc:it.lv>1?c.mk2:c.desc,color:c.color,tag:it.lv>1?'GEAR UPGRADE':'NEW GEAR'};}
+  if(it.kind==='gear'){const c=CARDS[it.id];return {icon:it.lv>2?'★':it.lv>1?'▲':'+',name:it.lv>1?c.name+' '+MKN[it.lv]:c.name,desc:cardDesc(c,it.lv),color:c.color,tag:it.lv>2?'LEGENDARY GEAR':it.lv>1?'GEAR UPGRADE':'NEW GEAR'};}
   if(it.kind==='perk'){const b=BOONS.find(x=>x.id===it.id);return {icon:b.icon,name:b.name,desc:b.desc,color:b.color,tag:'PERK'};}
   if(it.kind==='energy') return {icon:'⚡',name:'ENERGY CELL',desc:'Refill energy to full.',color:'#29f3ff',tag:'SUPPLY'};
   return {icon:'◉',name:'SPARE MARBLE',desc:'+1 launch for the next stage only.',color:'#7df9ff',tag:'SUPPLY'};
@@ -1781,6 +1878,17 @@ function stageScrap(){
   return s;
 }
 
+/* ---------- The Fracture: introduces each new rule as you reach it ---------- */
+function showFracture(f,done){
+  const first=f.from===10, all=activeFractures();
+  const list=all.map(x=>'<div class="frow'+(x===f?' new':'')+'" style="--f:'+x.color+'"><i>'+x.icon+'</i><b>'+x.name+'</b><span>'+x.desc+'</span>'+(x===f?'<u>NEW</u>':'')+'</div>').join('');
+  openRunModal('<div class="tag">// '+(first?'BEYOND THE DYNASTY — THE FRACTURE OPENS':'THE FRACTURE WIDENS')+'</div><h1 class="title fracture">'+(first?'THE FRACTURE':'FRACTURE '+['','I','II','III','IV'][all.length])+'</h1>'+
+    (first?'<p class="rmsg">The Dynast is gone, but its fall tore reality open. Five more cores wait inside the Fracture.<br>Every stage from here adds a <b>permanent new rule</b> on top of the last. <b>Legendary MK III gear</b> is now on offer.</p>':'<p class="rmsg">A new rule joins the others — they all stay active until the end.</p>')+
+    '<div class="flist">'+list+'</div><div class="btnrow"><button class="btn" id="fracBtn">'+(first?'ENTER THE FRACTURE':'CONTINUE')+'</button></div>','lose');
+  AudioSys.phase();
+  $('fracBtn').onclick=()=>{AudioSys.select();done();};
+}
+
 /* ===================== RENDERING ===================== */
 function drawAmbient(){
   ctx.globalCompositeOperation='lighter';
@@ -1801,11 +1909,11 @@ function drawCatcher(){
   ctx.beginPath(); ctx.moveTo(-w/2,-12); ctx.lineTo(-w/2+16,14); ctx.lineTo(w/2-16,14); ctx.lineTo(w/2,-12);
   g=ctx.createLinearGradient(0,-12,0,14); g.addColorStop(0,'rgba(10,40,60,0.5)'); g.addColorStop(1,'rgba(10,60,90,0.9)');
   ctx.fillStyle=g; ctx.fill();
-  const jc=c.jam?'#ff4130':'#29f3ff';
+  const off=fractureOn('bay'), jc=c.jam?'#ff4130':off?'#7dff7a':'#29f3ff';
   ctx.lineWidth=3; ctx.strokeStyle=jc; ctx.shadowColor=jc; ctx.shadowBlur=12+c.glow*20; ctx.stroke(); ctx.shadowBlur=0;
   if(c.jam){ctx.strokeStyle='rgba(255,65,48,0.7)';ctx.lineWidth=2;ctx.beginPath();for(let i=-2;i<=2;i++){ctx.moveTo(i*22-8,-10);ctx.lineTo(i*22+8,12);}ctx.stroke();}
   ctx.fillStyle=c.jam?'#ffd0c8':'rgba(200,250,255,0.85)'; ctx.font='700 9px '+FM; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(c.jam?'JAMMED':'RECOVERY +'+(S.boons.salvage?2:1),0,3);
+  ctx.fillText(c.jam?'JAMMED':off?'OFFLINE · +1 EN':'RECOVERY +'+(S.boons.salvage?2:1),0,3);
   ctx.restore();
 }
 function drawBarrier(){
@@ -1831,21 +1939,37 @@ function drawBarrier(){
   }
   ctx.restore();
 }
+function lightAt(x,y){
+  let v=0.07;
+  const add=(lx,ly,R)=>{const d=Math.hypot(x-lx,y-ly);if(d<R)v=Math.max(v,d<R*0.55?1:1-(d-R*0.55)/(R*0.45));};
+  add(LAUNCHER.x,LAUNCHER.y,210);
+  if(boss&&boss.alive) add(boss.x,boss.y,boss.maxR+50);
+  for(const m of marbles) if(m.alive) add(m.x,m.y,165);
+  for(const v2 of vortices) add(v2.x,v2.y,v2.R+40);
+  for(const l of lasers){if(Math.abs(y-l.y)<40)v=1;if(l.vert&&Math.abs(x-l.x)<40)v=1;}
+  if(prediction&&prediction.hit) add(prediction.hit.x,prediction.hit.y,80);
+  return v;
+}
 function drawPegs(){
-  const t=S.time;
+  const t=S.time, dark=fractureOn('dark')&&S.phase!=='clear';
+  if(dark){ctx.fillStyle='rgba(0,0,6,0.55)';ctx.fillRect(-40,-40,W+80,H+80);}
   for(const p of pegs){
     if(!p.alive) continue;
     let sc=1; const k=(S.stageT-p.spawn)/0.35;
     if(k<1){if(k<=0) continue; sc=easeOutBack(k);}
+    const vis=dark?lightAt(p.x,p.y):1;
+    if(vis<0.02) continue;
+    ctx.globalAlpha=vis;
     sc*=1+p.flash*0.35;
     if(p.type==='gold'||p.type==='energy'||p.type==='bomb'){
       ctx.globalCompositeOperation='lighter';
-      drawGlow(p.x,p.y,(p.type==='gold'?48:42)*sc,PEG_STYLE[p.type].color,(p.type==='bomb'?0.3:0.25)+0.15*Math.sin(t*(p.type==='bomb'?9:4)+p.bob));
+      drawGlow(p.x,p.y,(p.type==='gold'?48:42)*sc,PEG_STYLE[p.type].color,((p.type==='bomb'?0.3:0.25)+0.15*Math.sin(t*(p.type==='bomb'?9:4)+p.bob))*vis);
       ctx.globalCompositeOperation='source-over';
     }
     const spr=pegSprite(p.type,Math.max(0,p.maxHp-p.hp)), s=spr.S*sc;
-    ctx.drawImage(spr.c,p.x-s/2,p.y-s/2,s,s);
-    if(p.flash>0){ctx.globalCompositeOperation='lighter';drawGlow(p.x,p.y,50*sc,'#ffffff',p.flash*0.9);ctx.globalCompositeOperation='source-over';}
+    ctx.globalAlpha=vis; ctx.drawImage(spr.c,p.x-s/2,p.y-s/2,s,s); ctx.globalAlpha=1;
+    if(p.flash>0){ctx.globalCompositeOperation='lighter';drawGlow(p.x,p.y,50*sc,'#ffffff',p.flash*0.9*vis);ctx.globalCompositeOperation='source-over';}
+    ctx.globalAlpha=1;
   }
 }
 function drawBoss(){
@@ -1854,6 +1978,7 @@ function drawBoss(){
   const th=b.theme, sc=easeOutBack(sp)*(b.r/50), hpK=b.hp/b.maxHp, pulse=0.5+0.5*Math.sin(S.time*(3+(1-hpK)*4));
   const kx=(Math.random()-0.5)*b.kick*10, ky=(Math.random()-0.5)*b.kick*10;
   ctx.save(); ctx.translate(b.x+kx,b.y+ky); ctx.scale(sc,sc);
+  if(b.phased) ctx.globalAlpha=0.28+0.12*Math.sin(S.time*6);
   ctx.globalCompositeOperation='lighter';
   drawGlow(0,0,320,th.aura,0.35+pulse*0.2);
   drawGlow(0,0,160,th.aura2,0.25+pulse*0.15);
@@ -1951,7 +2076,7 @@ function drawOrbs(){
   ctx.globalCompositeOperation='source-over';
 }
 function polyPathCtx(c,n,rad,rot,cx,cy){c.beginPath();for(let i=0;i<n;i++){const a=i/n*TAU+rot,x=cx+Math.cos(a)*rad,y=cy+Math.sin(a)*rad;if(i)c.lineTo(x,y);else c.moveTo(x,y);}c.closePath();}
-function turretTier(){let t=0;for(const id of GEAR_ORDER){const lv=gearLv(id);if(lv>0&&GEAR_ORDER.indexOf(id)>2)t++;if(lv>1)t++;}return t+S.boons.rail+S.boons.targeting;}
+function turretTier(){let t=0;for(const id of GEAR_ORDER){const lv=gearLv(id);if(lv>0&&GEAR_ORDER.indexOf(id)>2)t++;if(lv>1)t++;if(lv>2)t++;}return t+S.boons.rail+S.boons.targeting;}
 function drawVortices(){
   if(!vortices.length) return;
   for(const v of vortices){
@@ -2134,7 +2259,7 @@ function drawTrajectory(){
     drawGlow(pts[idx][0],pts[idx][1],22,col,0.9);
   }
   const dp=prediction.dotted;
-  if(dp.length>1){
+  if(dp.length>1&&!fractureOn('dark')){
     path(dp); ctx.setLineDash([3,9]); ctx.lineDashOffset=-S.time*60;
     ctx.strokeStyle=hexA(col,0.8); ctx.lineWidth=2.5; ctx.stroke(); ctx.setLineDash([]);
   }
@@ -2210,6 +2335,9 @@ function drawBanners(){
     ctx.font='900 58px '+FD;
     const g=ctx.createLinearGradient(0,y-30,0,y+30); g.addColorStop(0,'#ffffff'); g.addColorStop(0.5,'#9ff6ff'); g.addColorStop(1,'#29b8ff');
     ctx.fillStyle=g; ctx.shadowColor='#29f3ff'; ctx.shadowBlur=24; ctx.fillText('STAGE '+pad2(S.stage+1),W/2+sl,y); ctx.shadowBlur=0;
+    const fr=activeFractures();
+    if(fr.length){ctx.font='700 11px '+FM;ctx.fillStyle='#ff9a7a';ctx.fillText('FRACTURE ▸ '+fr.map(f=>f.icon+' '+f.name).join('  ·  '),W/2+sl,y+56);}
+    if(st.phases){ctx.font='700 11px '+FM;ctx.fillStyle='#ff3dcb';ctx.fillText('◆ '+st.phases+'-PHASE BOSS ◆',W/2+sl,y-53);}
     if(S.elite){ctx.font='900 16px '+FD;ctx.fillStyle='#ff4130';ctx.shadowColor='#ff4130';ctx.shadowBlur=14;ctx.fillText('☠  ELITE  ☠',W/2-sl,y-74);ctx.shadowBlur=0;}
     ctx.font='700 14px '+FM; ctx.fillStyle=st.theme.label; ctx.fillText('TARGET ▸ '+st.title+' "'+st.name+'"',W/2-sl,y+40);
     ctx.restore();
@@ -2222,10 +2350,10 @@ function drawBanners(){
     const s=Math.max(0.01,k)*(1+0.03*Math.sin(S.time*6)); ctx.scale(s,s);
     ctx.font='900 '+(S.stage===STAGES.length-1?54:62)+'px '+FD;
     const g=ctx.createLinearGradient(0,-32,0,32); g.addColorStop(0,'#ffffff'); g.addColorStop(0.5,'#ffe680'); g.addColorStop(1,'#ffaa00');
-    ctx.lineWidth=6; ctx.strokeStyle='rgba(40,20,0,0.8)'; ctx.strokeText(S.stage===STAGES.length-1?'DYNASTY SECURED':'STAGE CLEARED',0,0);
-    ctx.fillStyle=g; ctx.shadowColor='#ffcc33'; ctx.shadowBlur=30; ctx.fillText(S.stage===STAGES.length-1?'DYNASTY SECURED':'STAGE CLEARED',0,0); ctx.shadowBlur=0;
+    ctx.lineWidth=6; ctx.strokeStyle='rgba(40,20,0,0.8)'; ctx.strokeText(clearWord(),0,0);
+    ctx.fillStyle=g; ctx.shadowColor='#ffcc33'; ctx.shadowBlur=30; ctx.fillText(clearWord(),0,0); ctx.shadowBlur=0;
     ctx.font='700 14px '+FM; ctx.fillStyle='#ffffff';
-    ctx.fillText(S.bossKilled?STAGE().name+' NEUTRALIZED':'TARGET SCORE ACHIEVED — CORE OVERLOADED',0,48);
+    ctx.fillText(S.bossKilled?(S.stage===9?'THE DYNASTY FALLS... SOMETHING STIRS':STAGE().name+' NEUTRALIZED'):'TARGET SCORE ACHIEVED — CORE OVERLOADED',0,48);
     ctx.restore();
   } else if(S.phase==='over'){
     const t=S.overT, a=clamp(t/0.4,0,1);
@@ -2239,6 +2367,7 @@ function drawBanners(){
     ctx.restore();
   }
 }
+function clearWord(){return S.stage===STAGES.length-1?'REALITY RESTORED':S.stage===9?'DYNASTY FALLEN':'STAGE CLEARED';}
 function drawFinale(){
   const k=clamp((cam.z-1)/0.8,0,1); if(k<=0.01) return;
   const bh=74*k;
